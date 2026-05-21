@@ -7,7 +7,7 @@
     "admin:sync": "node scripts/admin/sync-admin-data.mjs",
     "admin:check": "node scripts/admin/check-admin-data.mjs",
     "admin:build": "npm run admin:sync && npm run admin:check",
-    "start": "cd admin && npx http-server . -p 3000 -c-1 -o"
+    "start": "npx http-server .. -p 3000 -c-1 -o /s1-service-intelligence/admin/"
   },
   "engines": {
     "node": ">=18.0.0"

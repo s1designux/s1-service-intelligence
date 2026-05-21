@@ -328,7 +328,7 @@ window.ADMIN_DATA = {
           "commonPromotion": "not-yet",
           "dsMapping": "deferred",
           "nextAction": "차량 위치 모듈 메타데이터 디자이너 검증",
-          "dashboardLink": "../s1-mobility-uvis-workspace/dashboard/index.html",
+          "dashboardLink": "../../s1-mobility-uvis-workspace/dashboard/index.html",
           "publishStatus": "draft",
           "visibility": "admin-only"
         }
@@ -337,7 +337,7 @@ window.ADMIN_DATA = {
     {
       "domainId": "video",
       "domainName": "영상서비스",
-      "status": "planned",
+      "status": "active",
       "services": [
         {
           "serviceId": "video-svms",
@@ -370,18 +370,23 @@ window.ADMIN_DATA = {
         {
           "serviceId": "video-cloud",
           "serviceName": "클라우드영상시스템",
-          "client": "TBD",
-          "system": "클라우드 기반 영상 관제 시스템 (예정)",
-          "status": "planned",
-          "currentPhase": "not-started",
-          "currentFocus": null,
-          "detectedLayout": null,
-          "analyzedMenuCount": 0,
-          "pendingReviewCount": 0,
-          "sourceTypes": [],
-          "commonPromotion": "n/a",
-          "dsMapping": "n/a",
-          "nextAction": "자료 제공 대기",
+          "client": "에스원",
+          "system": "S1 VaaS (Video as a Service) — 클라우드 기반 영상관제 SaaS",
+          "status": "active",
+          "currentPhase": "designer-review-needed",
+          "currentFocus": "서비스 가이드 초안 검토",
+          "detectedLayout": "dashboard-3col + sidebar-split-panel + list-drawer",
+          "workspacePath": "../s1vaas",
+          "analyzedMenuCount": 11,
+          "pendingReviewCount": 6,
+          "sourceTypes": [
+            "코드베이스(React/TypeScript)",
+            "DB 스키마(SQL)",
+            "목업 데이터"
+          ],
+          "commonPromotion": "not-yet",
+          "dsMapping": "deferred",
+          "nextAction": "서비스 가이드 초안 디자이너 검토 — AI 영상 검색·출동 관제·백엔드 API 계획 확인",
           "publishStatus": "draft",
           "visibility": "admin-only"
         }
@@ -530,7 +535,7 @@ window.ADMIN_DATA = {
       "commonPromotion": "not-yet",
       "dsMapping": "deferred",
       "nextAction": "차량 위치 모듈 메타데이터 디자이너 검증",
-      "dashboardLink": "../s1-mobility-uvis-workspace/dashboard/index.html",
+      "dashboardLink": "../../s1-mobility-uvis-workspace/dashboard/index.html",
       "publishStatus": "draft",
       "visibility": "admin-only",
       "domainId": "mobility",
@@ -573,18 +578,23 @@ window.ADMIN_DATA = {
     {
       "serviceId": "video-cloud",
       "serviceName": "클라우드영상시스템",
-      "client": "TBD",
-      "system": "클라우드 기반 영상 관제 시스템 (예정)",
-      "status": "planned",
-      "currentPhase": "not-started",
-      "currentFocus": null,
-      "detectedLayout": null,
-      "analyzedMenuCount": 0,
-      "pendingReviewCount": 0,
-      "sourceTypes": [],
-      "commonPromotion": "n/a",
-      "dsMapping": "n/a",
-      "nextAction": "자료 제공 대기",
+      "client": "에스원",
+      "system": "S1 VaaS (Video as a Service) — 클라우드 기반 영상관제 SaaS",
+      "status": "active",
+      "currentPhase": "designer-review-needed",
+      "currentFocus": "서비스 가이드 초안 검토",
+      "detectedLayout": "dashboard-3col + sidebar-split-panel + list-drawer",
+      "workspacePath": "../s1vaas",
+      "analyzedMenuCount": 11,
+      "pendingReviewCount": 6,
+      "sourceTypes": [
+        "코드베이스(React/TypeScript)",
+        "DB 스키마(SQL)",
+        "목업 데이터"
+      ],
+      "commonPromotion": "not-yet",
+      "dsMapping": "deferred",
+      "nextAction": "서비스 가이드 초안 디자이너 검토 — AI 영상 검색·출동 관제·백엔드 API 계획 확인",
       "publishStatus": "draft",
       "visibility": "admin-only",
       "domainId": "video",
@@ -2409,6 +2419,381 @@ window.ADMIN_DATA = {
           "value": "관계사 UVIS관제 WEB은 SAMSUNG 관계사를 위한 통근버스 관제 관리 웹 시스템(Admin)입니다. Knox SSO 인증을 사용하며 통근버스 사이트 또는 관계 사이트에서 접근합니다. 버전 V0.9 기준으로 7개 GNB 메뉴(모니터링·운영 관리·통계 현황·알림 관리·기준 정보·설정·귀성 관리)를 갖추고 있습니다. 사용자는 마스터 관리자(관계사 총무/버스관리실 담당자)와 운수사 관리자 두 유형으로 구분됩니다. 마스터 관리자는 모든 기능을 사용하며 운수사별 메뉴·기능 접근 권한을 설정합니다. 운수사 관리자는 동일 사이트를 사용하지만 권한이 분리된 별도 계정으로, 마스터 관리자가 허용한 메뉴·기능만 접근 가능합니다. 관계사별로 사용 니즈가 달라 필수 메뉴 외 일부 메뉴는 특정 관계사에서만 운영됩니다. 이 시스템의 고유한 특징은 명절 귀성 버스 운영 전용 모듈(귀성 관리 8개 메뉴, 상시 GNB 노출), 음주 측정 정보 관리, 협력사 정산 기능입니다. 국문/영문 다국어를 지원합니다. 모니터링 > 대시보드는 HOME 대시보드와 별도 화면입니다. 설정 > 협력사 관리는 협력사 기본 정보(마스터)를 관리하며, 귀성 > 협력사 입금현황은 협력사별 입금 현황 리스트로 별도 기능입니다. 확인된 내용: IA V0.9 구조, 사용자 유형(마스터 관리자·운수사 관리자), 귀성 관리 상시 노출, 협력사 메뉴 역할 구분. 검토 필요: 운수사 관리자 전용 메뉴·기능 범위, 관계사별 선택 메뉴 목록, 통합 UVIS와의 관계."
         }
       ]
+    },
+    {
+      "serviceId": "video-cloud",
+      "serviceName": "클라우드영상시스템",
+      "curatedAt": "2026-05-21",
+      "sourceRefs": [
+        "Figma 기획문서 — 에스원 가람 영상 UX 기획 (클라우드영상시스템) 슬라이드 10장",
+        "슬라이드 01·02: 추진배경·현황분석 / 슬라이드 03·04: 전략방향",
+        "슬라이드 05·06: 상품컨셉 / 슬라이드 07·08: 상품화계획·판매정책",
+        "슬라이드 09·10: 포지셔닝·기대효과"
+      ],
+      "sections": [
+        {
+          "id": "overview",
+          "title": "서비스 개요",
+          "items": [
+            {
+              "label": "서비스명 (외부)",
+              "value": "에스원 클라우드 CCTV",
+              "status": "confirmed"
+            },
+            {
+              "label": "서비스명 (내부)",
+              "value": "클라우드 AI CCTV / 클라우드영상시스템",
+              "status": "confirmed"
+            },
+            {
+              "label": "서비스 유형",
+              "value": "VSaaS (Video as a Service) — 클라우드 기반 AI 영상관제 구독 서비스",
+              "status": "confirmed"
+            },
+            {
+              "label": "판매 채널",
+              "value": "다이렉트몰 중심 온라인 판매",
+              "status": "confirmed"
+            },
+            {
+              "label": "초기 타깃",
+              "value": "SOHO (1~4인) — 무인매장, 가두매장, 음식점/카페, 미용실",
+              "status": "confirmed"
+            },
+            {
+              "label": "기본 월 요금",
+              "value": "14円/台, 최대 8대",
+              "status": "confirmed"
+            },
+            {
+              "label": "현황",
+              "value": "'26년 경영계획 추진과제 — 클라우드 S/W + AI 카메라 개발 중",
+              "status": "confirmed"
+            }
+          ]
+        },
+        {
+          "id": "purpose",
+          "title": "전략 방향",
+          "items": [
+            {
+              "label": "전략①",
+              "value": "AI·클라우드 기반 Full 서비스 밸류체인 확보 — 에스원의 센싱·모니터링·출동 역량으로 영상보안 근원적 경쟁력 회복",
+              "status": "confirmed"
+            },
+            {
+              "label": "전략②",
+              "value": "H/W 렌탈에서 VSaaS 중심 비즈니스로 전환 — 구독형으로 고객이 원하는 서비스 선택 제공",
+              "status": "confirmed"
+            },
+            {
+              "label": "추진 배경",
+              "value": "SOHO 대응 상품 부족 (침투율 38.7%), 기존 클라우드 CCTV는 단순 저장/조회 한계, 에스원 성장률 하락 추세",
+              "status": "confirmed"
+            },
+            {
+              "label": "As-Is",
+              "value": "고객이 직접 영상 모니터링·대응 (기기 렌탈 + A/S만 제공)",
+              "status": "confirmed"
+            },
+            {
+              "label": "To-Be",
+              "value": "에스원이 AI 분석·AI 관제·원격 A/S·출동까지 통합 제공 (고객이 원하는 서비스 선택)",
+              "status": "confirmed"
+            }
+          ]
+        },
+        {
+          "id": "features",
+          "title": "클라우드 S/W 핵심 기능",
+          "items": [
+            {
+              "name": "영상 모니터링",
+              "description": "실시간 영상 모니터링",
+              "status": "confirmed"
+            },
+            {
+              "name": "영상 저장",
+              "description": "클라우드 기반 영상 저장",
+              "status": "confirmed"
+            },
+            {
+              "name": "녹화영상 전송",
+              "description": "저장된 녹화영상 조회 및 전송",
+              "status": "confirmed"
+            },
+            {
+              "name": "장비이상감지",
+              "description": "카메라·장비 이상 상태 감지",
+              "status": "confirmed"
+            },
+            {
+              "name": "영상 검색 (문장 검색)",
+              "description": "자연어 문장으로 영상 구간 검색 — 예: 파란선초 및 빨간색모자를 쓴 사람",
+              "status": "confirmed"
+            },
+            {
+              "name": "AI 알고리즘 구독",
+              "description": "침입·문장검색 외 유료 옵션 추가 (화재·배회·라인크로스·피플카운트)",
+              "status": "confirmed"
+            },
+            {
+              "name": "관제서버 연동",
+              "description": "요청 출동 및 영상확인 관제 (기본 월 2회 출동 포함)",
+              "status": "confirmed"
+            },
+            {
+              "name": "통합계정 연동",
+              "description": "에스원 계정 통합 관리",
+              "status": "confirmed"
+            },
+            {
+              "name": "모두App 연동",
+              "description": "고객용 모바일 서비스 연동",
+              "status": "confirmed"
+            }
+          ]
+        },
+        {
+          "id": "scenarios",
+          "title": "주요 사용 시나리오",
+          "items": [
+            {
+              "title": "AI 이상감지 → 출동 요청",
+              "status": "confirmed",
+              "steps": [
+                "카메라 AI가 침입·배회·화재 등 이상 감지",
+                "에스원 클라우드 S/W에서 이상 이벤트 수신",
+                "에스원 운영 담당이 영상 확인 후 출동 요청 처리 (기본 월 2회)",
+                "고객은 모두App을 통해 상황 확인"
+              ]
+            },
+            {
+              "title": "실시간 영상 모니터링",
+              "status": "confirmed",
+              "steps": [
+                "클라우드 S/W(웹뷰어)에서 계약 고객사 카메라 실시간 영상 확인",
+                "이상 감지 시 알림 수신 및 이벤트 처리"
+              ]
+            },
+            {
+              "title": "AI 문장 검색으로 영상 구간 조회",
+              "status": "confirmed",
+              "reviewNote": "검색 결과 표시 방식·UX 상세는 확인 필요",
+              "steps": [
+                "클라우드 S/W 영상 검색에서 자연어 문장 입력",
+                "파란선초 및 빨간색모자를 쓴 사람 → 해당 영상 구간 조회",
+                "녹화영상 구간 재생 및 활용"
+              ]
+            },
+            {
+              "title": "구독 옵션 추가 (AI 알고리즘)",
+              "status": "confirmed",
+              "reviewNote": "구독 관리 화면 위치 확인 필요",
+              "steps": [
+                "기본 서비스(침입·문장검색) 외 유료 옵션 선택",
+                "화재·배회·라인크로스·피플카운트 분석 추가 구독",
+                "영상확인 관제서비스 추가 시 에스원이 직접 영상 확인·관제"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "dsApplication",
+          "title": "DS 적용 계획",
+          "updatedAt": "2026-05-21",
+          "summary": "S1_AI_DESIGN_GUIDE(V2.4) 기준. DS에 있는 것만 적용, 없으면 gap으로 기록. 헥스값 직접 사용 금지.",
+          "stats": [
+            {
+              "label": "분석 화면 수",
+              "value": "8개 화면 (로그인·모니터링·알림·검색·설정·대시보드·사이트관리·공통)",
+              "status": "confirmed"
+            },
+            {
+              "label": "Foundation 적용 범위",
+              "value": "전체 applicable — 색상 팔레트·타이포·스페이싱·Border Width·Radius 모두 stable",
+              "status": "confirmed"
+            },
+            {
+              "label": "Semantic 토큰",
+              "value": "대부분 stable — bg·surface·text·border·icon·action·status·overlay. bg/home, bg/selected는 candidate",
+              "status": "confirmed"
+            },
+            {
+              "label": "구현 완료 컴포넌트",
+              "value": "12개 즉시 사용 가능 — Button·Input·Select·Toggle·Checkbox·Radio·Chip·Textarea·Table·Pagination",
+              "status": "confirmed"
+            },
+            {
+              "label": "Candidate 컴포넌트",
+              "value": "Date Picker·Time Picker — 착수 전 HD 결정 필요",
+              "status": "candidate"
+            },
+            {
+              "label": "DS Gap (P1)",
+              "value": "카메라 그리드·VideoPlayer·EmptyState·Toast·Modal·LoadingSpinner·Sidebar 너비·GNB 높이",
+              "status": "gap"
+            }
+          ],
+          "gaps": [
+            {
+              "id": "G-C1",
+              "priority": "P1",
+              "category": "색상 토큰",
+              "item": "--color-video-bg",
+              "description": "카메라 셀 영상 영역 배경 전용 토큰 없음. 임시: gray-dark-0 직접 참조"
+            },
+            {
+              "id": "G-C2",
+              "priority": "P1",
+              "category": "색상 토큰",
+              "item": "AI 이벤트 태그 색상",
+              "description": "침입·화재·배회 등 AI 이벤트 카테고리별 전용 토큰 없음. 임시: status-error/warning/info 순환 매핑"
+            },
+            {
+              "id": "G-L1",
+              "priority": "P1",
+              "category": "레이아웃 토큰",
+              "item": "--sidebar-width / --topbar-height",
+              "description": "Sizing 토큰 카테고리 부재. 사이드바 너비·GNB 높이 모두 없음. 서비스 전용 CSS 변수로 관리"
+            },
+            {
+              "id": "G-L2",
+              "priority": "P1",
+              "category": "레이아웃 토큰",
+              "item": "--camera-grid-gap",
+              "description": "카메라 그리드 간격 토큰 없음. 그리드 레이아웃 패턴(2×2, 4×4) 전체 부재"
+            },
+            {
+              "id": "G-P1",
+              "priority": "P1",
+              "category": "컴포넌트",
+              "item": "VideoPlayer · CameraCell · CameraGrid · LiveBadge",
+              "description": "영상 플레이어·카메라 카드·그리드·Live 배지 — 영상 도메인 전용. service-specific 설계 필요"
+            },
+            {
+              "id": "G-P2",
+              "priority": "P1",
+              "category": "컴포넌트",
+              "item": "EmptyState · LoadingSpinner",
+              "description": "빈 상태·로딩 상태 컴포넌트 없음. 임시: 서비스 전용 구현"
+            },
+            {
+              "id": "G-P3",
+              "priority": "P1",
+              "category": "컴포넌트",
+              "item": "Toast · Modal / Dialog",
+              "description": "Toast 없음. Modal은 구조 토큰(radius-modal-md, color-surface-raised)만 있고 컴포넌트 미등록"
+            },
+            {
+              "id": "G-P4",
+              "priority": "P2",
+              "category": "컴포넌트",
+              "item": "Tab",
+              "description": "Tab 컴포넌트 없음 — 카메라 설정 탭 등에서 필요. Button 또는 Radio로 임시 대응"
+            },
+            {
+              "id": "G-P5",
+              "priority": "P2",
+              "category": "컴포넌트",
+              "item": "VideoSearchResultCard · VideoTimeline",
+              "description": "AI 문장 검색 결과 카드·타임라인 하이라이팅 — service-specific 설계 필요"
+            }
+          ],
+          "candidates": [
+            {
+              "id": "CV-1",
+              "item": "--color-bg-home (#F5F6FB)",
+              "screen": "대시보드",
+              "checkPoint": "Figma에서 라이트/다크 토큰 값 확인 후 확정"
+            },
+            {
+              "id": "CV-2",
+              "item": "--color-bg-selected (blue-50)",
+              "screen": "모니터링 사이드바 내비게이션",
+              "checkPoint": "다크모드에서 충분한 대비 확인 필요"
+            },
+            {
+              "id": "CV-3",
+              "item": "Chip 다크모드",
+              "screen": "알림 이벤트 분류 필터",
+              "checkPoint": "dark mode 시각 검증 미완료 (pending) — 검증 후 사용 확정"
+            },
+            {
+              "id": "CV-4",
+              "item": "Date Picker",
+              "screen": "알림·영상 검색 화면",
+              "checkPoint": "착수 전 HD 결정 필요 — 녹화 영상 검색 기간 선택에서 핵심"
+            },
+            {
+              "id": "CV-5",
+              "item": "Nav (Sidebar)",
+              "screen": "공통 내비게이션",
+              "checkPoint": "in-progress 상태 — 클라우드 영상 메뉴 구조 반영 가능 여부 확인 필요"
+            },
+            {
+              "id": "CV-6",
+              "item": "Radio vs Button (레이아웃 전환)",
+              "screen": "모니터링 카메라 그리드",
+              "checkPoint": "2×2 / 4×4 전환 UX 패턴 결정 필요 — Radio(아이콘) 또는 Button 그룹"
+            }
+          ]
+        },
+        {
+          "id": "openQuestions",
+          "title": "확인 필요 항목",
+          "items": [
+            {
+              "id": "A-01",
+              "priority": "high",
+              "topic": "웹뷰어 접근 주체",
+              "question": "클라우드 S/W(웹뷰어)는 에스원 내부 직원 전용인가, 고객도 직접 로그인할 수 있는가?"
+            },
+            {
+              "id": "A-02",
+              "priority": "high",
+              "topic": "App vs 웹 기능 경계",
+              "question": "모두App(고객 모바일)과 클라우드 S/W(웹뷰어)의 기능 경계는 어떻게 되는가?"
+            },
+            {
+              "id": "B-01",
+              "priority": "high",
+              "topic": "웹뷰어 화면 목록·구조",
+              "question": "6개 기능이 웹뷰어에서 어떤 화면 구조(IA)로 구성되는가?"
+            },
+            {
+              "id": "B-02",
+              "priority": "high",
+              "topic": "영상 검색 화면 구성",
+              "question": "문장 검색 결과 표시 방식과 영상 구간 재생 UX는?"
+            },
+            {
+              "id": "C-01",
+              "priority": "high",
+              "topic": "요청출동 처리 흐름",
+              "question": "월 2회 기본 요청출동이 웹뷰어에서 어떤 흐름으로 처리되는가?"
+            },
+            {
+              "id": "D-01",
+              "priority": "mid",
+              "topic": "내부 운영자 역할 체계",
+              "question": "클라우드 S/W를 사용하는 에스원 내부 직원의 역할 구분은?"
+            },
+            {
+              "id": "C-02",
+              "priority": "mid",
+              "topic": "통합계정 연동 방식",
+              "question": "에스원 통합계정 연동 방식은? (SSO 등)"
+            },
+            {
+              "id": "B-03",
+              "priority": "mid",
+              "topic": "AI 알고리즘 구독 화면",
+              "question": "유료 AI 알고리즘 옵션 추가·관리 화면 위치는?"
+            }
+          ]
+        }
+      ]
     }
   ],
   "patternCandidates": [
@@ -2708,7 +3093,7 @@ window.ADMIN_DATA = {
       "fileId": "service-insights.generated.json",
       "path": "generated/admin/service-insights.generated.json",
       "description": "Service Guide Curator 산출물. 서비스별 기본 정보 가이드.",
-      "lastSynced": "2026-05-20",
+      "lastSynced": "2026-05-21",
       "syncStatus": "ok",
       "sourceFiles": []
     }

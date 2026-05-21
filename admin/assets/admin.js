@@ -458,6 +458,69 @@ function initAgentDetailTabs() {
 }
 
 // ── 서비스 분석 현황 ──
+// ── 이미지 모달 ──
+function openImageModal(src, title) {
+  let modal = document.getElementById('sn-image-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'sn-image-modal';
+    modal.className = 'sn-modal-overlay';
+    modal.innerHTML = `
+      <div class="sn-modal-box">
+        <div class="sn-modal-header">
+          <span class="sn-modal-title"></span>
+          <button class="sn-modal-close" aria-label="닫기">✕</button>
+        </div>
+        <div class="sn-modal-body">
+          <img class="sn-modal-img" src="" alt="">
+        </div>
+      </div>`;
+    document.body.appendChild(modal);
+    modal.querySelector('.sn-modal-close').addEventListener('click', () => modal.classList.remove('open'));
+    modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('open'); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') modal.classList.remove('open'); });
+  }
+  modal.querySelector('.sn-modal-title').textContent = title;
+  modal.querySelector('.sn-modal-img').src = src;
+  modal.querySelector('.sn-modal-img').alt = title;
+  modal.classList.add('open');
+}
+
+// ── 공유 자료 ──
+function renderSharedNotes() {
+  const el = document.getElementById('shared-notes-content');
+  if (!el) return;
+
+  const notes = [
+    {
+      tag: '기획 자료',
+      title: '통합 관리, 어디까지 하나?',
+      desc: '왜 하나의 에이전트가 모든 것을 관리하면 안 되는가, 그리고 이상적인 운영 방향',
+      date: '2026-05-21',
+      image: 'assets/images/shared-01.png',
+    },
+  ];
+
+  el.innerHTML = `
+    <div class="sn-grid">
+      ${notes.map(n => `
+        <div class="sn-card${n.image ? ' sn-card-clickable' : ''}" ${n.image ? `data-image="${n.image}" data-title="${n.title}"` : ''}>
+          <div class="sn-card-tag">${n.tag}</div>
+          <div class="sn-card-title">${n.title}</div>
+          <div class="sn-card-desc">${n.desc}</div>
+          <div class="sn-card-date">${n.date}${n.image ? '<span class="sn-card-view-hint">클릭하여 보기 →</span>' : ''}</div>
+        </div>`).join('')}
+      <div class="sn-card sn-card-empty">
+        <div class="sn-empty-icon">+</div>
+        <div class="sn-empty-label">자료를 추가하려면<br>admin.js의 notes 배열에 항목을 추가하세요.</div>
+      </div>
+    </div>`;
+
+  el.querySelectorAll('.sn-card-clickable').forEach(card => {
+    card.addEventListener('click', () => openImageModal(card.dataset.image, card.dataset.title));
+  });
+}
+
 function renderServiceIntelligence() {
   const domains = D().serviceDomains || [];
   const el = document.getElementById('service-intelligence-content');
@@ -515,16 +578,24 @@ function renderInsightSections(insight) {
       ${content}
     </div>`;
 
-  const overview = sec('overview');
-  const overviewHtml = overview ? wrap(overview.title, '', `
+  const kvTable = (items) => `
     <table class="insight-table"><tbody>
-      ${overview.items.map(item => `
+      ${items.map(item => `
         <tr>
           <td class="insight-label">${item.label}</td>
           <td class="insight-value">${item.value}</td>
           <td>${insightBadge(item.status)}</td>
         </tr>`).join('')}
-    </tbody></table>`) : '';
+    </tbody></table>`;
+
+  const overview = sec('overview');
+  const overviewHtml = overview ? wrap(overview.title, '', kvTable(overview.items)) : '';
+
+  const purpose = sec('purpose');
+  const purposeHtml = purpose ? wrap(purpose.title, '', kvTable(purpose.items)) : '';
+
+  const characteristics = sec('characteristics');
+  const characteristicsHtml = characteristics ? wrap(characteristics.title, '', kvTable(characteristics.items)) : '';
 
   const users = sec('users');
   const usersHtml = users ? wrap(users.title, '', `
@@ -536,7 +607,7 @@ function renderInsightSections(insight) {
           ${insightBadge(role.status)}
         </div>
         <div class="insight-role-purpose">${role.purpose}</div>
-        <ul class="insight-role-tasks">${role.tasks.map(t => `<li>${t}</li>`).join('')}</ul>
+        ${(role.tasks||[]).length ? `<ul class="insight-role-tasks">${role.tasks.map(t => `<li>${t}</li>`).join('')}</ul>` : ''}
         ${role.reviewNote ? `<div class="insight-review-note">검토: ${role.reviewNote}</div>` : ''}
       </div>`).join('')}
     </div>`) : '';
@@ -635,17 +706,123 @@ function renderInsightSections(insight) {
         <div class="insight-ux-value">${item.value}</div>
       </div>`).join('')}`) : '';
 
+  const features = sec('features');
+  const featuresHtml = features ? wrap(features.title, '', `
+    <div class="insight-features-grid">
+      ${features.items.map(item => `
+        <div class="insight-feature-item">
+          <div class="insight-feature-name">${item.name} ${insightBadge(item.status)}</div>
+          <div class="insight-feature-desc">${item.description}</div>
+        </div>`).join('')}
+    </div>`) : '';
+
+  const openQuestions = sec('openQuestions');
+  const openQuestionsHtml = openQuestions ? wrap(openQuestions.title, '', `
+    <div class="insight-oq-list">
+      ${openQuestions.items.map(item => `
+        <div class="insight-oq-item insight-oq-${item.priority}">
+          <div class="insight-oq-header">
+            <span class="insight-oq-id">${item.id}</span>
+            <span class="insight-oq-topic">${item.topic}</span>
+            <span class="insight-oq-badge insight-oq-badge-${item.priority}">${item.priority === 'high' ? '우선' : item.priority === 'mid' ? '중간' : '낮음'}</span>
+          </div>
+          <div class="insight-oq-question">${item.question}</div>
+        </div>`).join('')}
+    </div>`) : '';
+
+  // ── 서비스 가이드 패널 컨텐츠 ──
+  const serviceGuideContent = `${overviewHtml}${purposeHtml}${usersHtml}${scenariosHtml}${featuresHtml}${characteristicsHtml}${iaHtml}${uxHtml}${openQuestionsHtml}`;
+
+  // ── DS 적용 계획 섹션 ──
+  const dsApp = sec('dsApplication');
+
+  if (!dsApp) {
+    // 탭 불필요 — 단일 컨테이너
+    return `
+      <div class="insight-container">
+        <div class="insight-header">
+          <div class="insight-header-title">서비스 가이드</div>
+          <div class="insight-header-meta">
+            <span>${insight.serviceName}</span>
+            <span>정리: ${insight.curatedAt}</span>
+            ${insight.sourceRefs?.length ? `<span>${insight.sourceRefs[0]}</span>` : ''}
+          </div>
+        </div>
+        ${serviceGuideContent}
+      </div>`;
+  }
+
+  const dsAppPanelContent = `
+    ${wrap('적용 범위 요약', '', `
+      ${dsApp.summary ? `<div class="dsa-summary">${dsApp.summary}</div>` : ''}
+      <table class="insight-table"><tbody>
+        ${(dsApp.stats || []).map(item => `
+          <tr>
+            <td class="insight-label">${item.label}</td>
+            <td class="insight-value">${item.value}</td>
+            <td><span class="dsa-badge dsa-badge-${item.status}">${item.status === 'confirmed' ? 'applicable' : item.status === 'candidate' ? 'candidate' : 'gap'}</span></td>
+          </tr>`).join('')}
+      </tbody></table>`)}
+    ${wrap('Gap 목록', '', `
+      <div class="dsa-gap-list">
+        ${(dsApp.gaps || []).map(item => `
+          <div class="dsa-gap-item dsa-gap-${item.priority.toLowerCase()}">
+            <div class="dsa-gap-header">
+              <span class="dsa-gap-id">${item.id}</span>
+              <span class="dsa-gap-cat">${item.category}</span>
+              <span class="dsa-gap-priority dsa-p-${item.priority.toLowerCase()}">${item.priority}</span>
+            </div>
+            <div class="dsa-gap-item-name">${item.item}</div>
+            <div class="dsa-gap-desc">${item.description}</div>
+          </div>`).join('')}
+      </div>`)}
+    ${wrap('Candidate 검증 필요 항목', '', `
+      <div class="dsa-cv-list">
+        ${(dsApp.candidates || []).map(item => `
+          <div class="dsa-cv-item">
+            <div class="dsa-cv-header">
+              <span class="dsa-gap-id">${item.id}</span>
+              <span class="dsa-cv-item-name">${item.item}</span>
+              <span class="dsa-cv-screen">${item.screen}</span>
+            </div>
+            <div class="dsa-cv-check">→ ${item.checkPoint}</div>
+          </div>`).join('')}
+      </div>`)}`;
+
+  const tabGroup = `insight-${insight.serviceId}`;
+
   return `
-    <div class="insight-container">
-      <div class="insight-header">
-        <div class="insight-header-title">서비스 가이드</div>
-        <div class="insight-header-meta">
-          <span>${insight.serviceName}</span>
-          <span>정리: ${insight.curatedAt}</span>
-          ${insight.sourceRefs?.length ? `<span>${insight.sourceRefs[0]}</span>` : ''}
+    <div class="insight-tabs-wrapper">
+      <div class="tabs insight-service-tabs" data-group="${tabGroup}">
+        <div class="tab active" data-group="${tabGroup}" data-target="service-guide">서비스 가이드</div>
+        <div class="tab" data-group="${tabGroup}" data-target="ds-application">DS 적용 계획</div>
+      </div>
+      <div class="tab-panel active" data-group="${tabGroup}" data-panel="service-guide">
+        <div class="insight-container">
+          <div class="insight-header">
+            <div class="insight-header-title">서비스 가이드</div>
+            <div class="insight-header-meta">
+              <span>${insight.serviceName}</span>
+              <span>정리: ${insight.curatedAt}</span>
+              ${insight.sourceRefs?.length ? `<span>${insight.sourceRefs[0]}</span>` : ''}
+            </div>
+          </div>
+          ${serviceGuideContent}
         </div>
       </div>
-      ${overviewHtml}${usersHtml}${iaHtml}${scenariosHtml}${uxHtml}
+      <div class="tab-panel" data-group="${tabGroup}" data-panel="ds-application">
+        <div class="insight-container">
+          <div class="insight-header">
+            <div class="insight-header-title">DS 적용 계획</div>
+            <div class="insight-header-meta">
+              <span>${insight.serviceName}</span>
+              <span>정리: ${dsApp.updatedAt || insight.curatedAt}</span>
+              <span>S1_AI_DESIGN_GUIDE V2.4</span>
+            </div>
+          </div>
+          ${dsAppPanelContent}
+        </div>
+      </div>
     </div>`;
 }
 
@@ -678,6 +855,18 @@ function renderServiceDetail(svc, domain, contentId) {
         분석 예정 — 자료 제공 후 시작합니다.
       </div>` : ''}
     ${insight ? renderInsightSections(insight) : ''}`;
+
+  // 동적으로 생성된 insight 탭 이벤트 연결
+  el.querySelectorAll('.insight-service-tabs .tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const group = tab.dataset.group;
+      const target = tab.dataset.target;
+      el.querySelectorAll(`.insight-service-tabs[data-group="${group}"] .tab`).forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      el.querySelectorAll(`.tab-panel[data-group="${group}"]`).forEach(p => p.classList.remove('active'));
+      el.querySelector(`.tab-panel[data-group="${group}"][data-panel="${target}"]`)?.classList.add('active');
+    });
+  });
 }
 
 function renderAllServiceSections() {
@@ -695,6 +884,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   renderOverview();
   renderAgentTeams();
+  renderSharedNotes();
   renderServiceIntelligence();
   renderAllServiceSections();
 });

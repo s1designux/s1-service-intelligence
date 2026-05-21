@@ -8,7 +8,7 @@
       "registryRef": "../s1-mobility-uvis-workspace/registry/services/mobility/",
       "outputsRef": "../s1-mobility-uvis-workspace/outputs/mobility/",
       "agentsRef": "../s1-mobility-uvis-workspace/.claude/agents/services/mobility/",
-      "dashboardLink": "../s1-mobility-uvis-workspace/dashboard/index.html",
+      "dashboardLink": "../../s1-mobility-uvis-workspace/dashboard/index.html",
       "claudeMd": "../s1-mobility-uvis-workspace/CLAUDE.md",
       "status": "active",
       "notes": "기존 UVIS 분석 워크스페이스. 원본 데이터 source. 복사하지 않고 상대 경로로 참조."
