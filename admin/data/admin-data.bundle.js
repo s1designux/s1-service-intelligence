@@ -328,7 +328,7 @@ window.ADMIN_DATA = {
           "commonPromotion": "not-yet",
           "dsMapping": "deferred",
           "nextAction": "차량 위치 모듈 메타데이터 디자이너 검증",
-          "dashboardLink": "https://s1designux.github.io/s1-mobility-uvis-workspace/dashboard/",
+          "dashboardLink": "../s1-mobility-uvis-workspace/dashboard/index.html",
           "publishStatus": "draft",
           "visibility": "admin-only"
         }
@@ -530,7 +530,7 @@ window.ADMIN_DATA = {
       "commonPromotion": "not-yet",
       "dsMapping": "deferred",
       "nextAction": "차량 위치 모듈 메타데이터 디자이너 검증",
-      "dashboardLink": "https://s1designux.github.io/s1-mobility-uvis-workspace/dashboard/",
+      "dashboardLink": "../s1-mobility-uvis-workspace/dashboard/index.html",
       "publishStatus": "draft",
       "visibility": "admin-only",
       "domainId": "mobility",
@@ -660,10 +660,10 @@ window.ADMIN_DATA = {
     }
   ],
   "agentSummary": {
-    "totalAgents": 30,
+    "totalAgents": 31,
     "standby": 3,
     "active": 5,
-    "planned": 22
+    "planned": 23
   },
   "agentGroups": [
     {
@@ -849,6 +849,29 @@ window.ADMIN_DATA = {
             "registry/cross-service/pattern-candidates.json"
           ],
           "notes": "성급한 공통화 금지. 두 개 이상 서비스 반복 근거 확인 후 판단."
+        }
+      ]
+    },
+    {
+      "id": "experience-consistency",
+      "title": "경험 정합성 리뷰",
+      "description": "서비스별 분석 결과가 누적된 뒤 활성화되는 통합 경험 리뷰 레이어",
+      "agents": [
+        {
+          "id": "experience-consistency-lead",
+          "name": "Experience Consistency Lead",
+          "status": "planned",
+          "role": "향후 모든 서비스가 통합 SaaS 형태로 한 사이트에서 제공될 때 활성화됩니다. 서비스군별 UX 통합관리 결과를 바탕으로 전체 SaaS 관점의 화면 구조, 사용 흐름, 시각 표현 기준을 정리합니다.",
+          "activation": "통합 SaaS 전환 단계 진입 시 활성화. 각 서비스군 UX 통합관리 결과가 충분히 누적된 이후.",
+          "relatedService": "all",
+          "workspacePath": null,
+          "inputSources": [
+            "outputs/cross-service/ux-consistency/"
+          ],
+          "outputPaths": [
+            "outputs/cross-service/experience-consistency/"
+          ],
+          "notes": "UX 통합관리자(서비스군 내부 정합성)와 역할이 다름. Experience Consistency Lead는 전체 SaaS 전환 단계에서의 cross-service 정합성 관리."
         }
       ]
     },
@@ -1322,6 +1345,23 @@ window.ADMIN_DATA = {
         "registry/cross-service/pattern-candidates.json"
       ],
       "notes": "성급한 공통화 금지. 두 개 이상 서비스 반복 근거 확인 후 판단."
+    },
+    {
+      "layer": "experience-consistency",
+      "id": "experience-consistency-lead",
+      "name": "Experience Consistency Lead",
+      "status": "planned",
+      "role": "향후 모든 서비스가 통합 SaaS 형태로 한 사이트에서 제공될 때 활성화됩니다. 서비스군별 UX 통합관리 결과를 바탕으로 전체 SaaS 관점의 화면 구조, 사용 흐름, 시각 표현 기준을 정리합니다.",
+      "activation": "통합 SaaS 전환 단계 진입 시 활성화. 각 서비스군 UX 통합관리 결과가 충분히 누적된 이후.",
+      "relatedService": "all",
+      "workspacePath": null,
+      "inputSources": [
+        "outputs/cross-service/ux-consistency/"
+      ],
+      "outputPaths": [
+        "outputs/cross-service/experience-consistency/"
+      ],
+      "notes": "UX 통합관리자(서비스군 내부 정합성)와 역할이 다름. Experience Consistency Lead는 전체 SaaS 전환 단계에서의 cross-service 정합성 관리."
     },
     {
       "layer": "services/mobility",
@@ -2254,17 +2294,17 @@ window.ADMIN_DATA = {
             },
             {
               "label": "권한별 계정 유형 구분",
-              "value": "마스터 관리자(총무/버스관리실)와 운수사 관리자로 구분됩니다. 운수사 관리자는 배차 관련 메뉴 위주 조회, 기준정보(차량·운전자) 쓰기 가능. 접근 범위는 운수사마다 다르며 마스터 관리자가 설정합니다.",
+              "value": "마스터 관리자(총무/버스관리실)와 운수사 관리자로 구분됩니다. 운수사 관리자는 배차 관련 메뉴 위주 조회, 기준정보(차량·운전자) 쓰기 가능. 접근 권한이 없는 메뉴는 GNB에서 아예 숨겨집니다. 운수사별 접근 범위는 마스터 관리자가 설정합니다.",
               "status": "confirmed",
               "commonPromotion": "review-needed",
-              "notes": "운수사 관리자 전용 메뉴 UI 처리 방식(숨김 vs 비활성화) 확인 필요"
+              "notes": null
             },
             {
               "label": "대용량 데이터 비동기 다운로드",
-              "value": "운행 실적·탑승자 정보(카드 정보)·정산 레포트는 데이터가 많아 즉시 다운로드가 불가합니다. 대용량 다운로드 메뉴에서 신청 후 데이터 준비가 완료되면 다운로드하는 비동기 방식으로 운영됩니다.",
+              "value": "운행 실적·탑승자 정보(카드 정보)·정산 레포트는 데이터가 많아 즉시 다운로드가 불가합니다. 대용량 다운로드 메뉴에서 신청 후 데이터 준비가 완료되면 CSV 파일로 다운로드하는 비동기 방식으로 운영됩니다.",
               "status": "confirmed",
               "commonPromotion": "review-needed",
-              "notes": "다운로드 포맷(Excel/CSV 등) 추가 확인 필요"
+              "notes": null
             }
           ]
         },
@@ -2353,20 +2393,8 @@ window.ADMIN_DATA = {
               "note": "관계사 10개 이상, 특성 다양. 커스텀 메뉴도 지속 추가. 현 시점에서 구분 어려움."
             },
             {
-              "question": "운수사 관리자에게 숨겨지는 메뉴의 UI 처리 방식은 숨김인가, 비활성화인가?",
-              "priority": "medium"
-            },
-            {
-              "question": "대용량 다운로드 파일 포맷은 무엇인가? (Excel, CSV 등)",
-              "priority": "medium"
-            },
-            {
               "question": "모니터링 > 대시보드에서 보여주는 주요 지표·정보 구성은 어떻게 되는가?",
               "priority": "medium"
-            },
-            {
-              "question": "음주 측정 연동 단말기 사이트의 명칭과 연동 방식은 무엇인가?",
-              "priority": "low"
             },
             {
               "question": "협력사 관리와 귀성 > 협력사 입금현황은 어떻게 연결되는가?",

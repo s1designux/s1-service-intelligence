@@ -148,6 +148,8 @@ function renderOverview() {
     return;
   }
 
+  const activeList = services.filter(s => s.status === 'active');
+
   el.innerHTML = `
     <div class="cards cards-4">
       <div class="card">
@@ -171,36 +173,16 @@ function renderOverview() {
         <div class="card-sub">공통화 검토 전 단계</div>
       </div>
     </div>
-    <div class="mt-24">
-      ${services.filter(s => s.nextAction).map(s => `
-        <div class="next-action" style="margin-bottom:8px">
-          <span class="next-action-label">${s.displayName}</span>
-          <span class="next-action-text">${s.nextAction}</span>
-          ${badge(s.status)}
+    ${activeList.length ? `
+    <div class="ov-active-wrap mt-24">
+      <div class="ov-active-label">현재 분석 중</div>
+      ${activeList.map(s => `
+        <div class="ov-active-row">
+          <div class="ov-active-name">${s.displayName}</div>
+          ${s.currentFocus ? `<div class="ov-active-focus">${s.currentFocus}</div>` : ''}
+          ${s.nextAction   ? `<div class="ov-active-action">→ ${s.nextAction}</div>` : ''}
         </div>`).join('')}
-    </div>
-    <div class="cards cards-2 mt-16">
-      <div class="card">
-        <div class="card-label" style="margin-bottom:12px">서비스 현황</div>
-        ${services.map(s => `
-          <div class="flex items-center gap-8" style="margin-bottom:8px">
-            ${badge(s.status)}
-            <span style="font-weight:600;font-size:13px">${s.displayName}</span>
-            <span class="text-muted text-sm" style="margin-left:auto">${STATUS_LABEL[s.currentPhase] || s.currentPhase || '-'}</span>
-          </div>`).join('')}
-      </div>
-      <div class="card">
-        <div class="card-label" style="margin-bottom:12px">검증 상태</div>
-        ${gateFails > 0
-          ? `<div style="font-size:12px;color:var(--red-600);margin-bottom:8px;font-weight:600">${gateFails}개 항목 실패 — 관리자 확인 필요</div>`
-          : ''}
-        ${gates.slice(0, 5).map(g => `
-          <div class="flex items-center gap-8" style="margin-bottom:8px">
-            ${badge(g.status)}
-            <span style="font-size:13px">${g.name}</span>
-          </div>`).join('')}
-      </div>
-    </div>`;
+    </div>` : ''}`;
 }
 
 // ── 조직도 ──
@@ -211,6 +193,7 @@ function renderOrgChart() {
   const leadership    = groups.find(g => g.id === 'leadership');
   const orchestration = groups.find(g => g.id === 'orchestration');
   const shared        = groups.find(g => g.id === 'shared');
+  const expConsistency = groups.find(g => g.id === 'experience-consistency');
   const serviceTeams  = groups.find(g => g.id === 'service-teams');
 
   const leadAgent = (leadership?.agents || [])[0] || {};
@@ -221,26 +204,34 @@ function renderOrgChart() {
     const shortRole   = (a.role || '').split('. ')[0];
     return `
     <div class="mini-agent-card status-${a.status}">
-      <div class="mini-agent-name">${displayName}</div>
+      <div class="mini-agent-header">
+        <div class="mini-agent-name">${displayName}</div>
+        ${badge(a.status)}
+      </div>
       <div class="mini-agent-role">${shortRole}</div>
-      ${badge(a.status)}
     </div>`;
   }).join('');
 
   const teams = serviceTeams?.teams || [];
   const serviceCards = teams.map(t => {
-    const agentCount  = (t.agents || []).length;
-    const activeCount = (t.agents || []).filter(a => a.status === 'active').length;
-    const agentNames  = (t.agents || []).map(a => AGENT_NAME_MAP[a.name] || a.name).join(', ');
+    const isActive   = t.teamStatus === 'active';
+    const agentNames = (t.agents || []).map(a => a.name);
     return `
-      <div class="service-team-card ${t.teamStatus === 'active' ? 'svc-active' : 'svc-planned'}">
-        <div class="stc-name">${t.displayName || t.teamName}</div>
-        ${t.system ? `<div class="stc-sub">${t.system}</div>` : ''}
-        <div class="stc-status">${badge(t.teamStatus)}</div>
-        <div style="font-size:10px;color:var(--gray-400)">
-          에이전트 ${agentCount}명${activeCount > 0 ? ` · 진행 중 ${activeCount}` : ''}
+      <div class="service-team-card ${isActive ? 'svc-active' : 'svc-planned'}">
+        <div class="stc-header">
+          <div class="stc-name">${t.displayName || t.teamName}</div>
+          ${badge(t.teamStatus)}
         </div>
-        ${agentNames ? `<div class="stc-agent-list">${agentNames}</div>` : ''}
+        <div class="stc-section">
+          <div class="stc-section-label">Leader</div>
+          <div class="stc-manager-chip ${isActive ? 'stc-manager-active' : ''}">UX 통합관리 에이전트</div>
+        </div>
+        <div class="stc-section">
+          <div class="stc-section-label">상세 에이전트</div>
+          <div class="stc-agents">
+            ${agentNames.map(n => `<div class="stc-agent-row">${n}</div>`).join('')}
+          </div>
+        </div>
       </div>`;
   }).join('');
 
@@ -284,6 +275,29 @@ function renderOrgChart() {
           <p class="org-section-sub">모든 서비스에 공통으로 쓰이는 역할 <span style="font-size:10px;color:var(--gray-400)">Shared Capability Team</span></p>
         </div>
         <div class="capability-grid">${sharedCards}</div>
+      </section>
+
+      <div class="org-connector"></div>
+
+      <section class="org-section experience-consistency-review">
+        <div class="org-section-header">
+          <h3>경험 정합성 리뷰</h3>
+          <p class="org-section-sub">서비스별 UX 통합관리자의 분석 결과를 수집·관리·연결하여 전체 SaaS 정합성 기준을 정리하는 역할 <span style="font-size:10px;color:var(--gray-400)">Experience Consistency Review</span></p>
+        </div>
+        <div class="exp-consistency-wrap">
+          ${(() => {
+            const a = (expConsistency?.agents || [])[0];
+            if (!a) return '';
+            return `
+            <div class="exp-consistency-card">
+              <div class="mini-agent-header">
+                <div class="mini-agent-name">Experience Consistency Lead</div>
+                ${badge(a.status)}
+              </div>
+              <div class="mini-agent-role">통합 SaaS 정합성 리뷰</div>
+            </div>`;
+          })()}
+        </div>
       </section>
 
       <div class="org-connector"></div>
@@ -356,6 +370,8 @@ function renderAgentTeams() {
       <strong>실무 리더</strong>은 전체 작업 흐름과 다음 할 일을 관리합니다(항상 진행 중).
       <strong>서비스 통합 리더</strong>는 여러 서비스 분석 결과를 비교해 공통화 방향을 판단합니다. 두 번째 서비스 분석 이후 활성화 예정입니다(현재 대기).
       <strong>서비스 가이드 정리 담당(Service Guide Curator)</strong>은 서비스 개요·IA·주요 화면/기능·주요 사양을 중심으로 서비스 가이드를 정리합니다. 사용자가 수정한 정리 내용을 우선 기준으로 삼으며, 부족한 정보만 원본 분석에서 보완합니다. UX 평가·공통화 판단·DS 매핑 판단은 담당하지 않습니다.
+      <strong>UX 통합관리자</strong>는 각 서비스군 카드 안에서 동작하는 역할입니다. 상세 에이전트들의 분석 결과를 바탕으로 서비스군 내 화면 구조·사용 흐름·시각 표현의 불일치와 공통화 후보를 정리합니다. 원본 화면을 다시 분석하지 않으며 상세 에이전트를 대체하지 않습니다.
+      <strong>Experience Consistency Lead</strong>는 미래 통합 SaaS 전환 단계에서 활성화되는 예정 역할입니다. 서비스군별 UX 통합관리 결과를 바탕으로 전체 SaaS 관점의 화면 구조, 사용 흐름, 시각 표현 기준을 정리합니다. UX 통합관리자(서비스군 내부)와 역할 범위가 다릅니다.
     </div>`;
 
   const groupsArr = groups.map((group, i) => {
@@ -450,8 +466,14 @@ function renderServiceIntelligence() {
     el.innerHTML = `<div class="card" style="text-align:center;padding:48px;color:var(--gray-400)">데이터가 없습니다. 관리자에게 데이터 갱신을 요청하세요.</div>`;
     return;
   }
-  el.innerHTML = domains.map(domain => {
-    const svcs = domain.services || [];
+  const sortedDomains = [...domains].sort((a, b) =>
+    (a.status === 'active' ? 0 : 1) - (b.status === 'active' ? 0 : 1)
+  );
+  el.innerHTML = sortedDomains.map(domain => {
+    const rawSvcs = domain.services || [];
+    const svcs = [...rawSvcs].sort((a, b) =>
+      (a.status === 'active' ? 0 : 1) - (b.status === 'active' ? 0 : 1)
+    );
     const activeCount = svcs.filter(s => s.status === 'active').length;
     const isActive = domain.status === 'active';
     return `
