@@ -1,0 +1,225 @@
+{
+  "_meta": {
+    "role": "service-guide-writer",
+    "serviceId": "video-cloud",
+    "serviceName": "클라우드영상시스템 (에스원 클라우드 CCTV)",
+    "version": "0.2-draft",
+    "createdAt": "2026-05-21",
+    "basis": "Figma 기획문서 10장 슬라이드만 기준 — 프로토타입 코드베이스 내용 미포함",
+    "sources": [
+      "슬라이드 01 — 추진배경",
+      "슬라이드 02 — 현황분석 (당사 매출 및 상품 라인업)",
+      "슬라이드 03 — 전략방향",
+      "슬라이드 04 — 전략방향 (VSaaS 적정 로드맵)",
+      "슬라이드 05 — 상품컨셉",
+      "슬라이드 06 — 상품컨셉 변화 모습",
+      "슬라이드 07 — 상품화 계획",
+      "슬라이드 08 — 판매 정책",
+      "슬라이드 09 — 포지셔닝 (B2B 상품 선진사 비교)",
+      "슬라이드 10 — 기대효과"
+    ],
+    "statusValues": {
+      "confirmed": "기획문서에서 명확히 확인",
+      "needs-review": "담당자 확인 필요",
+      "out-of-scope": "이번 가이드 범위 외"
+    }
+  },
+
+  "section01_summary": {
+    "title": "서비스 한 줄 설명",
+    "status": "confirmed",
+    "source": "슬라이드 03·06",
+    "content": "에스원이 자체 클라우드로 직접 운영하는 AI 영상관제 구독 서비스 — 카메라를 설치하면 별도 서버 없이 에스원이 영상 모니터링·AI 분석·출동까지 원스톱으로 제공한다."
+  },
+
+  "section02_background": {
+    "title": "추진 배경",
+    "status": "confirmed",
+    "source": "슬라이드 01·02",
+    "items": [
+      { "point": "국내 영상보안 시장 CAGR 9.3% 성장 中, 에스원 성장률 '21년 10%→'25년 6.5%로 하락 — 실질 시장 지배력 위축" },
+      { "point": "SOHO(1~4인) 침투율 38.7% — 대응 상품 부족" },
+      { "point": "현 클라우드 CCTV(LGU+ 위탁)는 판매 수량 한정, 단순 저장/조회만 제공 — 경쟁 열위" },
+      { "point": "글로벌 영상보안 시장 17% CAGR 성장 — Full 서비스 밸류체인 확보로 경쟁우위 회복 필요" }
+    ]
+  },
+
+  "section03_strategy": {
+    "title": "전략 방향",
+    "status": "confirmed",
+    "source": "슬라이드 03",
+    "goal": "'26년 중장기 성장전략 下 Full 서비스 밸류체인의 기반이 되는 '클라우드 영상 시스템' 내제화",
+    "strategies": [
+      {
+        "id": "전략①",
+        "title": "AI·클라우드 기반의 Full 서비스 밸류체인 확보",
+        "description": "에스원의 센싱·모니터링·출동 역량을 기반으로 영상보안의 근원적 경쟁력 회복"
+      },
+      {
+        "id": "전략②",
+        "title": "H/W 렌탈에서 VSaaS 중심 비즈니스로 전환",
+        "description": "기존 CCTV의 물리적 한계를 넘어 고객이 원하는 영상 서비스를 구독형으로 제공"
+      }
+    ],
+    "initiative2026": {
+      "title": "클라우드 영상시스템 개발 ('26년 경영계획 과제)",
+      "items": ["클라우드 S/W 개발", "클라우드用 AI 카메라 개발"]
+    }
+  },
+
+  "section04_serviceModel": {
+    "title": "서비스 전환 모델 — As-Is vs To-Be",
+    "status": "confirmed",
+    "source": "슬라이드 06",
+    "asIs": {
+      "label": "As-Is · 로컬 기기(렌탈) 중심",
+      "operator": "고객이 직접 영상 모니터링 및 대응",
+      "flow": "영상기기(렌탈/구매) → 모니터 → 고객",
+      "service": "기기 렌탈 + A/S만"
+    },
+    "toBe": {
+      "label": "To-Be · 영상 Full 서비스 모델",
+      "operator": "에스원이 클라우드로 모니터링·대응 통합 제공",
+      "flow": "영상기기(렌탈) → 클라우드 영상 시스템 → 고객",
+      "additionalServices": ["AI 분석", "AI 관제", "원격 A/S", "출동"],
+      "service": "기기 렌탈 + 센싱·모니터링·대응 (고객이 원하는 서비스 선택)"
+    }
+  },
+
+  "section05_productConcept": {
+    "title": "상품 개념 — 3가지 구성 요소",
+    "status": "confirmed",
+    "source": "슬라이드 05",
+    "components": [
+      {
+        "id": "①",
+        "name": "클라우드用 AI 카메라",
+        "types": ["돔형(실내)", "블릿형(실외)"],
+        "basicAI": ["침입", "배회", "화재"],
+        "additionalAI": ["라인크로스", "피플카운트"],
+        "transmission": ["실시간영상 전송", "이벤트영상 전송"],
+        "spec": "2MP, H.265, 클라우드 전용"
+      },
+      {
+        "id": "②",
+        "name": "클라우드 S/W (웹뷰어)",
+        "features": [
+          { "name": "영상 저장", "description": "클라우드 기반 영상 저장" },
+          { "name": "장비이상감지", "description": "카메라·장비 이상 상태 감지" },
+          { "name": "영상 모니터링", "description": "실시간 영상 모니터링" },
+          { "name": "녹화영상 전송", "description": "저장된 녹화영상 조회 및 전송" },
+          { "name": "영상 검색 (문장 검색 포함)", "description": "자연어 문장으로 영상 구간 검색", "example": "파란선초 및 빨간색모자를 쓴 사람 → 해당 영상 검색" },
+          { "name": "솔루션 연동", "description": "주요 시스템과 연동" },
+          { "name": "AI 알고리즘 구독", "description": "침입·문장검색 외 유료 옵션으로 추가" }
+        ]
+      },
+      {
+        "id": "③",
+        "name": "기존 시스템 연동",
+        "integrations": [
+          { "system": "통합계정", "role": "에스원 계정 통합 관리" },
+          { "system": "관제서버", "role": "요청 출동 및 영상확인 관제" },
+          { "system": "모두App", "role": "고객용 모바일 서비스" }
+        ]
+      }
+    ]
+  },
+
+  "section06_targetMarket": {
+    "title": "초기 타깃 시장",
+    "status": "confirmed",
+    "source": "슬라이드 07",
+    "initialTarget": {
+      "segment": "SOHO (1~4인)",
+      "examples": ["무인매장", "가두매장", "음식점/카페", "미용실"],
+      "reasons": ["초기 보안투자 최소", "가격민감도 高", "영상단독 니즈 高"],
+      "marketSize": "5,353만 호",
+      "penetrationRate": "39%",
+      "companySalesShare": "26.4%"
+    },
+    "productRoadmap": [
+      { "phase": "1", "product": "클라우드 AI CCTV (신규)", "target": "SOHO" },
+      { "phase": "2", "product": "지능형 영상 알람", "target": "영상단독 침입탐지" },
+      { "phase": "3", "product": "클라우드 SVMS", "target": "중·대형 (고성능 AI영상서비스)" }
+    ]
+  },
+
+  "section07_pricing": {
+    "title": "판매 정책 / 구독 모델",
+    "status": "confirmed",
+    "source": "슬라이드 08",
+    "productName": "에스원 클라우드 CCTV",
+    "salesChannel": "다이렉트몰 중심 (고객이 직접 샘플 서비스 가입 가능한 온라인 판매채널)",
+    "basicPlan": {
+      "price": "14円/台/月",
+      "maxDevices": 8,
+      "includes": [
+        { "item": "영상분석", "detail": "침입, 정관경", "note": "기본제공" },
+        { "item": "요청출동", "detail": "월 2회", "note": "" },
+        { "item": "문장검색", "detail": "포함", "note": "타사 未제공" }
+      ]
+    },
+    "options": [
+      { "item": "영상분석 추가", "price": "2円/台", "detail": "화재, 배회, 라인크로스, 피플카운트" },
+      { "item": "보상", "price": "2円/5円/15円", "detail": "도난/화재" },
+      { "item": "ID 추가", "price": "1.5円/5개", "detail": "기본 5개 제공" },
+      { "item": "지정기간", "price": "1.5円/15일", "detail": "기본 30일, 최대 60일" },
+      { "item": "영상확인 관제서비스", "price": "10円", "detail": "화재 (자기방법 중 最)" }
+    ]
+  },
+
+  "section08_positioning": {
+    "title": "포지셔닝",
+    "status": "confirmed",
+    "source": "슬라이드 09",
+    "differentiators": [
+      "렌탈·매각 병행 판매방식 — 가격 경쟁력",
+      "자체 개발 AI 알고리즘 (14종 커스텀 대응 가능)",
+      "에스원 출동·관제 역량 연계",
+      "문장 검색 — 타사 未제공",
+      "AI 자연어 검색 (생성형) + 이벤트 기반 검색"
+    ]
+  },
+
+  "section09_expectedEffects": {
+    "title": "기대효과",
+    "status": "confirmed",
+    "source": "슬라이드 10",
+    "items": [
+      "SOHO 시장 에스원 M/S 26.4% → 41.3% 목표",
+      "시장 확대 기반 마련 (SOHO 선점 후 소·중·대형 확장)",
+      "AI 분석·기능 고도화 역량 확보",
+      "Full 서비스 밸류체인 기반 경쟁력 회복"
+    ]
+  },
+
+  "section10_openQuestions": {
+    "title": "확인 필요 항목",
+    "note": "기획문서에 언급됐으나 상세 정의가 없거나, UX 설계 시 결정이 필요한 항목",
+    "items": [
+      { "id": "A-01", "priority": "high", "topic": "웹뷰어 접근 주체", "question": "클라우드 S/W(웹뷰어)는 에스원 내부 직원 전용인가, 고객(사업자)도 직접 로그인할 수 있는가?" },
+      { "id": "A-02", "priority": "high", "topic": "App vs 웹 기능 경계", "question": "모두App(고객 모바일)과 클라우드 S/W(웹뷰어)의 기능 경계는 어떻게 되는가?" },
+      { "id": "B-01", "priority": "high", "topic": "웹뷰어 화면 목록·구조", "question": "6개 기능이 웹뷰어에서 어떤 화면 구조(IA)로 구성되는가?" },
+      { "id": "B-02", "priority": "high", "topic": "영상 검색 화면 구성", "question": "문장 검색 결과 표시 방식과 영상 구간 재생 UX는 어떻게 구성하는가?" },
+      { "id": "C-01", "priority": "high", "topic": "요청출동 처리 흐름", "question": "월 2회 기본 요청출동이 웹뷰어에서 어떤 흐름으로 처리되는가?" },
+      { "id": "C-02", "priority": "mid", "topic": "통합계정 연동 방식", "question": "에스원 통합계정 연동 방식은? (SSO 등)" },
+      { "id": "B-03", "priority": "mid", "topic": "AI 알고리즘 구독 화면", "question": "유료 AI 알고리즘 옵션 추가·관리 화면은 어디에 위치하는가?" },
+      { "id": "C-03", "priority": "mid", "topic": "영상확인 관제서비스 화면", "question": "유료 옵션인 영상확인 관제서비스(10円)가 웹뷰어에서 어떻게 동작하는가?" },
+      { "id": "D-01", "priority": "mid", "topic": "내부 운영자 역할 체계", "question": "클라우드 S/W를 사용하는 에스원 내부 직원의 역할 구분은 어떻게 되는가?" },
+      { "id": "D-02", "priority": "low", "topic": "고객 온보딩 흐름", "question": "다이렉트몰 가입 후 카메라 설치 → 서비스 활성화까지의 흐름은?" }
+    ]
+  },
+
+  "section11_uxNotes": {
+    "title": "UX 설계 시 참고할 기획 단서",
+    "status": "confirmed",
+    "source": "슬라이드 종합",
+    "notes": [
+      "고객이 원하는 서비스 선택 제공 — 기본 구성 + 선택적 옵션 구조를 UI에서 명확히 구분 필요",
+      "요청출동 월 2회 기본 포함, 영상확인 관제는 유료 옵션 — 서비스 티어 구분 UX 필요",
+      "다이렉트몰 중심 판매 → 셀프 온보딩·카메라 등록 흐름이 핵심 경험이 될 수 있음",
+      "타깃 SOHO는 보안 전문인력 없는 소규모 사업장 → 자동화·단순화 우선",
+      "모두App(고객 모바일)과 클라우드 S/W(웹뷰어) 채널 역할·기능 범위 협의 선행 필요"
+    ]
+  }
+}

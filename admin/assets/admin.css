@@ -2284,3 +2284,123 @@ tr:hover td { background: var(--gray-50); }
   color: var(--gray-500);
   margin-left: 8px;
 }
+
+/* ── IA 제안 ── */
+.ia-summary {
+  display: flex;
+  gap: 20px;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.ia-summary-left { flex: 1; min-width: 200px; }
+.ia-summary-title { font-size: 11px; font-weight: 700; color: var(--gray-500); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+.ia-summary-desc { font-size: 12px; color: var(--gray-700); line-height: 1.6; }
+.ia-summary-premise { font-size: 11px; color: var(--gray-500); margin-top: 6px; }
+.ia-summary-right { display: flex; align-items: flex-start; padding-top: 4px; }
+.ia-summary-stat-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.ia-stat {
+  font-size: 11px; font-weight: 700;
+  padding: 3px 8px; border-radius: 10px;
+}
+
+/* IA 판단 배지 */
+.ia-dec-badge { display: inline-block; font-size: 10px; font-weight: 700; padding: 1px 7px; border-radius: 10px; text-transform: uppercase; }
+.ia-dec-keep   { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+.ia-dec-add    { background: #dbeafe; color: #1d4ed8; border: 1px solid #bfdbfe; }
+.ia-dec-adapt  { background: #fef9c3; color: #854d0e; border: 1px solid #fef08a; }
+.ia-dec-defer  { background: #f3f4f6; color: #6b7280; border: 1px solid #e5e7eb; }
+.ia-dec-reject { background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; }
+.ia-dec-hold   { background: #fdf4ff; color: #7e22ce; border: 1px solid #e9d5ff; }
+
+/* IA 3단 컬럼 */
+.ia-three-col {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 10px;
+}
+@media (max-width: 1200px) { .ia-three-col { grid-template-columns: 1fr; } }
+
+.ia-tree-block {
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.ia-tree-header {
+  font-size: 12px; font-weight: 700;
+  padding: 8px 12px;
+  color: #fff;
+}
+.ia-hdr-minimal     { background: #2563eb; }
+.ia-hdr-recommended { background: #16a34a; }
+.ia-hdr-advanced    { background: #7c3aed; }
+.ia-tree-desc { font-size: 11px; color: var(--gray-600); padding: 8px 12px 4px; line-height: 1.5; border-bottom: 1px solid var(--gray-100); }
+.ia-tree-menus { padding: 8px; display: flex; flex-direction: column; gap: 4px; }
+.ia-tree-menu {
+  border: 1px solid var(--gray-100);
+  border-radius: 6px;
+  padding: 7px 10px;
+  background: var(--gray-50);
+}
+.ia-tree-menu-name {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 700; color: var(--gray-800);
+  margin-bottom: 3px;
+}
+.ia-tree-num { font-size: 10px; color: var(--gray-400); font-family: monospace; width: 18px; flex-shrink: 0; }
+.ia-menu-prio { font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 8px; margin-left: auto; }
+.ia-p0 { background: #dbeafe; color: #1e40af; }
+.ia-p1 { background: #dcfce7; color: #166534; }
+.ia-p2 { background: #f3f4f6; color: #6b7280; }
+.ia-hold { background: #fdf4ff; color: #7e22ce; }
+.ia-reject { background: #fee2e2; color: #dc2626; }
+.ia-tree-menu-note { font-size: 10px; color: var(--gray-500); margin-bottom: 4px; font-style: italic; }
+.ia-tree-sub-list { display: flex; flex-direction: column; gap: 1px; }
+.ia-tree-sub { font-size: 11px; color: var(--gray-500); padding: 1px 0 1px 14px; }
+
+/* 고도화 IA 추가 항목 */
+.ia-adv-list { padding: 8px; display: flex; flex-direction: column; gap: 6px; }
+.ia-adv-item { border: 1px solid var(--gray-100); border-radius: 6px; padding: 7px 10px; background: var(--gray-50); }
+.ia-adv-menu { font-size: 12px; font-weight: 700; color: var(--gray-800); margin-bottom: 3px; }
+.ia-adv-cond { font-size: 10px; font-weight: 400; color: var(--gray-500); margin-left: 6px; }
+
+/* 사양 우선순위 테이블 */
+.ia-spec-group { margin-bottom: 16px; }
+.ia-spec-group-hdr {
+  font-size: 11px; font-weight: 700;
+  padding: 6px 10px;
+  border-radius: 6px 6px 0 0;
+  display: flex; align-items: center; gap: 8px;
+  color: #fff;
+}
+.ia-p0-hdr     { background: #1d4ed8; }
+.ia-p1-hdr     { background: #16a34a; }
+.ia-p2-hdr     { background: #6b7280; }
+.ia-hold-hdr   { background: #7c3aed; }
+.ia-reject-hdr { background: #dc2626; }
+.ia-spec-count { font-size: 10px; font-weight: 400; opacity: .8; }
+.ia-spec-table { width: 100%; border-collapse: collapse; }
+.ia-spec-table tr { border-bottom: 1px solid var(--gray-100); }
+.ia-spec-table tr:last-child { border-bottom: none; }
+.ia-spec-table td { padding: 7px 10px; font-size: 12px; vertical-align: top; }
+.ia-spec-td { font-weight: 600; color: var(--gray-800); width: 38%; }
+.ia-spec-reason { color: var(--gray-500); }
+
+/* 확인 질문 */
+.ia-oq-list { display: flex; flex-direction: column; gap: 8px; }
+.ia-oq-item { border: 1px solid var(--gray-100); border-radius: 6px; padding: 10px 12px; background: var(--gray-50); }
+.ia-q-critical { border-left: 3px solid #dc2626; }
+.ia-q-high     { border-left: 3px solid #f97316; }
+.ia-q-medium   { border-left: 3px solid var(--gray-300); }
+.ia-oq-hdr { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+.ia-oq-id { font-size: 10px; font-weight: 700; color: var(--gray-400); font-family: monospace; }
+.ia-oq-badge { font-size: 10px; font-weight: 600; padding: 1px 7px; border-radius: 10px; }
+.ia-q-badge-critical { background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; }
+.ia-q-badge-high     { background: #fff7ed; color: #ea580c; border: 1px solid #fed7aa; }
+.ia-q-badge-medium   { background: var(--gray-100); color: var(--gray-500); border: 1px solid var(--gray-200); }
+.ia-oq-question { font-size: 12px; color: var(--gray-700); line-height: 1.5; margin-bottom: 4px; }
+.ia-oq-impact { font-size: 11px; color: var(--gray-500); }

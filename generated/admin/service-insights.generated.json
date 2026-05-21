@@ -821,21 +821,19 @@
           "title": "주요 사용 시나리오",
           "items": [
             {
-              "title": "AI 이상감지 → 출동 요청",
+              "title": "AI 이상감지 → 관제서버 연동 대응",
               "status": "confirmed",
+              "reviewNote": "웹뷰어 내 이상감지 이벤트 표시 방식 및 관제서버 연동 흐름 확인 필요",
               "steps": [
-                "카메라 AI가 침입·배회·화재 등 이상 감지",
-                "에스원 클라우드 S/W에서 이상 이벤트 수신",
-                "에스원 운영 담당이 영상 확인 후 출동 요청 처리 (기본 월 2회)",
-                "고객은 모두App을 통해 상황 확인"
+                "카메라 AI가 침입·배회·화재 등 이상 감지 (슬라이드 05 — AI 영상분석 기능)",
+                "관제서버 연동을 통해 요청 출동 및 영상확인 관제 처리 (슬라이드 05 — 기존 시스템 연동)"
               ]
             },
             {
               "title": "실시간 영상 모니터링",
               "status": "confirmed",
               "steps": [
-                "클라우드 S/W(웹뷰어)에서 계약 고객사 카메라 실시간 영상 확인",
-                "이상 감지 시 알림 수신 및 이벤트 처리"
+                "클라우드 S/W(웹뷰어)에서 계약 고객사 카메라 실시간 영상 확인 (슬라이드 05 — 영상 모니터링)"
               ]
             },
             {
@@ -843,9 +841,9 @@
               "status": "confirmed",
               "reviewNote": "검색 결과 표시 방식·UX 상세는 확인 필요",
               "steps": [
-                "클라우드 S/W 영상 검색에서 자연어 문장 입력",
-                "파란선초 및 빨간색모자를 쓴 사람 → 해당 영상 구간 조회",
-                "녹화영상 구간 재생 및 활용"
+                "클라우드 S/W 영상 검색에서 자연어 문장 입력 (슬라이드 05 — 영상 검색, 문장 검색 포함)",
+                "예: 파란선초 및 빨간색모자를 쓴 사람 → 해당 영상 구간 조회",
+                "녹화영상 구간 재생 및 활용 (슬라이드 05 — 녹화영상 전송)"
               ]
             },
             {
@@ -853,9 +851,9 @@
               "status": "confirmed",
               "reviewNote": "구독 관리 화면 위치 확인 필요",
               "steps": [
-                "기본 서비스(침입·문장검색) 외 유료 옵션 선택",
-                "화재·배회·라인크로스·피플카운트 분석 추가 구독",
-                "영상확인 관제서비스 추가 시 에스원이 직접 영상 확인·관제"
+                "기본 서비스(침입·문장검색) 외 유료 옵션 선택 (슬라이드 05 — AI 알고리즘 구독 서비스)",
+                "화재·배회·라인크로스·피플카운트 분석 추가 구독 (슬라이드 08 — 옵션 영상분석 항목)",
+                "영상확인 관제서비스 추가 시 에스원이 직접 영상 확인·관제 (슬라이드 08 — 영상확인 관제서비스 옵션)"
               ]
             }
           ]
@@ -1052,6 +1050,873 @@
               "priority": "mid",
               "topic": "AI 알고리즘 구독 화면",
               "question": "유료 AI 알고리즘 옵션 추가·관리 화면 위치는?"
+            }
+          ]
+        },
+        {
+          "id": "iaProposal",
+          "title": "IA 제안",
+          "analyzedAt": "2026-05-21",
+          "basis": "Figma 기획문서 + Verkada 벤치마크 비교 분석",
+          "premise": "웹뷰어 접근 주체(A-01) 미확정 상태 — 에스원 내부 관제 직원 주 사용자로 가정",
+          "specSummary": {
+            "total": 45,
+            "keep": 12,
+            "add": 9,
+            "adapt": 9,
+            "defer": 9,
+            "reject": 3,
+            "needsReview": 3
+          },
+          "minimalIA": {
+            "label": "A. 최소 출시 IA",
+            "desc": "Phase 1 출시에 적합한 가장 단순한 구조. 사용자가 바로 영상 조회·검색·이벤트 처리를 할 수 있는 수준.",
+            "menus": [
+              {
+                "name": "대시보드",
+                "priority": "P0",
+                "items": [
+                  "사이트별 카메라 상태 요약"
+                ],
+                "specs": [
+                  "KPI 수치 카드",
+                  "사이트별 상태 카드",
+                  "최근 이벤트 목록"
+                ]
+              },
+              {
+                "name": "실시간 영상",
+                "priority": "P0",
+                "items": [
+                  "멀티 카메라 그리드 (2x2/3x3)",
+                  "단일 카메라 상세 보기"
+                ],
+                "specs": [
+                  "그리드 레이아웃 전환",
+                  "얼굴 블러 토글",
+                  "카메라 상태 표시"
+                ]
+              },
+              {
+                "name": "이벤트",
+                "priority": "P0",
+                "items": [
+                  "이상감지 이벤트 목록",
+                  "출동 요청 처리"
+                ],
+                "specs": [
+                  "이벤트 수신함",
+                  "이벤트 영상 클립",
+                  "출동 요청"
+                ]
+              },
+              {
+                "name": "영상 검색",
+                "priority": "P0",
+                "items": [
+                  "AI 문장 검색",
+                  "날짜·카메라 필터",
+                  "검색 결과 클립 보기"
+                ],
+                "specs": [
+                  "자연어 검색 입력",
+                  "검색 필터",
+                  "검색 결과 클립 뷰어"
+                ]
+              },
+              {
+                "name": "카메라 관리",
+                "priority": "P0",
+                "items": [
+                  "카메라 목록·상태",
+                  "카메라 기본 설정"
+                ],
+                "specs": [
+                  "장비 상태 목록",
+                  "카메라 등록 온보딩",
+                  "일반·AI 설정"
+                ]
+              },
+              {
+                "name": "설정",
+                "priority": "P0",
+                "items": [
+                  "내 계정 (통합계정 연동)",
+                  "AI 구독 옵션 관리"
+                ],
+                "specs": [
+                  "SSO 로그인",
+                  "역할·권한",
+                  "구독 옵션 on/off"
+                ]
+              }
+            ]
+          },
+          "recommendedIA": {
+            "label": "B. 권장 IA",
+            "desc": "초기 사용성과 향후 확장성을 함께 고려한 추천 구조. P1 사양 70% 포함.",
+            "menus": [
+              {
+                "name": "대시보드",
+                "priority": "P0",
+                "items": [
+                  "운영 현황 요약",
+                  "사이트별 상태 카드",
+                  "최근 이벤트 요약"
+                ],
+                "note": "SOC 콘솔 개념 → 에스원 관제 맥락으로 재설계"
+              },
+              {
+                "name": "실시간 영상",
+                "priority": "P0",
+                "items": [
+                  "멀티 카메라 그리드 (2x2/3x3/4x3)",
+                  "단일 카메라 상세 보기"
+                ],
+                "note": "얼굴 블러 토글 포함 / 레이아웃 저장은 Phase 2"
+              },
+              {
+                "name": "녹화 영상",
+                "priority": "P0",
+                "items": [
+                  "24h 타임라인 재생",
+                  "날짜·카메라 선택",
+                  "스냅샷·다운로드"
+                ],
+                "note": "실시간 영상과 분리 — 탐색 편의성 향상"
+              },
+              {
+                "name": "AI 영상 검색",
+                "priority": "P0",
+                "items": [
+                  "자연어 문장 검색",
+                  "검색 필터",
+                  "최근·추천 검색",
+                  "검색 결과 클립"
+                ],
+                "note": "S1 핵심 차별점 — 독립 대메뉴 필수"
+              },
+              {
+                "name": "이벤트 관리",
+                "priority": "P0",
+                "items": [
+                  "이벤트 수신함",
+                  "이벤트 상세·출동 처리",
+                  "사건 이력",
+                  "기본 알림 규칙"
+                ],
+                "note": "관제 업무 흐름 명확화를 위해 독립 대메뉴"
+              },
+              {
+                "name": "카메라 관리",
+                "priority": "P0",
+                "items": [
+                  "카메라 목록·상태",
+                  "카메라 등록",
+                  "카메라 설정 (일반·AI·프라이버시)",
+                  "원격 펌웨어"
+                ],
+                "note": "장비이상감지 + 온보딩 + AI 설정 통합"
+              },
+              {
+                "name": "관리자",
+                "priority": "P0",
+                "items": [
+                  "계정·SSO",
+                  "사용자·권한",
+                  "AI 구독 옵션",
+                  "이상감지 빈도 통계",
+                  "감사 로그"
+                ],
+                "note": "에스원 내부 역할 체계 확정 후 권한 설계 가능"
+              }
+            ]
+          },
+          "advancedIA": {
+            "label": "C. 고도화 IA",
+            "desc": "Phase 2 이후 확장을 고려한 전체 구조. Verkada 수준 사양 포함.",
+            "additions": [
+              {
+                "menu": "인물·차량",
+                "condition": "Hold — 개인정보보호법 확인 후",
+                "items": [
+                  "인물 감지 목록 (비식별 처리)",
+                  "차량 번호판 인식 (LPR 사양 확인 후)"
+                ]
+              },
+              {
+                "menu": "분석·통계",
+                "condition": "P2 — Phase 2 이후",
+                "items": [
+                  "재실 인원 트렌드",
+                  "대기열 분석",
+                  "이상감지 빈도 심화"
+                ]
+              },
+              {
+                "menu": "플로어 플랜",
+                "condition": "P2 — 단순화 버전",
+                "items": [
+                  "평면도 기반 카메라 위치 보기"
+                ]
+              },
+              {
+                "menu": "이벤트 관리 확장",
+                "condition": "P2",
+                "items": [
+                  "커스텀 알림 규칙 빌더",
+                  "수사 케이스 관리"
+                ]
+              },
+              {
+                "menu": "관리자 확장",
+                "condition": "P2",
+                "items": [
+                  "데이터 내보내기·컴플라이언스",
+                  "API Keys·Webhook"
+                ]
+              }
+            ]
+          },
+          "specPriority": {
+            "P0": [
+              {
+                "spec": "라이브 그리드 (2x2/3x3/4x3)",
+                "decision": "keep",
+                "reason": "기획 명시 / 관제 핵심 화면"
+              },
+              {
+                "spec": "단일 카메라 라이브 보기",
+                "decision": "add",
+                "reason": "개별 카메라 확인 필수"
+              },
+              {
+                "spec": "24h 재생 타임라인",
+                "decision": "keep",
+                "reason": "기획 명시 / 녹화영상 조회 핵심"
+              },
+              {
+                "spec": "얼굴 블러 토글",
+                "decision": "add",
+                "reason": "개보법 대응 필수"
+              },
+              {
+                "spec": "이상감지 이벤트 수신함",
+                "decision": "keep",
+                "reason": "관제 핵심 업무 흐름"
+              },
+              {
+                "spec": "침입·화재·배회 AI 감지 이벤트",
+                "decision": "keep",
+                "reason": "기획 기본 AI 알고리즘"
+              },
+              {
+                "spec": "이벤트 → 출동 요청 처리",
+                "decision": "keep",
+                "reason": "기획 핵심 시나리오"
+              },
+              {
+                "spec": "자연어 문장 검색",
+                "decision": "keep",
+                "reason": "기획 핵심 차별점"
+              },
+              {
+                "spec": "검색 필터 (카메라·날짜)",
+                "decision": "add",
+                "reason": "검색 정확도 필수"
+              },
+              {
+                "spec": "검색 결과 클립 뷰어",
+                "decision": "keep",
+                "reason": "검색 후 영상 확인 핵심"
+              },
+              {
+                "spec": "사이트·카메라별 현황 대시보드",
+                "decision": "adapt",
+                "reason": "SOC 콘솔 → 에스원 관제 맥락 재설계"
+              },
+              {
+                "spec": "카메라 목록·장비 상태",
+                "decision": "keep",
+                "reason": "장비이상감지 기획 명시"
+              },
+              {
+                "spec": "카메라 온보딩 (장치 등록)",
+                "decision": "add",
+                "reason": "다이렉트몰 셀프 온보딩 핵심"
+              },
+              {
+                "spec": "카메라 기본 설정 (이름·AI on/off)",
+                "decision": "adapt",
+                "reason": "General·Events 탭 우선"
+              },
+              {
+                "spec": "SSO / 통합계정 로그인",
+                "decision": "keep",
+                "reason": "기획 명시 (확인항목 C-02)"
+              },
+              {
+                "spec": "역할·권한 관리",
+                "decision": "adapt",
+                "reason": "에스원 내부 역할 구분 (관제원·운영자·관리자)"
+              },
+              {
+                "spec": "AI 알고리즘 구독 옵션 관리",
+                "decision": "adapt",
+                "reason": "화재·배회·라인크로스·피플카운트 on/off"
+              }
+            ],
+            "P1": [
+              {
+                "spec": "영상 스냅샷·다운로드",
+                "decision": "adapt",
+                "reason": "공유 방식 에스원 정책 기준 조정"
+              },
+              {
+                "spec": "알림 음소거·스누즈",
+                "decision": "add",
+                "reason": "무인매장 야간 운영 과잉 알림 방지"
+              },
+              {
+                "spec": "기본 알림 규칙 설정",
+                "decision": "adapt",
+                "reason": "기본 조건 제공, 커스텀은 Phase 2"
+              },
+              {
+                "spec": "사건 이력 조회",
+                "decision": "add",
+                "reason": "출동 결과 기록·이력 관리"
+              },
+              {
+                "spec": "최근·추천 검색",
+                "decision": "add",
+                "reason": "비전문 SOHO 사용자 편의성"
+              },
+              {
+                "spec": "원격 펌웨어 업데이트",
+                "decision": "add",
+                "reason": "AI 알고리즘 업데이트 연계"
+              },
+              {
+                "spec": "이상감지 빈도 기본 통계",
+                "decision": "add",
+                "reason": "운영 리포트 최소 단위"
+              },
+              {
+                "spec": "감사 로그",
+                "decision": "add",
+                "reason": "운영 보안·개보법 대응"
+              }
+            ],
+            "P2": [
+              {
+                "spec": "멀티캠 동기화 재생",
+                "decision": "defer",
+                "reason": "SOHO 8대 이하 단일 재생으로 충분"
+              },
+              {
+                "spec": "평면도 기반 카메라 보기",
+                "decision": "adapt",
+                "reason": "단순화 버전으로 Phase 2"
+              },
+              {
+                "spec": "재실 인원·대기열 트렌드",
+                "decision": "defer",
+                "reason": "SOHO 니즈 있으나 Phase 2"
+              },
+              {
+                "spec": "수사 케이스 관리",
+                "decision": "defer",
+                "reason": "출동 결과 연계 고도화"
+              },
+              {
+                "spec": "커스텀 알림 규칙 빌더",
+                "decision": "defer",
+                "reason": "기본 알림 구성 후 Phase 2"
+              },
+              {
+                "spec": "데이터 내보내기·컴플라이언스",
+                "decision": "add",
+                "reason": "개보법 대응 — 정책 확인 후"
+              }
+            ],
+            "Hold": [
+              {
+                "spec": "인물 얼굴 감지·저장 (POI)",
+                "decision": "needs-review",
+                "reason": "개인정보보호법 생체정보 수집 범위 확인 필요"
+              },
+              {
+                "spec": "차량 번호판 인식 (LPR)",
+                "decision": "needs-review",
+                "reason": "S1 AI 카메라 LPR 탑재 여부 확인 필요"
+              },
+              {
+                "spec": "인물 동선 추적",
+                "decision": "needs-review",
+                "reason": "개보법 비식별 처리 방식 기준 확인 필요"
+              }
+            ],
+            "Reject": [
+              {
+                "spec": "양방향 음성 (Talkdown)",
+                "decision": "reject",
+                "reason": "S1 AI 카메라 H/W 미확인"
+              },
+              {
+                "spec": "공개 그리드 URL",
+                "decision": "reject",
+                "reason": "에스원 보안 정책 — 인증 없는 외부 공개 부적합"
+              },
+              {
+                "spec": "Slack·Teams·InformaCast 연동",
+                "decision": "reject",
+                "reason": "SOHO 타깃 불필요"
+              }
+            ]
+          },
+          "openQuestions": [
+            {
+              "id": "Q1",
+              "priority": "critical",
+              "question": "웹뷰어 접근 주체(A-01) — 에스원 내부 전용인가, 고객(SOHO)도 접근하는가?",
+              "impact": "IA 전체 구조가 이 답에 따라 달라짐"
+            },
+            {
+              "id": "Q2",
+              "priority": "critical",
+              "question": "이벤트 → 출동 처리 흐름 상세(C-01) — 웹뷰어에서 어떤 화면이 필요한가?",
+              "impact": "이벤트 관리 대메뉴 하위 화면 구성"
+            },
+            {
+              "id": "Q3",
+              "priority": "high",
+              "question": "에스원 내부 역할 체계(D-01) — 관제원·운영자·관리자 구분이 확정돼야 권한 설계 가능",
+              "impact": "관리자 대메뉴 권한 매트릭스"
+            },
+            {
+              "id": "Q4",
+              "priority": "high",
+              "question": "모두App vs 웹뷰어 기능 경계(A-02) — 고객이 모두App으로 할 수 있는 것과 웹뷰어에서 해야 하는 것 구분",
+              "impact": "채널별 기능 설계 방향"
+            },
+            {
+              "id": "Q5",
+              "priority": "medium",
+              "question": "다음에 어떤 화면부터 기획할 것인가? 추천 순서: 이벤트 수신함 → 실시간 영상 → AI 검색 → 카메라 온보딩 → 대시보드",
+              "impact": "기획 작업 우선순위"
+            }
+          ]
+        },
+        {
+          "id": "benchmark",
+          "title": "버카다 벤치마크 분석",
+          "source": "github.com/ErikKim/verkada — VSaaS 화면 복사본 분석",
+          "analyzedAt": "2026-05-21",
+          "summary": "Verkada는 글로벌 VSaaS 1위 사업자. 영상·AI검색·관제·출입통제·직장관리까지 아우르는 통합 플랫폼으로, 이 중 클라우드영상시스템(SOHO VSaaS)에 직접 적용 가능한 기능을 아래와 같이 선별했다.",
+          "clusters": [
+            {
+              "id": "video-core",
+              "title": "영상 모니터링 코어",
+              "items": [
+                {
+                  "feature": "Live Grid (1x1~4x3 레이아웃)",
+                  "verkadaSpec": "페이지당 최대 12대, 드래그 타일 재배치, 레이아웃 저장",
+                  "decision": "adopt",
+                  "rationale": "웹뷰어 핵심 화면 — SOHO 최대 8대 환경에 2x2/3x3 레이아웃 우선 제공"
+                },
+                {
+                  "feature": "단일 카메라 라이브 + PTZ 컨트롤",
+                  "verkadaSpec": "줌/팬/틸트 패드, 프리셋 위치, 모션존 에디터",
+                  "decision": "adopt",
+                  "rationale": "개별 카메라 상세 모니터링 화면 필수"
+                },
+                {
+                  "feature": "24h 재생 타임라인 (Playback)",
+                  "verkadaSpec": "24시간 스크럽, 1x/2x/4x/8x 속도, HQ/SQ 품질 전환, 날짜 선택",
+                  "decision": "adopt",
+                  "rationale": "녹화영상 전송·조회 기획 명시 — 타임라인 스크럽 UX가 핵심"
+                },
+                {
+                  "feature": "얼굴 흐림(Face Blur) 토글",
+                  "verkadaSpec": "라이브 그리드에서 원터치 얼굴 블러 적용",
+                  "decision": "adopt",
+                  "rationale": "개인정보보호법 대응 — SOHO 매장 내 고객 얼굴 식별 방지 필요"
+                },
+                {
+                  "feature": "영상 아카이브 / 스냅샷 / 다운로드",
+                  "verkadaSpec": "클립 아카이브, 캡처 이미지, MP4 다운로드, 공유 링크",
+                  "decision": "adopt",
+                  "rationale": "기획 명시(녹화영상 전송) — 다운로드·공유는 S1 보안 정책 기준으로 범위 조정"
+                },
+                {
+                  "feature": "멀티캠 동기화 재생",
+                  "verkadaSpec": "2~4개 카메라 동시 재생·시간 동기화 타임라인",
+                  "decision": "defer",
+                  "rationale": "Phase 1 SOHO 8대 이하 — 단일 카메라 재생으로 충분, Phase 2 소/중형 시 도입"
+                },
+                {
+                  "feature": "카메라 설정 (7탭)",
+                  "verkadaSpec": "General·Device·Audio·Events·Privacy·Analytics·Backup",
+                  "decision": "adapt",
+                  "rationale": "General·Events·Privacy 3탭 우선 도입, Audio·Backup은 S1 카메라 사양 확인 후 결정"
+                },
+                {
+                  "feature": "프라이버시 마스크 영역 편집",
+                  "verkadaSpec": "드래그로 블랙마스크 영역 지정, 인코딩 시 영구 적용",
+                  "decision": "adapt",
+                  "rationale": "개보법 대응 필수 기능 — 마스크 소급 미적용 정책 등 법적 검토 후 사양 확정"
+                },
+                {
+                  "feature": "펌웨어 업데이트 관리",
+                  "verkadaSpec": "카메라별 펌웨어 버전 확인, 원격 업데이트 실행",
+                  "decision": "adopt",
+                  "rationale": "클라우드 AI 카메라 원격 관리의 핵심 운영 기능"
+                },
+                {
+                  "feature": "카메라 상태·통계 (Health/Stats)",
+                  "verkadaSpec": "연결 상태·CPU·대역폭·스토리지 사용량 차트",
+                  "decision": "adopt",
+                  "rationale": "기획 명시(장비이상감지)와 직결 — 장비 이상 조기 감지"
+                },
+                {
+                  "feature": "카메라 감사 로그",
+                  "verkadaSpec": "접근 기록, 설정 변경 이력",
+                  "decision": "adopt",
+                  "rationale": "운영 보안 및 개보법 대응 필수 로그"
+                },
+                {
+                  "feature": "인물 히트맵",
+                  "verkadaSpec": "시간대별 동선 밀도 히트맵 오버레이",
+                  "decision": "defer",
+                  "rationale": "Phase 2 분석 기능 — SOHO 초기 니즈는 낮음, 리테일 확장 시 유효"
+                },
+                {
+                  "feature": "공개 그리드 (외부 공유 링크)",
+                  "verkadaSpec": "조직 외부에 카메라 그리드 URL 공개",
+                  "decision": "reject",
+                  "rationale": "에스원 보안 정책상 인증 없는 외부 공개 링크는 부적합"
+                }
+              ]
+            },
+            {
+              "id": "ai-search",
+              "title": "AI 검색",
+              "items": [
+                {
+                  "feature": "자연어 문장 검색",
+                  "verkadaSpec": "예: '파란 재킷 남성' 입력 → 일치 영상 구간 검색",
+                  "decision": "adopt",
+                  "rationale": "기획문서 핵심 차별점 명시 — 타사 未제공, S1 구독 기본 포함"
+                },
+                {
+                  "feature": "검색 필터 (사이트·카메라·날짜·인물·차량)",
+                  "verkadaSpec": "필터 칩으로 검색 범위 좁히기, 멀티 조건 조합",
+                  "decision": "adopt",
+                  "rationale": "검색 정확도와 운영 효율 향상 — SOHO도 필요"
+                },
+                {
+                  "feature": "최근 검색 & 추천 검색",
+                  "verkadaSpec": "최근 검색 목록 + 자주 쓰는 검색 템플릿",
+                  "decision": "adopt",
+                  "rationale": "보안 비전문가인 SOHO 사용자 편의성 향상"
+                },
+                {
+                  "feature": "검색 결과 클립 뷰어",
+                  "verkadaSpec": "결과 썸네일 그리드, 영상 구간 인라인 재생",
+                  "decision": "adopt",
+                  "rationale": "문장 검색 후 영상 구간 확인이 핵심 UX"
+                },
+                {
+                  "feature": "검색 결과로 알림 규칙 생성",
+                  "verkadaSpec": "검색 조건을 알림 트리거로 저장",
+                  "decision": "adapt",
+                  "rationale": "유용한 기능이나 Phase 1 기본 알림 구성 후 Phase 2로 검토"
+                }
+              ]
+            },
+            {
+              "id": "alerts",
+              "title": "이상감지 & 알림",
+              "items": [
+                {
+                  "feature": "알림 수신함 (읽음·안읽음·음소거)",
+                  "verkadaSpec": "탭별 알림 분류, 이벤트 카드 목록, 필터 패널",
+                  "decision": "adopt",
+                  "rationale": "이상감지 이벤트 수신·확인이 웹뷰어 핵심 업무 흐름"
+                },
+                {
+                  "feature": "AI 감지: 침입·배회·화재",
+                  "verkadaSpec": "모션 감지, 객체 분류, 이벤트 클립 자동 생성",
+                  "decision": "adopt",
+                  "rationale": "기획문서 기본 AI 알고리즘 명시 — 구독 기본 포함"
+                },
+                {
+                  "feature": "AI 감지: 라인크로스·피플카운트",
+                  "verkadaSpec": "가상 라인 설정, 방향 감지, 시간대별 카운팅",
+                  "decision": "adopt",
+                  "rationale": "기획문서 유료 옵션 AI 알고리즘 명시 — 구독 추가 시 활성화"
+                },
+                {
+                  "feature": "알림 규칙 생성 (Alert Rule Builder)",
+                  "verkadaSpec": "감지 유형·시간·구역 조건 조합, 알림 채널 지정",
+                  "decision": "adapt",
+                  "rationale": "Phase 1은 기본 규칙 제공, 커스텀 규칙 편집기는 Phase 2"
+                },
+                {
+                  "feature": "알림 채널 선택 (Push·Email·Slack)",
+                  "verkadaSpec": "알림별 수신 채널 지정, Slack·Teams·InformaCast 연동",
+                  "decision": "adapt",
+                  "rationale": "Phase 1은 모두App 푸시 + 이메일, 3rd party 연동은 Phase 2"
+                },
+                {
+                  "feature": "알림 음소거/스누즈",
+                  "verkadaSpec": "시간 지정 음소거, 반복 알림 억제",
+                  "decision": "adopt",
+                  "rationale": "무인매장·야간 운영 SOHO에 과잉 알림 방지 필수"
+                },
+                {
+                  "feature": "POI 매칭 알림",
+                  "verkadaSpec": "등록된 인물 얼굴이 카메라에 포착되면 즉시 알림",
+                  "decision": "defer",
+                  "rationale": "개인정보보호법 얼굴 인식 저장 제약 — 법적 검토 후 Phase 2 이후 도입"
+                }
+              ]
+            },
+            {
+              "id": "people-vehicles",
+              "title": "인물 & 차량 분석",
+              "items": [
+                {
+                  "feature": "인물 감지 그리드 (면 크롭)",
+                  "verkadaSpec": "카메라별 감지 인물 얼굴 크롭 타일 그리드, 사이트·시간 필터",
+                  "decision": "adapt",
+                  "rationale": "개인정보보호법 얼굴 저장 방식 검토 필요 — 실루엣 또는 비식별 대안 우선 검토"
+                },
+                {
+                  "feature": "POI (주요 인물) 프로필 & 동선 추적",
+                  "verkadaSpec": "인물 등록, 사이트 간 이동 궤적, 출현 타임라인",
+                  "decision": "defer",
+                  "rationale": "법적 복잡도 高 — 개보법·비식별 처리 기준 확보 후 Phase 2 이후 도입"
+                },
+                {
+                  "feature": "차량 번호판 인식 (LPR)",
+                  "verkadaSpec": "번호판 리스트, LPOI(관심 차량) 등록·알림",
+                  "decision": "adapt",
+                  "rationale": "S1 AI 카메라 LPR 탑재 여부 확인 후 Phase 2 도입 검토"
+                }
+              ]
+            },
+            {
+              "id": "analytics",
+              "title": "스마트 트렌드 & 분석",
+              "items": [
+                {
+                  "feature": "재실 인원 트렌드 (Occupancy)",
+                  "verkadaSpec": "시간대별 재실 인원수 차트, 사이트별 비교",
+                  "decision": "defer",
+                  "rationale": "Phase 2 — 무인매장·미용실 SOHO에 니즈 있으나 Phase 1 범위 외"
+                },
+                {
+                  "feature": "대기열 분석 (Queue Trends)",
+                  "verkadaSpec": "대기 줄 길이 실시간·추세 분석",
+                  "decision": "defer",
+                  "rationale": "Phase 2 — 음식점/카페 SOHO에 유효하나 AI 알고리즘 옵션 추가 후 검토"
+                },
+                {
+                  "feature": "이상감지 알림 빈도 차트",
+                  "verkadaSpec": "요일·시간대별 알림 발생 빈도 히스토그램",
+                  "decision": "adopt",
+                  "rationale": "운영 리포트 기본 — 이상 패턴 파악 및 알림 규칙 최적화에 활용"
+                },
+                {
+                  "feature": "동선 히트맵 (Helix)",
+                  "verkadaSpec": "매장 내 고객 이동 경로 시각화",
+                  "decision": "defer",
+                  "rationale": "Phase 2+ — 리테일 분석 기능, 개보법 검토 후 비식별 처리 방식으로 도입"
+                }
+              ]
+            },
+            {
+              "id": "floorplan",
+              "title": "플로어 플랜",
+              "items": [
+                {
+                  "feature": "평면도 기반 카메라 핀 배치",
+                  "verkadaSpec": "평면도에 카메라 위치 핀, 클릭 시 라이브 팝업",
+                  "decision": "adapt",
+                  "rationale": "단일 매장 SOHO 적합 — 간소화 버전으로 도입, 다층 관리는 Phase 2"
+                }
+              ]
+            },
+            {
+              "id": "operator",
+              "title": "관제 / 운영자 화면",
+              "items": [
+                {
+                  "feature": "관제 운영자 티켓 큐",
+                  "verkadaSpec": "이상감지 이벤트를 티켓으로 처리, 대응 상태 관리",
+                  "decision": "adapt",
+                  "rationale": "에스원 관제서버 연동 흐름에 맞게 재설계 — 요청출동 처리 흐름과 통합"
+                },
+                {
+                  "feature": "SOC 콘솔 (사이트 그리드)",
+                  "verkadaSpec": "계약 사이트별 카메라 상태·이벤트 현황 대시보드",
+                  "decision": "adopt",
+                  "rationale": "에스원 내부 관제 화면 핵심 — 다수 고객사 동시 모니터링"
+                },
+                {
+                  "feature": "전문 관제 서비스 구독 관리",
+                  "verkadaSpec": "Professional Monitoring 구독·해지, 대응 레벨 설정",
+                  "decision": "adapt",
+                  "rationale": "에스원 영상확인 관제서비스(유료 옵션 10円)와 대응 — 구독 연동 방식 검토 필요"
+                },
+                {
+                  "feature": "사건 이력 (Incident History)",
+                  "verkadaSpec": "이상감지 사건 목록, 대응 결과, 타임라인 로그",
+                  "decision": "adopt",
+                  "rationale": "관제 운영 기록 및 출동 이력 관리에 필요"
+                },
+                {
+                  "feature": "양방향 음성 (Talkdown)",
+                  "verkadaSpec": "관제자가 카메라 스피커로 현장에 직접 경고 방송",
+                  "decision": "reject",
+                  "rationale": "S1 AI 카메라 양방향 음성 사양 미확인 — 하드웨어 검토 후 재평가"
+                },
+                {
+                  "feature": "수사 케이스 관리 (Investigation)",
+                  "verkadaSpec": "사건별 영상 클립 수집, 타임라인 정리, 담당자 할당",
+                  "decision": "defer",
+                  "rationale": "Phase 2 이후 — 에스원 출동 결과 연계 기능으로 고도화"
+                }
+              ]
+            },
+            {
+              "id": "device-mgmt",
+              "title": "장치 관리",
+              "items": [
+                {
+                  "feature": "장치 목록 & 상태 대시보드",
+                  "verkadaSpec": "전체 장치 리스트, 연결 상태·오류 뱃지, 사이트별 필터",
+                  "decision": "adopt",
+                  "rationale": "기획 명시(장비이상감지) — 카메라 관리의 기본 화면"
+                },
+                {
+                  "feature": "장치 온보딩 마법사",
+                  "verkadaSpec": "QR코드 스캔 또는 시리얼번호 입력으로 신규 장치 등록",
+                  "decision": "adopt",
+                  "rationale": "다이렉트몰 셀프 온보딩 핵심 — SOHO 비전문 사용자 대상"
+                },
+                {
+                  "feature": "원격 펌웨어 업데이트",
+                  "verkadaSpec": "버전 확인, 일정 업데이트, 진행률 표시",
+                  "decision": "adopt",
+                  "rationale": "AI 알고리즘 업데이트와 연계 — 클라우드 AI 카메라 운영 필수"
+                },
+                {
+                  "feature": "장치 통계 (CPU·대역폭·스토리지)",
+                  "verkadaSpec": "시간대별 리소스 사용 차트",
+                  "decision": "defer",
+                  "rationale": "Phase 2 — 운영 안정화 후 고도화"
+                }
+              ]
+            },
+            {
+              "id": "admin",
+              "title": "관리자 (Admin)",
+              "items": [
+                {
+                  "feature": "조직 정보 · 사용자 · 그룹 관리",
+                  "verkadaSpec": "조직 프로필, 사용자 초대/삭제, 그룹별 권한 관리",
+                  "decision": "adopt",
+                  "rationale": "다수 고객사 계정 운영 필수 — ID 추가 옵션(1.5円/5개)과 연동"
+                },
+                {
+                  "feature": "역할 및 권한 매트릭스",
+                  "verkadaSpec": "역할별 화면·기능 접근 권한 설정",
+                  "decision": "adopt",
+                  "rationale": "에스원 내부 역할 구분(관제원·운영자·관리자) 대응 필요"
+                },
+                {
+                  "feature": "SSO / 통합계정 연동",
+                  "verkadaSpec": "SAML SSO, SCIM 자동 프로비저닝, SSOButton 컴포넌트",
+                  "decision": "adopt",
+                  "rationale": "기획문서 통합계정 연동 명시 — 에스원 SSO 방식 확정 필요(확인항목 C-02)"
+                },
+                {
+                  "feature": "감사 로그 & 리포트",
+                  "verkadaSpec": "사용자 행동 로그, 리포트 자동화, CSV 내보내기",
+                  "decision": "adopt",
+                  "rationale": "운영 보안 및 개보법 대응 필수"
+                },
+                {
+                  "feature": "구독 라이선싱 관리",
+                  "verkadaSpec": "제품별 라이선스 수량·만료일, 업그레이드 흐름",
+                  "decision": "adopt",
+                  "rationale": "AI 알고리즘 구독 옵션 관리(화재·배회 등)에 직접 대응"
+                },
+                {
+                  "feature": "기능 플래그 (Feature Manager)",
+                  "verkadaSpec": "조직·사이트별 베타 기능 on/off",
+                  "decision": "adopt",
+                  "rationale": "구독 옵션별 기능 활성화 제어에 활용 — AI 알고리즘 옵션 관리"
+                },
+                {
+                  "feature": "데이터 내보내기 · 컴플라이언스",
+                  "verkadaSpec": "영상 메타데이터 내보내기, 컴플라이언스 뱃지",
+                  "decision": "adopt",
+                  "rationale": "개인정보보호법 대응 — 데이터 보관·삭제 정책 시행"
+                },
+                {
+                  "feature": "API Keys & Webhook",
+                  "verkadaSpec": "API 키 발급, Webhook URL 등록, 이벤트 발생 시 외부 호출",
+                  "decision": "adapt",
+                  "rationale": "Phase 2 — 관제서버 연동 등 외부 시스템 연계 시 필요"
+                },
+                {
+                  "feature": "외부 협업 도구 연동 (Slack·Teams)",
+                  "verkadaSpec": "이상감지 알림을 Slack/Teams 채널로 전송",
+                  "decision": "reject",
+                  "rationale": "SOHO 타깃 서비스에 불필요 — 모두App 푸시로 충분"
+                }
+              ]
+            },
+            {
+              "id": "out-of-scope",
+              "title": "범위 외 (Out of Scope)",
+              "note": "Verkada의 하드웨어 생태계 확장 기능으로, 클라우드영상시스템 범위와 무관",
+              "items": [
+                {
+                  "feature": "출입통제 (Access Control)",
+                  "verkadaSpec": "도어 잠금·해제, 출입 권한, 스케줄, 비상 롤콜",
+                  "decision": "reject",
+                  "rationale": "에스원 별개 상품(SVMS 등) — 클라우드영상시스템 범위 외"
+                },
+                {
+                  "feature": "인터폰 (Intercom)",
+                  "verkadaSpec": "IP 인터폰 통화, AI 음성 안내, 통화 기록",
+                  "decision": "reject",
+                  "rationale": "S1 인터폰 별도 상품 — 클라우드영상시스템 범위 외"
+                },
+                {
+                  "feature": "공기질 센서 (Air Quality)",
+                  "verkadaSpec": "CO₂·PM2.5·온습도 모니터링, 임계값 알림",
+                  "decision": "reject",
+                  "rationale": "클라우드영상시스템 범위 외"
+                },
+                {
+                  "feature": "네트워크 게이트웨이 (Connectivity)",
+                  "verkadaSpec": "Verkada 전용 게이트웨이 관리, WAN 페일오버",
+                  "decision": "reject",
+                  "rationale": "에스원 네트워크 인프라 별도 관리 — 서비스 범위 외"
+                },
+                {
+                  "feature": "직장 관리 (Workplace — 방문자·우편물)",
+                  "verkadaSpec": "방문자 체크인, 우편물 추적, NDA 서명",
+                  "decision": "reject",
+                  "rationale": "클라우드영상시스템 범위 외 — SOHO 타깃과 무관"
+                }
+              ]
             }
           ]
         }

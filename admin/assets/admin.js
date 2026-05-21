@@ -566,6 +566,138 @@ function renderServiceIntelligence() {
 
 }
 
+// ── IA 제안 렌더링 ──
+function renderIAProposalSection(ia) {
+  const decisionBadge = d => {
+    const map = { keep:'ia-dec-keep', add:'ia-dec-add', adapt:'ia-dec-adapt', defer:'ia-dec-defer', reject:'ia-dec-reject', 'needs-review':'ia-dec-hold' };
+    const label = { keep:'유지', add:'추가', adapt:'변형', defer:'보류', reject:'제외', 'needs-review':'검토' };
+    return `<span class="ia-dec-badge ${map[d]||'ia-dec-defer'}">${label[d]||d}</span>`;
+  };
+  const prioColor = { P0:'ia-p0', P1:'ia-p1', P2:'ia-p2', Hold:'ia-hold', Reject:'ia-reject' };
+
+  // ── 요약 바 ──
+  const ss = ia.specSummary || {};
+  const summaryHtml = `
+    <div class="ia-summary">
+      <div class="ia-summary-left">
+        <div class="ia-summary-title">작업 목적</div>
+        <div class="ia-summary-desc">기획안(Figma 10장)과 Verkada 벤치마크를 비교해 초기 PC 웹뷰어 IA를 제안합니다.</div>
+        <div class="ia-summary-premise">전제: ${ia.premise || ''}</div>
+      </div>
+      <div class="ia-summary-right">
+        <div class="ia-summary-stat-row">
+          <span class="ia-stat ia-dec-keep">유지 ${ss.keep||0}</span>
+          <span class="ia-stat ia-dec-add">추가 ${ss.add||0}</span>
+          <span class="ia-stat ia-dec-adapt">변형 ${ss.adapt||0}</span>
+          <span class="ia-stat ia-dec-defer">보류 ${ss.defer||0}</span>
+          <span class="ia-stat ia-dec-reject">제외 ${ss.reject||0}</span>
+          <span class="ia-stat ia-dec-hold">검토 ${ss.needsReview||0}</span>
+        </div>
+      </div>
+    </div>`;
+
+  // ── IA 트리 렌더러 ──
+  const renderIATree = (iaData, colorClass) => {
+    if (!iaData) return '';
+    const menus = iaData.menus || [];
+    return `
+      <div class="ia-tree-block">
+        <div class="ia-tree-header ${colorClass}">${iaData.label}</div>
+        <div class="ia-tree-desc">${iaData.desc || ''}</div>
+        <div class="ia-tree-menus">
+          ${menus.map((m, mi) => `
+            <div class="ia-tree-menu">
+              <div class="ia-tree-menu-name">
+                <span class="ia-tree-num">${String(mi+1).padStart(2,'0')}</span>
+                <span>${m.name}</span>
+                <span class="ia-menu-prio ${prioColor[m.priority]||''}">${m.priority}</span>
+              </div>
+              ${m.note ? `<div class="ia-tree-menu-note">${m.note}</div>` : ''}
+              <div class="ia-tree-sub-list">
+                ${(m.items||[]).map(item => `<div class="ia-tree-sub">↳ ${item}</div>`).join('')}
+              </div>
+            </div>`).join('')}
+        </div>
+      </div>`;
+  };
+
+  // ── 고도화 IA (추가 메뉴 목록) ──
+  const advancedHtml = (() => {
+    const adv = ia.advancedIA;
+    if (!adv) return '';
+    return `
+      <div class="ia-tree-block">
+        <div class="ia-tree-header ia-hdr-advanced">${adv.label}</div>
+        <div class="ia-tree-desc">${adv.desc || ''}</div>
+        <div class="ia-adv-list">
+          ${(adv.additions||[]).map(a => `
+            <div class="ia-adv-item">
+              <div class="ia-adv-menu">${a.menu} <span class="ia-adv-cond">${a.condition}</span></div>
+              ${(a.items||[]).map(i => `<div class="ia-tree-sub">↳ ${i}</div>`).join('')}
+            </div>`).join('')}
+        </div>
+      </div>`;
+  })();
+
+  // ── 사양 우선순위 테이블 ──
+  const specPrio = ia.specPriority || {};
+  const renderSpecTable = (prio, items, headerCls) => {
+    if (!items || !items.length) return '';
+    const rows = items.map(s => `
+      <tr>
+        <td class="ia-spec-td">${s.spec}</td>
+        <td>${decisionBadge(s.decision)}</td>
+        <td class="ia-spec-reason">${s.reason}</td>
+      </tr>`).join('');
+    return `
+      <div class="ia-spec-group">
+        <div class="ia-spec-group-hdr ${headerCls}">${prio} <span class="ia-spec-count">${items.length}개</span></div>
+        <table class="ia-spec-table"><tbody>${rows}</tbody></table>
+      </div>`;
+  };
+
+  const specHtml = `
+    <div class="insight-section">
+      <div class="insight-section-title">사양 우선순위</div>
+      ${renderSpecTable('P0 — 초기 필수', specPrio.P0, 'ia-p0-hdr')}
+      ${renderSpecTable('P1 — 초기 권장', specPrio.P1, 'ia-p1-hdr')}
+      ${renderSpecTable('P2 — 고도화', specPrio.P2, 'ia-p2-hdr')}
+      ${renderSpecTable('Hold — 정책·기술 확인', specPrio.Hold, 'ia-hold-hdr')}
+      ${renderSpecTable('Reject — 제외', specPrio.Reject, 'ia-reject-hdr')}
+    </div>`;
+
+  // ── 추가 확인 질문 ──
+  const qMap = { critical:'ia-q-critical', high:'ia-q-high', medium:'ia-q-medium' };
+  const oqHtml = `
+    <div class="insight-section">
+      <div class="insight-section-title">추가 확인 질문</div>
+      <div class="ia-oq-list">
+        ${(ia.openQuestions||[]).map(q => `
+          <div class="ia-oq-item ${qMap[q.priority]||''}">
+            <div class="ia-oq-hdr">
+              <span class="ia-oq-id">${q.id}</span>
+              <span class="ia-oq-badge ia-q-badge-${q.priority}">${q.priority==='critical'?'필수확인':q.priority==='high'?'중요':'보통'}</span>
+            </div>
+            <div class="ia-oq-question">${q.question}</div>
+            <div class="ia-oq-impact">→ ${q.impact}</div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+
+  return `
+    ${summaryHtml}
+    <div class="insight-section">
+      <div class="insight-section-title">IA 구조 (3단계)</div>
+      <div class="ia-three-col">
+        ${renderIATree(ia.minimalIA, 'ia-hdr-minimal')}
+        ${renderIATree(ia.recommendedIA, 'ia-hdr-recommended')}
+        ${advancedHtml}
+      </div>
+    </div>
+    ${specHtml}
+    ${oqHtml}`;
+}
+
 // ── 버카다 벤치마크 렌더링 ──
 function renderBenchmarkSection(benchmark) {
   const decisionMeta = {
@@ -797,11 +929,15 @@ function renderInsightSections(insight) {
   // ── DS 적용 계획 섹션 ──
   const dsApp = sec('dsApplication');
 
+  // ── IA 제안 섹션 ──
+  const iaProposal = sec('iaProposal');
+  const iaProposalContent = iaProposal ? renderIAProposalSection(iaProposal) : '';
+
   // ── 버카다 벤치마크 섹션 ──
   const benchmark = sec('benchmark');
   const benchmarkPanelContent = benchmark ? renderBenchmarkSection(benchmark) : '';
 
-  if (!dsApp && !benchmark) {
+  if (!dsApp && !iaProposal && !benchmark) {
     // 탭 불필요 — 단일 컨테이너
     return `
       <div class="insight-container">
@@ -861,6 +997,7 @@ function renderInsightSections(insight) {
       <div class="tabs insight-service-tabs" data-group="${tabGroup}">
         <div class="tab active" data-group="${tabGroup}" data-target="service-guide">서비스 가이드</div>
         ${dsApp ? `<div class="tab" data-group="${tabGroup}" data-target="ds-application">DS 적용 계획</div>` : ''}
+        ${iaProposal ? `<div class="tab" data-group="${tabGroup}" data-target="ia-proposal">IA 제안</div>` : ''}
         ${benchmark ? `<div class="tab" data-group="${tabGroup}" data-target="benchmark">버카다 벤치마크</div>` : ''}
       </div>
       <div class="tab-panel active" data-group="${tabGroup}" data-panel="service-guide">
@@ -888,6 +1025,19 @@ function renderInsightSections(insight) {
             </div>
           </div>
           ${dsAppPanelContent}
+        </div>
+      </div>` : ''}
+      ${iaProposal ? `
+      <div class="tab-panel" data-group="${tabGroup}" data-panel="ia-proposal">
+        <div class="insight-container">
+          <div class="insight-header">
+            <div class="insight-header-title">IA 제안</div>
+            <div class="insight-header-meta">
+              <span>${iaProposal.basis}</span>
+              <span>분석: ${iaProposal.analyzedAt}</span>
+            </div>
+          </div>
+          ${iaProposalContent}
         </div>
       </div>` : ''}
       ${benchmark ? `
