@@ -1,0 +1,3808 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>클라우드영상시스템 — PC 웹뷰어 기획 자료</title>
+  <style>
+/* ── Reset / 레이아웃 — standalone 단일 페이지 오버라이드 ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --sidebar-width: 220px;
+  --header-h: 56px;
+  --blue-500: #3b82f6;
+  --blue-600: #2563eb;
+  --blue-700: #1d4ed8;
+  --blue-50: #eff6ff;
+  --green-500: #22c55e;
+  --green-600: #16a34a;
+  --green-50: #f0fdf4;
+  --yellow-500: #eab308;
+  --yellow-50: #fefce8;
+  --yellow-100: #fef9c3;
+  --yellow-600: #ca8a04;
+  --red-500: #ef4444;
+  --red-600: #dc2626;
+  --red-50: #fef2f2;
+  --orange-500: #f97316;
+  --orange-50: #fff7ed;
+  --orange-100: #ffedd5;
+  --orange-600: #ea580c;
+  --purple-500: #a855f7;
+  --purple-50: #faf5ff;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-400: #9ca3af;
+  --gray-500: #6b7280;
+  --gray-600: #4b5563;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+  --sidebar-bg: #1e2433;
+  --sidebar-hover: #2a3347;
+  --sidebar-active: #2563eb;
+  --text-sidebar: #c9d1e0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--gray-50);
+  color: var(--gray-900);
+  font-size: 14px;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ── Sidebar ── */
+.sidebar {
+  width: var(--sidebar-width);
+  background: var(--sidebar-bg);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  z-index: 100;
+}
+
+.sidebar-header {
+  padding: 18px 16px 14px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.sidebar-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: .02em;
+  line-height: 1.2;
+}
+
+.sidebar-sub {
+  font-size: 11px;
+  color: var(--text-sidebar);
+  margin-top: 3px;
+  opacity: .7;
+}
+
+.sidebar-nav { flex: 1; overflow-y: auto; padding: 12px 0 20px; }
+
+/* ── Nav group ── */
+.nav-group { padding: 0 0 6px; }
+.nav-group + .nav-group {
+  border-top: 1px solid rgba(255,255,255,.06);
+  margin-top: 6px;
+  padding-top: 10px;
+}
+
+.nav-group-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: rgba(201,209,224,.35);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: 2px 16px 5px;
+}
+
+/* ── Top-level nav items ── */
+.nav-item {
+  display: flex;
+  align-items: center;
+  padding: 7px 16px;
+  color: rgba(201,209,224,.8);
+  cursor: pointer;
+  font-size: 13px;
+  transition: background .15s, color .15s;
+  border-left: 2px solid transparent;
+}
+.nav-item:hover { background: var(--sidebar-hover); color: #fff; }
+.nav-item.active {
+  background: rgba(37,99,235,.18);
+  color: #fff;
+  border-left-color: var(--blue-500);
+  font-weight: 600;
+}
+
+/* ── Domain accordion toggles ── */
+.nav-domain-toggle {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 16px;
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 700;
+  color: rgba(201,209,224,.4);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  transition: color .15s;
+  margin-top: 6px;
+  user-select: none;
+  border-left: 2px solid transparent;
+}
+.nav-domain-toggle:hover { color: rgba(201,209,224,.7); }
+
+.nav-domain-arrow {
+  font-size: 7px;
+  transition: transform .2s;
+  flex-shrink: 0;
+  opacity: .6;
+}
+.nav-domain-toggle.collapsed .nav-domain-arrow { transform: rotate(-90deg); }
+
+.nav-domain-items { overflow: hidden; }
+.nav-domain-items.collapsed { display: none; }
+
+/* ── Service sub-items ── */
+.nav-sub-item {
+  display: flex;
+  align-items: center;
+  padding: 5px 16px 5px 26px;
+  color: rgba(201,209,224,.65);
+  cursor: pointer;
+  font-size: 12px;
+  transition: background .15s, color .15s;
+  border-left: 2px solid transparent;
+}
+.nav-sub-item::before {
+  content: '';
+  display: block;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(201,209,224,.25);
+  margin-right: 9px;
+  flex-shrink: 0;
+}
+.nav-sub-item:hover { background: var(--sidebar-hover); color: rgba(201,209,224,.9); }
+.nav-sub-item.active {
+  background: rgba(37,99,235,.18);
+  color: #fff;
+  border-left-color: var(--blue-500);
+  font-weight: 600;
+}
+.nav-sub-item.active::before { background: var(--blue-400); }
+
+.nav-icon { display: none; }
+
+/* ── Main ── */
+.main {
+  margin-left: var(--sidebar-width);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-header {
+  height: var(--header-h);
+  background: #fff;
+  border-bottom: 1px solid var(--gray-200);
+  display: flex;
+  align-items: center;
+  padding: 0 28px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  gap: 12px;
+}
+
+.breadcrumb {
+  font-size: 13px;
+  color: var(--gray-500);
+}
+
+.breadcrumb strong { color: var(--gray-900); font-weight: 600; }
+
+.header-actions { margin-left: auto; display: flex; gap: 8px; }
+
+.btn {
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: background .15s;
+}
+
+.btn-primary { background: var(--blue-600); color: #fff; }
+.btn-primary:hover { background: var(--blue-700); }
+.btn-ghost { background: transparent; color: var(--gray-600); border: 1px solid var(--gray-200); }
+.btn-ghost:hover { background: var(--gray-100); }
+
+.content { padding: 28px; flex: 1; }
+
+.section { display: none; }
+.section.active { display: block; }
+
+/* ── Section header ── */
+.section-header { margin-bottom: 24px; }
+.section-title { font-size: 20px; font-weight: 700; color: var(--gray-900); }
+.section-desc { font-size: 13px; color: var(--gray-500); margin-top: 4px; }
+
+/* ── Cards ── */
+.cards { display: grid; gap: 16px; }
+.cards-4 { grid-template-columns: repeat(4, 1fr); }
+.cards-3 { grid-template-columns: repeat(3, 1fr); }
+.cards-2 { grid-template-columns: repeat(2, 1fr); }
+
+.card {
+  background: #fff;
+  border: 1px solid var(--gray-200);
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.card-label { font-size: 12px; color: var(--gray-500); font-weight: 500; margin-bottom: 8px; }
+.card-value { font-size: 28px; font-weight: 700; color: var(--gray-900); }
+.card-sub { font-size: 12px; color: var(--gray-400); margin-top: 4px; }
+
+/* ── Service card ── */
+.service-card {
+  background: #fff;
+  border: 1px solid var(--gray-200);
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.service-card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.service-card-name { font-size: 16px; font-weight: 700; }
+.service-card-system { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+
+.service-card-meta { display: flex; flex-direction: column; gap: 6px; }
+.meta-row { display: flex; gap: 6px; font-size: 12px; }
+.meta-label { color: var(--gray-400); width: 80px; flex-shrink: 0; }
+.meta-value { color: var(--gray-700); font-weight: 500; }
+
+.service-card-actions { margin-top: 4px; }
+
+/* ── Badges ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge-active { background: var(--green-50); color: var(--green-600); }
+.badge-standby { background: var(--yellow-50); color: var(--yellow-600); }
+.badge-planned { background: var(--gray-100); color: var(--gray-500); }
+.badge-blocked { background: var(--red-50); color: var(--red-600); }
+.badge-deprecated { background: var(--gray-100); color: var(--gray-400); }
+.badge-pending { background: var(--orange-100); color: var(--orange-600); }
+.badge-ok { background: var(--green-50); color: var(--green-600); }
+.badge-unknown { background: var(--gray-100); color: var(--gray-500); }
+.badge-fail { background: var(--red-50); color: var(--red-600); }
+.badge-draft { background: var(--gray-100); color: var(--gray-500); }
+.badge-high { background: var(--red-50); color: var(--red-600); }
+.badge-medium { background: var(--yellow-100); color: var(--yellow-600); }
+.badge-low { background: var(--gray-100); color: var(--gray-500); }
+
+/* ── Table ── */
+.table-wrap {
+  background: #fff;
+  border: 1px solid var(--gray-200);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.table-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--gray-100);
+}
+
+.table-title { font-size: 14px; font-weight: 600; }
+.table-count { font-size: 12px; color: var(--gray-400); }
+
+table { width: 100%; border-collapse: collapse; }
+th {
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  padding: 10px 20px;
+  background: var(--gray-50);
+  border-bottom: 1px solid var(--gray-200);
+}
+td { padding: 12px 20px; border-bottom: 1px solid var(--gray-100); font-size: 13px; vertical-align: middle; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--gray-50); }
+
+/* ── Service Intelligence List ── */
+.si-block {
+  border: 1px solid var(--gray-200);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.si-block-active { border-color: #bfdbfe; }
+.si-block-planned { border-color: var(--gray-200); }
+
+.si-domain-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 20px;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.si-block-active .si-domain-header   { background: #eff6ff; border-bottom-color: #bfdbfe; }
+.si-block-planned .si-domain-header  { background: var(--gray-50); }
+
+.si-domain-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gray-800);
+}
+
+.si-domain-meta {
+  font-size: 11px;
+  color: var(--gray-400);
+  flex: 1;
+}
+
+.si-rows { display: flex; flex-direction: column; background: #fff; }
+
+.si-row {
+  display: grid;
+  grid-template-columns: 2fr 1.2fr 2.5fr auto;
+  gap: 16px;
+  align-items: center;
+  padding: 11px 20px;
+  border-bottom: 1px solid var(--gray-100);
+}
+.si-row:last-child { border-bottom: none; }
+
+.si-row-active { background: #fff; }
+.si-row-planned { background: var(--gray-50); }
+.si-row-active:hover { background: #f0f6ff; }
+.si-row-planned:hover { background: var(--gray-100); }
+
+.si-svc-name {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gray-900);
+}
+.si-row-planned .si-svc-name { color: var(--gray-400); font-weight: 500; }
+
+.si-svc-system {
+  display: block;
+  font-size: 11px;
+  color: var(--gray-400);
+  margin-top: 2px;
+}
+.si-row-planned .si-svc-system { color: var(--gray-300); }
+
+.si-col-focus {
+  font-size: 12px;
+  color: var(--gray-300);
+}
+.si-row-active .si-col-focus {
+  color: var(--blue-600);
+  font-weight: 500;
+}
+
+.si-col-action {
+  font-size: 12px;
+  color: var(--gray-300);
+}
+.si-row-active .si-col-action {
+  color: var(--gray-600);
+}
+
+.si-col-status { display: flex; justify-content: flex-end; }
+
+/* ── Layer group ── */
+.layer-group { margin-bottom: 20px; }
+.layer-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gray-400);
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--gray-200);
+  margin-bottom: 8px;
+}
+
+/* ── Tabs ── */
+.tabs { display: flex; gap: 2px; margin-bottom: 20px; border-bottom: 2px solid var(--gray-200); }
+.tab {
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--gray-500);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+}
+.tab.active { color: var(--blue-600); border-bottom-color: var(--blue-600); font-weight: 600; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ── Filter bar ── */
+.filter-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  align-items: center;
+}
+
+.filter-chip {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid var(--gray-200);
+  background: #fff;
+  color: var(--gray-600);
+  transition: all .15s;
+}
+
+.filter-chip.active { background: var(--blue-600); color: #fff; border-color: var(--blue-600); }
+
+/* ── Review item ── */
+.review-item {
+  background: #fff;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.review-content { flex: 1; }
+.review-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.review-meta { font-size: 12px; color: var(--gray-500); display: flex; gap: 12px; flex-wrap: wrap; }
+
+/* ── Registry list ── */
+.registry-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--gray-100);
+  gap: 12px;
+  font-size: 12px;
+}
+
+.registry-item:last-child { border-bottom: none; }
+.registry-path { font-family: monospace; color: var(--gray-700); flex: 1; word-break: break-all; }
+.registry-role { color: var(--gray-400); width: 160px; flex-shrink: 0; }
+
+/* ── Gate status ── */
+.gate-row { display: flex; align-items: center; padding: 12px 20px; border-bottom: 1px solid var(--gray-100); gap: 12px; }
+.gate-row:last-child { border-bottom: none; }
+.gate-name { flex: 1; font-size: 13px; font-weight: 500; }
+.gate-command { font-family: monospace; font-size: 11px; color: var(--gray-400); }
+.gate-last { font-size: 12px; color: var(--gray-400); width: 100px; }
+
+/* ── Next action banner ── */
+.next-action {
+  background: var(--blue-50);
+  border: 1px solid var(--blue-500);
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.next-action-label { font-weight: 600; color: var(--blue-700); white-space: nowrap; }
+.next-action-text { color: var(--gray-700); }
+
+/* ── Overview: 현재 분석 중 블록 ── */
+.ov-active-wrap {
+  background: var(--blue-50);
+  border: 1px solid #bfdbfe;
+  border-radius: 10px;
+  padding: 18px 20px;
+}
+.ov-active-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--blue-600);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.ov-active-row {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.ov-active-row + .ov-active-row { margin-top: 10px; padding-top: 10px; border-top: 1px solid #dbeafe; }
+.ov-active-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gray-900);
+  white-space: nowrap;
+}
+.ov-active-focus {
+  font-size: 13px;
+  color: var(--blue-700);
+  font-weight: 500;
+}
+.ov-active-action {
+  font-size: 12px;
+  color: var(--gray-500);
+  margin-left: auto;
+}
+
+/* ── Responsive spacing ── */
+.mt-16 { margin-top: 16px; }
+.mt-24 { margin-top: 24px; }
+.mb-16 { margin-bottom: 16px; }
+.flex { display: flex; }
+.gap-8 { gap: 8px; }
+.items-center { align-items: center; }
+.link { color: var(--blue-600); text-decoration: none; font-weight: 500; }
+.link:hover { text-decoration: underline; }
+.text-muted { color: var(--gray-400); }
+.text-sm { font-size: 12px; }
+.font-mono { font-family: monospace; }
+
+/* ── Agent Architecture ── */
+.agent-arch { display: flex; flex-direction: column; gap: 24px; }
+
+.agent-group {
+  background: #fff;
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.agent-group-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px;
+  background: var(--gray-50);
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.agent-group-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gray-700);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+
+.agent-group-desc {
+  font-size: 12px;
+  color: var(--gray-400);
+  margin-left: auto;
+}
+
+.agent-group-count {
+  font-size: 11px;
+  color: var(--gray-400);
+  background: var(--gray-200);
+  padding: 1px 7px;
+  border-radius: 10px;
+}
+
+.agent-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+  padding: 16px;
+}
+
+.agent-card {
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #fff;
+  transition: box-shadow .15s;
+}
+
+.agent-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+
+.agent-card.status-active   { border-left: 3px solid var(--green-500); }
+.agent-card.status-standby  { border-left: 3px solid var(--yellow-500); background: var(--gray-50); }
+.agent-card.status-planned  { border-left: 3px solid var(--gray-300); }
+.agent-card.status-blocked  { border-left: 3px solid var(--red-500); }
+.agent-card.status-deprecated { border-left: 3px solid var(--gray-200); opacity: .6; }
+
+.agent-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.agent-card-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gray-900);
+  line-height: 1.3;
+}
+
+.agent-card-id {
+  font-size: 10px;
+  color: var(--gray-400);
+  font-family: monospace;
+  margin-top: 2px;
+}
+
+.agent-card-role {
+  font-size: 12px;
+  color: var(--gray-600);
+  line-height: 1.5;
+}
+
+.agent-card-activation {
+  font-size: 11px;
+  color: var(--gray-400);
+  background: var(--gray-50);
+  border: 1px solid var(--gray-100);
+  border-radius: 4px;
+  padding: 5px 8px;
+  line-height: 1.4;
+}
+
+.agent-card-activation-label {
+  font-weight: 600;
+  color: var(--gray-500);
+  display: block;
+  margin-bottom: 2px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.agent-card-meta {
+  font-size: 11px;
+  color: var(--gray-400);
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.agent-card-notes {
+  font-size: 11px;
+  color: var(--blue-600);
+  background: var(--blue-50);
+  border-radius: 4px;
+  padding: 4px 8px;
+  line-height: 1.4;
+}
+
+/* ── Service Team block ── */
+.service-team-block {
+  border-top: 1px solid var(--gray-100);
+}
+
+.service-team-block:first-child { border-top: none; }
+
+.service-team-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: var(--gray-50);
+}
+
+.service-team-header.status-active { background: var(--green-50); }
+.service-team-header.status-planned { background: var(--gray-50); }
+
+.service-team-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gray-800);
+}
+
+.service-team-meta {
+  font-size: 11px;
+  color: var(--gray-500);
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+
+.service-team-workspace {
+  font-family: monospace;
+  font-size: 11px;
+  color: var(--gray-400);
+  margin-left: auto;
+}
+
+/* ── Role distinction notice ── */
+.role-notice {
+  background: var(--yellow-50);
+  border: 1px solid var(--yellow-500);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 12px;
+  color: var(--gray-700);
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.role-notice strong { color: var(--gray-900); }
+
+/* ── Agent summary stats ── */
+.agent-summary-bar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.agent-stat {
+  background: #fff;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  padding: 10px 18px;
+  text-align: center;
+  min-width: 80px;
+}
+
+.agent-stat-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--gray-900);
+}
+
+.agent-stat-label {
+  font-size: 11px;
+  color: var(--gray-400);
+  margin-top: 2px;
+}
+
+.agent-stat.highlight-active .agent-stat-value { color: var(--green-600); }
+.agent-stat.highlight-standby .agent-stat-value { color: var(--yellow-600); }
+.agent-stat.highlight-planned .agent-stat-value { color: var(--gray-400); }
+
+/* ══════════════════════════════════════
+   Agent Org Chart  (.agent-org-chart)
+   ══════════════════════════════════════ */
+
+.agent-org-chart {
+  background: #fff;
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  padding: 28px 32px 32px;
+  margin-bottom: 24px;
+}
+
+/* ── Root title (그룹명 레이블) ── */
+.org-root {
+  padding: 0 0 20px;
+}
+
+.org-root h3 {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin: 0;
+}
+
+/* ── Vertical connector ── */
+.org-connector {
+  width: 2px;
+  height: 16px;
+  background: var(--gray-300);
+  margin: 0 auto;
+}
+
+/* ── Tier Cards: Lead, Orchestrator ── */
+.org-card {
+  border: 2px solid var(--gray-200);
+  border-radius: 10px;
+  padding: 10px 14px;
+  background: #fff;
+  max-width: 373px;
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* standby → 회색: 비활성 상태를 명확히 표현 */
+.org-lead         { border-color: var(--gray-300); background: var(--gray-100); }
+/* active → 파란색: 현재 작동 중 */
+.org-orchestrator { border-color: var(--blue-400); background: var(--blue-50); }
+
+.org-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.org-card-header > div { flex: 1; }
+
+.org-card-header .badge {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+}
+
+.org-card-header h3 {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin: 0;
+}
+
+.org-lead .org-card-header h3 { color: var(--gray-500); }
+
+.org-node-role {
+  font-size: 11px;
+  color: var(--gray-400);
+  margin: 3px 0 0;
+}
+
+.org-lead .org-node-role { color: var(--gray-400); }
+
+/* ── Sections: Shared Capability / Service Domain ── */
+.org-section {
+  border: 1.5px solid var(--gray-200);
+  border-radius: 10px;
+  padding: 20px 24px;
+}
+
+.org-section.shared-capabilities       { border-color: var(--gray-200); }
+.org-section.experience-consistency-review { border-color: var(--gray-200); border-style: dashed; opacity: .85; text-align: center; }
+.org-section.service-domain-teams      { border-color: var(--gray-200); }
+
+.exp-consistency-wrap {
+  display: flex;
+  justify-content: center;
+}
+.exp-consistency-card {
+  border: 1px solid var(--gray-300);
+  border-radius: 8px;
+  padding: 12px 16px;
+  background: var(--gray-100);
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: fit-content;
+}
+
+.org-section-header { margin-bottom: 14px; }
+
+.org-section-header h3 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin: 0 0 3px;
+}
+
+.org-section-sub {
+  font-size: 12px;
+  color: var(--gray-500);
+  margin: 0 0 4px;
+}
+
+.org-section-desc {
+  font-size: 12px;
+  color: var(--gray-400);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ── Shared: 6 mini-agent cards ── */
+.capability-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+}
+
+.mini-agent-card {
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.mini-agent-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+/* 상태별 미니 카드 배경 */
+.mini-agent-card.status-active  { background: #fff;              border-color: var(--gray-200); }
+.mini-agent-card.status-standby { background: var(--gray-100);   border-color: var(--gray-300); }
+.mini-agent-card.status-planned { background: var(--gray-50);    border-color: var(--gray-200); opacity: .7; }
+
+.mini-agent-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gray-800);
+  flex: 1;
+  min-width: 0;
+}
+
+.mini-agent-card.status-standby .mini-agent-name,
+.mini-agent-card.status-planned .mini-agent-name { color: var(--gray-500); }
+
+.mini-agent-role {
+  font-size: 10px;
+  color: var(--gray-400);
+  line-height: 1.4;
+}
+
+/* ── Service Domain: 5 service-team cards ── */
+.service-team-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
+
+.service-team-card {
+  border: 1.5px solid var(--gray-200);
+  border-radius: 8px;
+  padding: 12px;
+  background: #fff;
+}
+
+.service-team-card.svc-active  { border-color: var(--green-500); background: var(--green-50); }
+.service-team-card.svc-planned { border-color: var(--gray-200);  background: var(--gray-50);  opacity: .75; }
+
+.stc-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.stc-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gray-900);
+  flex: 1;
+  min-width: 0;
+}
+
+.stc-sub {
+  font-size: 10px;
+  color: var(--gray-400);
+  margin: 0 0 6px;
+}
+
+.stc-section {
+  margin-top: 8px;
+  padding-top: 7px;
+  border-top: 1px solid var(--gray-200);
+}
+
+.stc-section-label {
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--gray-400);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
+.stc-manager-chip {
+  display: inline-flex;
+  align-items: center;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--gray-500);
+  background: var(--gray-100);
+  border: 1px solid var(--gray-200);
+  border-radius: 4px;
+  padding: 2px 7px;
+}
+.stc-manager-chip.stc-manager-active {
+  color: var(--green-600);
+  background: var(--green-50);
+  border-color: var(--green-500);
+}
+
+.stc-agents { display: flex; flex-direction: column; gap: 2px; }
+
+.stc-agent-row {
+  font-size: 10px;
+  color: var(--gray-500);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  line-height: 1.4;
+}
+
+.stc-agent-row::before { content: '·'; color: var(--gray-300); flex-shrink: 0; }
+
+/* ── Org Chart Legend ── */
+/* ── 공유 자료 ── */
+.sn-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.sn-card {
+  background: #fff;
+  border: 1px solid var(--gray-200);
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 140px;
+}
+
+.sn-card-tag {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--blue-600);
+  background: var(--blue-50);
+  border-radius: 4px;
+  padding: 2px 7px;
+  width: fit-content;
+  letter-spacing: .04em;
+}
+
+.sn-card-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gray-900);
+  line-height: 1.4;
+}
+
+.sn-card-desc {
+  font-size: 12px;
+  color: var(--gray-500);
+  line-height: 1.6;
+  flex: 1;
+}
+
+.sn-card-date {
+  font-size: 11px;
+  color: var(--gray-400);
+  margin-top: 4px;
+}
+
+.sn-card-clickable {
+  cursor: pointer;
+  transition: box-shadow .15s, transform .15s, border-color .15s;
+}
+.sn-card-clickable:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,.1);
+  transform: translateY(-2px);
+  border-color: var(--blue-500);
+}
+
+.sn-card-view-hint {
+  font-size: 10px;
+  color: var(--blue-500);
+  font-weight: 600;
+  margin-left: 8px;
+  opacity: 0;
+  transition: opacity .15s;
+}
+.sn-card-clickable:hover .sn-card-view-hint { opacity: 1; }
+
+.sn-card-empty {
+  border-style: dashed;
+  background: var(--gray-50);
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 10px;
+  cursor: default;
+  opacity: .6;
+}
+
+/* ── 공유자료 이미지 모달 ── */
+.sn-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.6);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.sn-modal-overlay.open { display: flex; }
+
+.sn-modal-box {
+  background: #fff;
+  border-radius: 12px;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,.3);
+}
+
+.sn-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--gray-200);
+  flex-shrink: 0;
+}
+
+.sn-modal-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gray-900);
+}
+
+.sn-modal-close {
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: var(--gray-400);
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background .15s, color .15s;
+  line-height: 1;
+}
+.sn-modal-close:hover { background: var(--gray-100); color: var(--gray-700); }
+
+.sn-modal-body {
+  overflow: auto;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sn-modal-img {
+  max-width: 100%;
+  max-height: calc(90vh - 100px);
+  border-radius: 6px;
+  display: block;
+}
+
+.sn-empty-icon {
+  font-size: 24px;
+  color: var(--gray-300);
+  line-height: 1;
+}
+
+/* ════════════════════════════════════════
+   에이전트 활동보고서 (ar-*)
+   ════════════════════════════════════════ */
+
+/* 진단 기준 안내 배너 */
+.ar-disclaimer {
+  font-size: 11px;
+  color: var(--gray-500);
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: 6px;
+  padding: 8px 14px;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+/* 요약 카드 그리드 */
+.ar-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  margin-bottom: 28px;
+}
+.ar-summary-card {
+  background: #fff;
+  border: 1px solid var(--gray-200);
+  border-radius: 10px;
+  padding: 16px 18px;
+}
+.ar-summary-card.ar-summary-high  { border-top: 3px solid var(--green-500); }
+.ar-summary-card.ar-summary-medium { border-top: 3px solid var(--yellow-500); }
+.ar-summary-card.ar-summary-low   { border-top: 3px solid var(--gray-300); }
+.ar-summary-label { font-size: 11px; color: var(--gray-500); font-weight: 500; margin-bottom: 6px; }
+.ar-summary-value { font-size: 28px; font-weight: 700; color: var(--gray-900); line-height: 1; }
+.ar-summary-sub   { font-size: 11px; color: var(--gray-400); margin-top: 6px; }
+
+/* 섹션 타이틀 */
+.ar-section-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gray-800);
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+/* 프로젝트 카드 */
+.ar-project-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+.ar-project-card {
+  background: #fff;
+  border: 1.5px solid var(--gray-200);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.ar-proj-active  { border-color: var(--green-500); }
+.ar-proj-planned { opacity: .75; }
+
+.ar-project-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.ar-project-name  { font-size: 12px; font-weight: 700; color: var(--gray-900); flex: 1; min-width: 0; }
+.ar-project-phase { font-size: 11px; color: var(--gray-500); margin-bottom: 10px; }
+
+.ar-progress-bar-wrap {
+  height: 4px;
+  background: var(--gray-100);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+.ar-progress-bar {
+  height: 100%;
+  background: var(--green-500);
+  border-radius: 2px;
+  transition: width .3s;
+}
+.ar-proj-planned .ar-progress-bar { background: var(--gray-300); }
+
+.ar-project-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--gray-400);
+}
+.ar-progress-pct { font-weight: 600; }
+
+/* 에이전트 테이블 */
+.ar-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--gray-200);
+  border-radius: 10px;
+  background: #fff;
+}
+.ar-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.ar-table thead tr {
+  background: var(--gray-50);
+  border-bottom: 1px solid var(--gray-200);
+}
+.ar-table th {
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--gray-500);
+  white-space: nowrap;
+}
+.ar-table-group-row td {
+  background: var(--gray-50);
+  padding: 6px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gray-600);
+  letter-spacing: .04em;
+  border-top: 1px solid var(--gray-200);
+}
+.ar-table-row td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--gray-100);
+  vertical-align: top;
+}
+.ar-table-row:last-child td { border-bottom: none; }
+.ar-table-row.ar-has-issue { background: #fffbeb; }
+
+.ar-agent-name      { font-weight: 700; color: var(--gray-800); margin-bottom: 2px; }
+.ar-agent-role-short { font-size: 11px; color: var(--gray-500); line-height: 1.4; }
+.ar-agent-issue     { font-size: 10px; color: var(--orange-600); margin-top: 4px; font-weight: 500; }
+.ar-service-tag     { font-size: 10px; color: var(--gray-500); background: var(--gray-100); border-radius: 4px; padding: 2px 7px; white-space: nowrap; }
+.ar-zero            { color: var(--gray-300); }
+.ar-td-name         { min-width: 200px; max-width: 280px; }
+.ar-td-center       { text-align: center; }
+
+/* 활용도 badge */
+.ar-badge           { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 600; white-space: nowrap; }
+.ar-badge-high      { background: var(--green-50);  color: var(--green-600); }
+.ar-badge-medium    { background: var(--yellow-50); color: var(--yellow-600); }
+.ar-badge-low       { background: var(--gray-100);  color: var(--gray-500); }
+.ar-badge-unclear   { background: var(--orange-50); color: var(--orange-600); }
+
+/* 활용 유형 badge */
+.ar-type-badge      { display: inline-flex; align-items: center; padding: 2px 7px; border-radius: 4px; font-size: 10px; font-weight: 500; white-space: nowrap; }
+.ar-type-ep         { background: #eff6ff; color: var(--blue-600); }
+.ar-type-rr         { background: #f0fdf4; color: var(--green-600); }
+.ar-type-do         { background: var(--gray-100); color: var(--gray-500); }
+.ar-type-uc         { background: var(--orange-50); color: var(--orange-600); }
+
+/* 추천 badge */
+.ar-rec-badge       { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 600; white-space: nowrap; }
+.ar-rec-keep        { background: #f0fdf4; color: var(--green-600); }
+.ar-rec-clarify     { background: var(--yellow-50); color: var(--yellow-600); }
+.ar-rec-merge       { background: var(--blue-50); color: var(--blue-600); }
+.ar-rec-rename      { background: var(--purple-50); color: var(--purple-500); }
+.ar-rec-archive     { background: var(--gray-100); color: var(--gray-500); }
+.ar-rec-promote     { background: #eff6ff; color: var(--blue-600); }
+
+/* 미래 계획 에이전트 */
+.ar-future-wrap {
+  margin-top: 16px;
+  background: var(--gray-50);
+  border: 1px dashed var(--gray-300);
+  border-radius: 8px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.ar-future-label { font-size: 11px; color: var(--gray-500); flex-shrink: 0; }
+.ar-future-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.ar-future-chip  { font-size: 11px; color: var(--gray-500); background: #fff; border: 1px solid var(--gray-200); border-radius: 4px; padding: 2px 9px; }
+.ar-future-chip strong { color: var(--gray-700); }
+
+/* 분석 노트 (역할 공백·분화) */
+.ar-notes-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+.ar-note-card {
+  background: #fff;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  padding: 14px 16px;
+  border-left: 4px solid var(--gray-300);
+}
+.ar-note-gap     { border-left-color: var(--orange-500); }
+.ar-note-overlap { border-left-color: var(--blue-500); }
+.ar-note-type    { font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--gray-400); margin-bottom: 4px; }
+.ar-note-gap .ar-note-type  { color: var(--orange-600); }
+.ar-note-overlap .ar-note-type { color: var(--blue-600); }
+.ar-note-title   { font-size: 13px; font-weight: 700; color: var(--gray-800); margin-bottom: 6px; }
+.ar-note-desc    { font-size: 12px; color: var(--gray-600); line-height: 1.6; }
+
+/* 다음 개선 액션 */
+.ar-actions-list { display: flex; flex-direction: column; gap: 10px; }
+.ar-action-item  {
+  background: #fff;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+.ar-action-header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+.ar-action-label  { font-size: 13px; font-weight: 700; color: var(--gray-800); }
+.ar-action-desc   { font-size: 12px; color: var(--gray-600); line-height: 1.6; margin-bottom: 4px; }
+.ar-action-owner  { font-size: 10px; color: var(--gray-400); }
+
+/* 우선순위 badge */
+.ar-pri-badge  { display: inline-flex; align-items: center; padding: 2px 7px; border-radius: 4px; font-size: 10px; font-weight: 700; white-space: nowrap; }
+.ar-pri-high   { background: var(--red-50);    color: var(--red-600); }
+.ar-pri-med    { background: var(--yellow-50); color: var(--yellow-600); }
+.ar-pri-low    { background: var(--gray-100);  color: var(--gray-500); }
+
+
+.sn-empty-label {
+  font-size: 11px;
+  color: var(--gray-400);
+  line-height: 1.6;
+}
+
+/* ── Org Legend ── */
+.org-legend {
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-top: 20px;
+  background: var(--gray-50);
+}
+
+.org-legend-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--gray-400);
+  margin-bottom: 10px;
+}
+
+.org-legend-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px 24px;
+}
+
+.org-legend-item {
+  font-size: 11px;
+  color: var(--gray-500);
+  line-height: 1.5;
+}
+
+.org-legend-item strong {
+  color: var(--gray-700);
+  display: block;
+  margin-bottom: 1px;
+}
+
+/* ── 운영 방식 설명 ── */
+.ops-model {
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: 10px;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px 32px;
+}
+
+.ops-model-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  grid-column: 1 / -1;
+  margin-bottom: 4px;
+}
+
+.ops-item {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 13px;
+  color: var(--gray-700);
+  line-height: 1.6;
+}
+
+.ops-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-top: 6px;
+  flex-shrink: 0;
+}
+
+.ops-dot-purple { background: var(--purple-500); }
+.ops-dot-blue   { background: var(--blue-500); }
+.ops-dot-green  { background: var(--green-500); }
+.ops-dot-orange { background: var(--orange-500); }
+.ops-dot-gray   { background: var(--gray-400); }
+
+.ops-item strong { color: var(--gray-900); }
+
+/* ── Service Domain Cards (하단 상세) ── */
+.service-domain-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.service-domain-card {
+  background: #fff;
+  border: 1.5px solid var(--gray-200);
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.service-domain-card.status-active { border-left: 4px solid var(--green-500); }
+.service-domain-card.status-planned { border-left: 4px solid var(--gray-300); }
+
+.sdc-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 6px; }
+.sdc-name { font-size: 14px; font-weight: 700; color: var(--gray-900); }
+.sdc-phase { font-size: 11px; color: var(--gray-400); margin-top: 2px; }
+.sdc-context { font-size: 11px; color: var(--gray-500); line-height: 1.5; }
+.sdc-agents { font-size: 11px; color: var(--gray-400); }
+
+/* ══════════════════════════════════════
+   Service Insight Sections
+   ══════════════════════════════════════ */
+
+.insight-badge {
+  display: inline-block;
+  padding: 1px 7px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.insight-badge-confirmed     { background: var(--green-50);   color: var(--green-600);  border: 1px solid #bbf7d0; }
+.insight-badge-assumed       { background: var(--yellow-50);  color: var(--yellow-600); border: 1px solid #fef08a; }
+.insight-badge-review-needed { background: var(--orange-50);  color: var(--orange-600); border: 1px solid #fed7aa; }
+
+.insight-container { margin-top: 20px; }
+
+.insight-header {
+  border: 1px solid var(--gray-200);
+  border-radius: 8px 8px 0 0;
+  background: var(--gray-50);
+  padding: 12px 16px;
+  border-bottom: none;
+}
+
+.insight-header-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  margin-bottom: 4px;
+}
+
+.insight-header-meta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 11px;
+  color: var(--gray-400);
+}
+
+.insight-section {
+  background: #fff;
+  border: 1px solid var(--gray-200);
+  border-top: none;
+  padding: 16px 20px;
+}
+.insight-section:last-child { border-radius: 0 0 8px 8px; }
+
+.insight-section-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gray-800);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.insight-source-note {
+  font-size: 11px;
+  color: var(--gray-400);
+  margin-bottom: 10px;
+  font-style: italic;
+}
+
+/* Overview table */
+.insight-table { width: 100%; border-collapse: collapse; }
+.insight-table tr:not(:last-child) td { border-bottom: 1px solid var(--gray-100); }
+.insight-table td { padding: 5px 8px; vertical-align: top; font-size: 12px; }
+.insight-label { color: var(--gray-500); white-space: nowrap; width: 130px; font-weight: 500; }
+.insight-value { color: var(--gray-800); line-height: 1.5; }
+
+/* Role cards */
+.insight-role-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 10px;
+}
+.insight-role-card {
+  border: 1px solid var(--gray-100);
+  border-radius: 6px;
+  padding: 10px 14px;
+  background: var(--gray-50);
+}
+.insight-role-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.insight-role-name { font-size: 13px; font-weight: 700; color: var(--gray-900); }
+.insight-role-purpose { font-size: 11px; color: var(--gray-500); margin-bottom: 6px; }
+.insight-role-tasks { padding-left: 16px; font-size: 12px; color: var(--gray-700); line-height: 1.8; }
+.insight-review-note {
+  font-size: 11px;
+  color: var(--orange-600);
+  margin-top: 6px;
+  padding: 4px 8px;
+  background: var(--orange-50);
+  border-radius: 4px;
+}
+
+/* IA section */
+.insight-ia-entry,
+.insight-ia-utility {
+  font-size: 12px;
+  color: var(--gray-700);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.insight-ia-gnb {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+.insight-ia-menu {
+  border: 1px solid var(--gray-200);
+  border-radius: 6px;
+  padding: 10px 12px;
+  background: var(--gray-50);
+}
+.insight-ia-menu-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+.insight-ia-menu-num {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--blue-500);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.insight-ia-menu-name { font-size: 12px; font-weight: 700; color: var(--gray-900); flex: 1; }
+.insight-ia-sub { padding-left: 14px; font-size: 11px; color: var(--gray-600); line-height: 1.7; }
+.insight-ia-children { color: var(--gray-400); font-size: 10px; }
+.insight-ia-note { font-size: 10px; color: var(--gray-400); margin-top: 6px; font-style: italic; }
+
+/* Scenarios */
+.insight-scenario {
+  border: 1px solid var(--gray-200);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin-bottom: 10px;
+  background: var(--gray-50);
+}
+.insight-scenario-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.insight-scenario-num {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--blue-600);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.insight-scenario-title { font-size: 13px; font-weight: 700; color: var(--gray-900); margin-bottom: 8px; line-height: 1.4; }
+.insight-scenario-steps { padding-left: 16px; font-size: 12px; color: var(--gray-700); line-height: 1.8; }
+
+/* Journey table */
+.insight-journey-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.insight-journey-table th {
+  text-align: left;
+  padding: 6px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--gray-500);
+  border-bottom: 2px solid var(--gray-200);
+}
+.insight-journey-table td {
+  padding: 7px 8px;
+  vertical-align: top;
+  line-height: 1.5;
+  border-bottom: 1px solid var(--gray-100);
+}
+.insight-journey-step { font-weight: 600; color: var(--gray-800); white-space: nowrap; width: 100px; }
+
+/* Features grid */
+.insight-features-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+.insight-feature-item {
+  background: var(--gray-50);
+  border: 1px solid var(--gray-100);
+  border-radius: 6px;
+  padding: 10px 12px;
+}
+.insight-feature-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gray-900);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+}
+.insight-feature-desc {
+  font-size: 11px;
+  color: var(--gray-500);
+  line-height: 1.5;
+}
+
+/* Open Questions list */
+.insight-oq-list { display: flex; flex-direction: column; gap: 8px; }
+.insight-oq-item {
+  border: 1px solid var(--gray-100);
+  border-radius: 6px;
+  padding: 10px 12px;
+  background: var(--gray-50);
+}
+.insight-oq-item.insight-oq-high { border-left: 3px solid var(--orange-400); }
+.insight-oq-item.insight-oq-mid  { border-left: 3px solid var(--yellow-400); }
+.insight-oq-item.insight-oq-low  { border-left: 3px solid var(--gray-200); }
+.insight-oq-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 5px;
+}
+.insight-oq-id {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--gray-400);
+  font-family: monospace;
+}
+.insight-oq-topic {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gray-800);
+  flex: 1;
+}
+.insight-oq-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 7px;
+  border-radius: 10px;
+}
+.insight-oq-badge-high { background: var(--orange-50); color: var(--orange-600); border: 1px solid #fed7aa; }
+.insight-oq-badge-mid  { background: var(--yellow-50); color: var(--yellow-600); border: 1px solid #fef08a; }
+.insight-oq-badge-low  { background: var(--gray-100);  color: var(--gray-500);  border: 1px solid var(--gray-200); }
+.insight-oq-question {
+  font-size: 12px;
+  color: var(--gray-600);
+  line-height: 1.5;
+}
+
+/* UX Direction */
+.insight-ux-item { padding: 8px 0; border-bottom: 1px solid var(--gray-100); }
+.insight-ux-item:last-child { border-bottom: none; }
+.insight-ux-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gray-800);
+  margin-bottom: 3px;
+}
+.insight-ux-value { font-size: 12px; color: var(--gray-600); line-height: 1.6; }
+
+/* Review items */
+.insight-review-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--gray-100);
+  font-size: 12px;
+}
+.insight-review-item:last-child { border-bottom: none; }
+.insight-review-num {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--gray-200);
+  color: var(--gray-600);
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.insight-review-q { flex: 1; color: var(--gray-700); line-height: 1.5; }
+
+/* IA tree (메뉴 트리) */
+.ia-tree { margin-top: 12px; }
+
+.ia-tree-row { margin-bottom: 14px; }
+
+.ia-tree-menu-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid var(--gray-100);
+  margin-bottom: 2px;
+}
+
+.ia-tree-num {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--blue-500);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ia-tree-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--gray-900);
+  flex: 1;
+}
+
+.ia-tree-subs {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  padding-left: 28px;
+  border-left: 2px solid var(--gray-200);
+  margin-left: 9px;
+}
+
+.ia-tree-subs li {
+  font-size: 12px;
+  color: var(--gray-700);
+  padding: 2px 0 2px 8px;
+  line-height: 1.5;
+}
+
+.ia-tree-children { color: var(--gray-400); font-size: 11px; }
+
+.ia-tree-note {
+  font-size: 10px;
+  color: var(--gray-400);
+  padding-left: 37px;
+  margin-top: 3px;
+  font-style: italic;
+}
+.sdc-focus { font-size: 11px; color: var(--blue-600); font-weight: 500; }
+
+/* ══════════════════════════════════════
+   IA 문서 레이아웃 (.ia-doc)
+   ══════════════════════════════════════ */
+
+.ia-doc { display: flex; flex-direction: column; gap: 24px; }
+
+/* 섹션 소제목 */
+.ia-block-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+/* ── 1. 진입 및 공통 영역 ── */
+.ia-entry-row { display: flex; gap: 12px; flex-wrap: wrap; }
+.ia-entry-item {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 12px;
+}
+.ia-entry-label { font-weight: 600; color: var(--gray-500); white-space: nowrap; }
+.ia-entry-value { color: var(--gray-800); }
+
+/* ── 2. 메뉴 구조 테이블 ── */
+.ia-table-scroll { overflow-x: auto; border: 1px solid var(--gray-200); border-radius: 8px; }
+.ia-menu-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.ia-menu-table th {
+  text-align: left;
+  padding: 8px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  background: var(--gray-50);
+  border-bottom: 1px solid var(--gray-200);
+  white-space: nowrap;
+}
+.ia-menu-table td { padding: 7px 12px; border-bottom: 1px solid var(--gray-100); vertical-align: top; }
+.ia-menu-table tr:last-child td { border-bottom: none; }
+.ia-menu-table tr:hover td { background: var(--gray-50); }
+
+.ia-td-1d {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gray-900);
+  white-space: nowrap;
+  vertical-align: top;
+  border-right: 2px solid var(--gray-200);
+  background: var(--gray-50);
+  padding: 8px 14px 8px 12px;
+}
+.ia-1d-note { font-size: 10px; font-weight: 400; color: var(--gray-400); margin-top: 2px; white-space: normal; }
+.ia-td-2d { font-size: 12px; font-weight: 600; color: var(--gray-800); min-width: 120px; }
+.ia-item-inline-note { font-size: 10px; color: var(--blue-600); margin-top: 2px; }
+.ia-td-sub { color: var(--gray-600); min-width: 130px; }
+.ia-td-role { color: var(--gray-500); min-width: 120px; }
+.ia-td-status { white-space: nowrap; }
+
+.ia-sub-tag {
+  display: inline-block;
+  background: var(--gray-100);
+  color: var(--gray-600);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-size: 11px;
+  margin: 1px 2px 1px 0;
+}
+.ia-sub-empty { color: var(--gray-300); }
+
+/* IA 상태 칩 */
+.ia-status-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+}
+.ia-chip-confirmed { background: var(--green-50);   color: var(--green-600); }
+.ia-chip-assumed   { background: var(--gray-100);   color: var(--gray-500); }
+.ia-chip-review    { background: var(--yellow-50);  color: var(--yellow-600); }
+
+/* ── 3. IA 트리 ── */
+.ia-tree-compact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.ia-tc-col {
+  border-right: 1px solid var(--gray-200);
+  padding: 12px;
+  min-width: 130px;
+  flex: 1;
+}
+.ia-tc-col:last-child { border-right: none; }
+.ia-tc-root {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gray-900);
+  padding-bottom: 8px;
+  margin-bottom: 6px;
+  border-bottom: 2px solid var(--gray-200);
+}
+.ia-tc-d1 {
+  font-size: 11px;
+  color: var(--gray-700);
+  padding: 3px 0 3px 10px;
+  border-left: 2px solid var(--gray-200);
+  margin: 2px 0;
+}
+.ia-tc-d2 {
+  font-size: 10px;
+  color: var(--gray-500);
+  padding: 2px 0 2px 10px;
+  margin: 1px 0;
+  border-left: 2px solid var(--gray-100);
+  margin-left: 8px;
+}
+.ia-tc-d3 {
+  font-size: 10px;
+  color: var(--gray-400);
+  padding: 1px 0 1px 8px;
+  border-left: 1px solid var(--gray-100);
+  margin-left: 8px;
+}
+
+/* ── 4. 확인 필요 박스 ── */
+.ia-review-box {
+  background: var(--yellow-50);
+  border: 1px solid var(--yellow-500);
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+.ia-review-box-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gray-700);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin-bottom: 8px;
+}
+.ia-review-list {
+  margin: 0;
+  padding: 0 0 0 16px;
+  font-size: 12px;
+  color: var(--gray-600);
+  line-height: 1.8;
+}
+
+/* ── DS Application Section ── */
+.dsa-summary {
+  font-size: 12px;
+  color: var(--gray-600);
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+  line-height: 1.6;
+}
+.dsa-block-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin-bottom: 8px;
+}
+.dsa-badge {
+  display: inline-block;
+  padding: 1px 7px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.dsa-badge-confirmed { background: var(--green-50);  color: var(--green-600);  border: 1px solid #bbf7d0; }
+.dsa-badge-candidate { background: var(--yellow-50); color: var(--yellow-600); border: 1px solid #fef08a; }
+.dsa-badge-gap       { background: var(--orange-50); color: var(--orange-600); border: 1px solid #fed7aa; }
+
+.dsa-gap-list { display: flex; flex-direction: column; gap: 6px; }
+.dsa-gap-item {
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-left: 3px solid var(--gray-300);
+}
+.dsa-gap-item.dsa-gap-p1 { border-left-color: var(--orange-400); }
+.dsa-gap-item.dsa-gap-p2 { border-left-color: var(--yellow-400); }
+.dsa-gap-item.dsa-gap-p3 { border-left-color: var(--gray-300); }
+.dsa-gap-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 3px;
+}
+.dsa-gap-id {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--gray-400);
+  font-family: monospace;
+}
+.dsa-gap-cat {
+  font-size: 11px;
+  color: var(--gray-500);
+  background: var(--gray-100);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+.dsa-gap-priority {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 4px;
+  margin-left: auto;
+}
+.dsa-p-p1 { background: var(--orange-50); color: var(--orange-600); border: 1px solid #fed7aa; }
+.dsa-p-p2 { background: var(--yellow-50); color: var(--yellow-600); border: 1px solid #fef08a; }
+.dsa-p-p3 { background: var(--gray-100);  color: var(--gray-500);  border: 1px solid var(--gray-200); }
+.dsa-gap-item-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gray-800);
+  font-family: monospace;
+  margin-bottom: 2px;
+}
+.dsa-gap-desc {
+  font-size: 11px;
+  color: var(--gray-500);
+  line-height: 1.5;
+}
+
+.dsa-cv-list { display: flex; flex-direction: column; gap: 6px; }
+.dsa-cv-item {
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: var(--yellow-50);
+  border: 1px solid var(--yellow-200);
+}
+.dsa-cv-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 3px;
+  flex-wrap: wrap;
+}
+.dsa-cv-item-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gray-800);
+  font-family: monospace;
+}
+.dsa-cv-screen {
+  font-size: 11px;
+  color: var(--gray-500);
+  background: var(--gray-100);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+.dsa-cv-check {
+  font-size: 11px;
+  color: var(--yellow-700);
+  line-height: 1.5;
+}
+
+/* ── Insight tab wrapper ── */
+.insight-tabs-wrapper { margin-top: 20px; }
+.insight-tabs-wrapper .tabs { margin-bottom: 0; border-radius: 0; }
+.insight-tabs-wrapper .tab-panel.active .insight-container { margin-top: 0; }
+
+/* ── 버카다 벤치마크 ── */
+.bm-summary {
+  background: var(--blue-50);
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.bm-summary-desc {
+  font-size: 12px;
+  color: var(--gray-700);
+  line-height: 1.6;
+}
+.bm-summary-pills {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.bm-pill {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 12px;
+}
+.bm-table-scroll {
+  overflow-x: auto;
+  margin-top: 10px;
+}
+.bm-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.bm-table thead th {
+  background: var(--gray-50);
+  border-bottom: 2px solid var(--gray-200);
+  padding: 8px 10px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gray-500);
+  white-space: nowrap;
+}
+.bm-table tbody tr {
+  border-bottom: 1px solid var(--gray-100);
+  transition: background 0.1s;
+}
+.bm-table tbody tr:hover { background: var(--gray-50); }
+.bm-table tbody td { padding: 9px 10px; vertical-align: top; }
+.bm-th-feature, .bm-td-feature {
+  width: 22%;
+  font-weight: 600;
+  color: var(--gray-800);
+}
+.bm-th-spec, .bm-td-spec {
+  width: 28%;
+  color: var(--gray-600);
+  line-height: 1.5;
+}
+.bm-th-decision, .bm-td-decision {
+  width: 8%;
+  text-align: center;
+}
+.bm-th-rationale, .bm-td-rationale {
+  width: 42%;
+  color: var(--gray-600);
+  line-height: 1.5;
+}
+.bm-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.bm-adopt  { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+.bm-adapt  { background: #fef9c3; color: #854d0e; border: 1px solid #fef08a; }
+.bm-defer  { background: #f3f4f6; color: #6b7280; border: 1px solid #e5e7eb; }
+.bm-reject { background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; }
+.bm-cluster-note {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--gray-500);
+  margin-left: 8px;
+}
+
+/* ── IA 제안 ── */
+.ia-summary {
+  display: flex;
+  gap: 20px;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.ia-summary-left { flex: 1; min-width: 200px; }
+.ia-summary-title { font-size: 11px; font-weight: 700; color: var(--gray-500); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 4px; }
+.ia-summary-desc { font-size: 12px; color: var(--gray-700); line-height: 1.6; }
+.ia-summary-premise { font-size: 11px; color: var(--gray-500); margin-top: 6px; }
+.ia-summary-right { display: flex; align-items: flex-start; padding-top: 4px; }
+.ia-summary-stat-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.ia-stat {
+  font-size: 11px; font-weight: 700;
+  padding: 3px 8px; border-radius: 10px;
+}
+
+/* IA 판단 배지 */
+.ia-dec-badge { display: inline-block; font-size: 10px; font-weight: 700; padding: 1px 7px; border-radius: 10px; text-transform: uppercase; }
+.ia-dec-keep   { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+.ia-dec-add    { background: #dbeafe; color: #1d4ed8; border: 1px solid #bfdbfe; }
+.ia-dec-adapt  { background: #fef9c3; color: #854d0e; border: 1px solid #fef08a; }
+.ia-dec-defer  { background: #f3f4f6; color: #6b7280; border: 1px solid #e5e7eb; }
+.ia-dec-reject { background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; }
+.ia-dec-hold   { background: #fdf4ff; color: #7e22ce; border: 1px solid #e9d5ff; }
+
+/* IA 3단 컬럼 */
+.ia-three-col {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 10px;
+}
+@media (max-width: 1200px) { .ia-three-col { grid-template-columns: 1fr; } }
+
+.ia-tree-block {
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.ia-tree-header {
+  font-size: 12px; font-weight: 700;
+  padding: 8px 12px;
+  color: #fff;
+}
+.ia-hdr-minimal     { background: #2563eb; }
+.ia-hdr-recommended { background: #16a34a; }
+.ia-hdr-advanced    { background: #7c3aed; }
+.ia-tree-desc { font-size: 11px; color: var(--gray-600); padding: 8px 12px 4px; line-height: 1.5; border-bottom: 1px solid var(--gray-100); }
+.ia-tree-menus { padding: 8px; display: flex; flex-direction: column; gap: 4px; }
+.ia-tree-menu {
+  border: 1px solid var(--gray-100);
+  border-radius: 6px;
+  padding: 7px 10px;
+  background: var(--gray-50);
+}
+.ia-tree-menu-name {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 700; color: var(--gray-800);
+  margin-bottom: 3px;
+}
+.ia-tree-num { font-size: 10px; color: var(--gray-400); font-family: monospace; width: 18px; flex-shrink: 0; }
+.ia-menu-prio { font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 8px; margin-left: auto; }
+.ia-p0 { background: #dbeafe; color: #1e40af; }
+.ia-p1 { background: #dcfce7; color: #166534; }
+.ia-p2 { background: #f3f4f6; color: #6b7280; }
+.ia-hold { background: #fdf4ff; color: #7e22ce; }
+.ia-reject { background: #fee2e2; color: #dc2626; }
+.ia-tree-menu-note { font-size: 10px; color: var(--gray-500); margin-bottom: 4px; font-style: italic; }
+.ia-tree-sub-list { display: flex; flex-direction: column; gap: 1px; }
+.ia-tree-sub { font-size: 11px; color: var(--gray-500); padding: 1px 0 1px 14px; }
+
+/* 고도화 IA 추가 항목 */
+.ia-adv-list { padding: 8px; display: flex; flex-direction: column; gap: 6px; }
+.ia-adv-item { border: 1px solid var(--gray-100); border-radius: 6px; padding: 7px 10px; background: var(--gray-50); }
+.ia-adv-menu { font-size: 12px; font-weight: 700; color: var(--gray-800); margin-bottom: 3px; }
+.ia-adv-cond { font-size: 10px; font-weight: 400; color: var(--gray-500); margin-left: 6px; }
+
+/* 사양 우선순위 테이블 */
+.ia-spec-group { margin-bottom: 16px; }
+.ia-spec-group-hdr {
+  font-size: 11px; font-weight: 700;
+  padding: 6px 10px;
+  border-radius: 6px 6px 0 0;
+  display: flex; align-items: center; gap: 8px;
+  color: #fff;
+}
+.ia-p0-hdr     { background: #1d4ed8; }
+.ia-p1-hdr     { background: #16a34a; }
+.ia-p2-hdr     { background: #6b7280; }
+.ia-hold-hdr   { background: #7c3aed; }
+.ia-reject-hdr { background: #dc2626; }
+.ia-spec-count { font-size: 10px; font-weight: 400; opacity: .8; }
+.ia-spec-table { width: 100%; border-collapse: collapse; }
+.ia-spec-table tr { border-bottom: 1px solid var(--gray-100); }
+.ia-spec-table tr:last-child { border-bottom: none; }
+.ia-spec-table td { padding: 7px 10px; font-size: 12px; vertical-align: top; }
+.ia-spec-td { font-weight: 600; color: var(--gray-800); width: 38%; }
+.ia-spec-reason { color: var(--gray-500); }
+
+/* 확인 질문 */
+.ia-oq-list { display: flex; flex-direction: column; gap: 8px; }
+.ia-oq-item { border: 1px solid var(--gray-100); border-radius: 6px; padding: 10px 12px; background: var(--gray-50); }
+.ia-q-critical { border-left: 3px solid #dc2626; }
+.ia-q-high     { border-left: 3px solid #f97316; }
+.ia-q-medium   { border-left: 3px solid var(--gray-300); }
+.ia-oq-hdr { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+.ia-oq-id { font-size: 10px; font-weight: 700; color: var(--gray-400); font-family: monospace; }
+.ia-oq-badge { font-size: 10px; font-weight: 600; padding: 1px 7px; border-radius: 10px; }
+.ia-q-badge-critical { background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; }
+.ia-q-badge-high     { background: #fff7ed; color: #ea580c; border: 1px solid #fed7aa; }
+.ia-q-badge-medium   { background: var(--gray-100); color: var(--gray-500); border: 1px solid var(--gray-200); }
+.ia-oq-question { font-size: 12px; color: var(--gray-700); line-height: 1.5; margin-bottom: 4px; }
+.ia-oq-impact { font-size: 11px; color: var(--gray-500); }
+
+
+/* standalone 전용 오버라이드 */
+body { display: block; background: var(--gray-50); }
+.standalone-wrap { max-width: 1100px; margin: 0 auto; padding: 32px 24px 80px; }
+.standalone-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 24px; padding-bottom: 20px;
+  border-bottom: 1px solid var(--gray-200);
+}
+.standalone-title { font-size: 22px; font-weight: 700; color: var(--gray-900); }
+.standalone-sub { font-size: 13px; color: var(--gray-500); margin-top: 4px; }
+.standalone-badge {
+  display: inline-block; padding: 4px 10px; border-radius: 4px;
+  background: #dbeafe; color: #1e40af; font-size: 12px; font-weight: 600;
+}
+.standalone-meta { font-size: 12px; color: var(--gray-400); margin-top: 8px; text-align: right; }
+  </style>
+</head>
+<body>
+<div class="standalone-wrap">
+
+  <div class="standalone-header">
+    <div>
+      <div class="standalone-title">클라우드영상시스템</div>
+      <div class="standalone-sub">PC 웹뷰어 기획 자료 — 서비스 분석 · IA 제안 · 벤치마크</div>
+    </div>
+    <div style="text-align:right">
+      <span class="standalone-badge">S1 서비스 인텔리전스</span>
+      <div class="standalone-meta">생성: 2026년 5월 21일</div>
+    </div>
+  </div>
+
+  <div id="insight-root"></div>
+
+</div>
+
+<script>
+// ── 인라인 데이터 ──
+const CLOUD_VIDEO_DATA = {"service":{"serviceId":"video-cloud","serviceName":"클라우드영상시스템","client":"에스원","system":"S1 VaaS (Video as a Service) — 클라우드 기반 영상관제 SaaS","status":"active","currentPhase":"designer-review-needed","currentFocus":"서비스 가이드 초안 검토","detectedLayout":"dashboard-3col + sidebar-split-panel + list-drawer","workspacePath":"../s1vaas","analyzedMenuCount":11,"pendingReviewCount":6,"sourceTypes":["코드베이스(React/TypeScript)","DB 스키마(SQL)","목업 데이터"],"commonPromotion":"not-yet","dsMapping":"deferred","nextAction":"서비스 가이드 초안 디자이너 검토 — AI 영상 검색·출동 관제·백엔드 API 계획 확인","publishStatus":"draft","visibility":"admin-only","domainId":"video","domainName":"영상서비스","displayName":"클라우드영상시스템","domain":"video"},"insight":{"serviceId":"video-cloud","serviceName":"클라우드영상시스템","curatedAt":"2026-05-21","sourceRefs":["Figma 기획문서 — 에스원 가람 영상 UX 기획 (클라우드영상시스템) 슬라이드 10장","슬라이드 01·02: 추진배경·현황분석 / 슬라이드 03·04: 전략방향","슬라이드 05·06: 상품컨셉 / 슬라이드 07·08: 상품화계획·판매정책","슬라이드 09·10: 포지셔닝·기대효과"],"sections":[{"id":"overview","title":"서비스 개요","items":[{"label":"서비스명 (외부)","value":"에스원 클라우드 CCTV","status":"confirmed"},{"label":"서비스명 (내부)","value":"클라우드 AI CCTV / 클라우드영상시스템","status":"confirmed"},{"label":"서비스 유형","value":"VSaaS (Video as a Service) — 클라우드 기반 AI 영상관제 구독 서비스","status":"confirmed"},{"label":"판매 채널","value":"다이렉트몰 중심 온라인 판매","status":"confirmed"},{"label":"초기 타깃","value":"SOHO (1~4인) — 무인매장, 가두매장, 음식점/카페, 미용실","status":"confirmed"},{"label":"기본 월 요금","value":"14円/台, 최대 8대","status":"confirmed"},{"label":"현황","value":"'26년 경영계획 추진과제 — 클라우드 S/W + AI 카메라 개발 중","status":"confirmed"}]},{"id":"purpose","title":"전략 방향","items":[{"label":"전략①","value":"AI·클라우드 기반 Full 서비스 밸류체인 확보 — 에스원의 센싱·모니터링·출동 역량으로 영상보안 근원적 경쟁력 회복","status":"confirmed"},{"label":"전략②","value":"H/W 렌탈에서 VSaaS 중심 비즈니스로 전환 — 구독형으로 고객이 원하는 서비스 선택 제공","status":"confirmed"},{"label":"추진 배경","value":"SOHO 대응 상품 부족 (침투율 38.7%), 기존 클라우드 CCTV는 단순 저장/조회 한계, 에스원 성장률 하락 추세","status":"confirmed"},{"label":"As-Is","value":"고객이 직접 영상 모니터링·대응 (기기 렌탈 + A/S만 제공)","status":"confirmed"},{"label":"To-Be","value":"에스원이 AI 분석·AI 관제·원격 A/S·출동까지 통합 제공 (고객이 원하는 서비스 선택)","status":"confirmed"}]},{"id":"features","title":"클라우드 S/W 핵심 기능","items":[{"name":"영상 모니터링","description":"실시간 영상 모니터링","status":"confirmed"},{"name":"영상 저장","description":"클라우드 기반 영상 저장","status":"confirmed"},{"name":"녹화영상 전송","description":"저장된 녹화영상 조회 및 전송","status":"confirmed"},{"name":"장비이상감지","description":"카메라·장비 이상 상태 감지","status":"confirmed"},{"name":"영상 검색 (문장 검색)","description":"자연어 문장으로 영상 구간 검색 — 예: 파란선초 및 빨간색모자를 쓴 사람","status":"confirmed"},{"name":"AI 알고리즘 구독","description":"침입·문장검색 외 유료 옵션 추가 (화재·배회·라인크로스·피플카운트)","status":"confirmed"},{"name":"관제서버 연동","description":"요청 출동 및 영상확인 관제 (기본 월 2회 출동 포함)","status":"confirmed"},{"name":"통합계정 연동","description":"에스원 계정 통합 관리","status":"confirmed"},{"name":"모두App 연동","description":"고객용 모바일 서비스 연동","status":"confirmed"}]},{"id":"scenarios","title":"주요 사용 시나리오","items":[{"title":"AI 이상감지 → 관제서버 연동 대응","status":"confirmed","reviewNote":"웹뷰어 내 이상감지 이벤트 표시 방식 및 관제서버 연동 흐름 확인 필요","steps":["카메라 AI가 침입·배회·화재 등 이상 감지 (슬라이드 05 — AI 영상분석 기능)","관제서버 연동을 통해 요청 출동 및 영상확인 관제 처리 (슬라이드 05 — 기존 시스템 연동)"]},{"title":"실시간 영상 모니터링","status":"confirmed","steps":["클라우드 S/W(웹뷰어)에서 계약 고객사 카메라 실시간 영상 확인 (슬라이드 05 — 영상 모니터링)"]},{"title":"AI 문장 검색으로 영상 구간 조회","status":"confirmed","reviewNote":"검색 결과 표시 방식·UX 상세는 확인 필요","steps":["클라우드 S/W 영상 검색에서 자연어 문장 입력 (슬라이드 05 — 영상 검색, 문장 검색 포함)","예: 파란선초 및 빨간색모자를 쓴 사람 → 해당 영상 구간 조회","녹화영상 구간 재생 및 활용 (슬라이드 05 — 녹화영상 전송)"]},{"title":"구독 옵션 추가 (AI 알고리즘)","status":"confirmed","reviewNote":"구독 관리 화면 위치 확인 필요","steps":["기본 서비스(침입·문장검색) 외 유료 옵션 선택 (슬라이드 05 — AI 알고리즘 구독 서비스)","화재·배회·라인크로스·피플카운트 분석 추가 구독 (슬라이드 08 — 옵션 영상분석 항목)","영상확인 관제서비스 추가 시 에스원이 직접 영상 확인·관제 (슬라이드 08 — 영상확인 관제서비스 옵션)"]}]},{"id":"dsApplication","title":"DS 적용 계획","updatedAt":"2026-05-21","summary":"S1_AI_DESIGN_GUIDE(V2.4) 기준. DS에 있는 것만 적용, 없으면 gap으로 기록. 헥스값 직접 사용 금지.","stats":[{"label":"분석 화면 수","value":"8개 화면 (로그인·모니터링·알림·검색·설정·대시보드·사이트관리·공통)","status":"confirmed"},{"label":"Foundation 적용 범위","value":"전체 applicable — 색상 팔레트·타이포·스페이싱·Border Width·Radius 모두 stable","status":"confirmed"},{"label":"Semantic 토큰","value":"대부분 stable — bg·surface·text·border·icon·action·status·overlay. bg/home, bg/selected는 candidate","status":"confirmed"},{"label":"구현 완료 컴포넌트","value":"12개 즉시 사용 가능 — Button·Input·Select·Toggle·Checkbox·Radio·Chip·Textarea·Table·Pagination","status":"confirmed"},{"label":"Candidate 컴포넌트","value":"Date Picker·Time Picker — 착수 전 HD 결정 필요","status":"candidate"},{"label":"DS Gap (P1)","value":"카메라 그리드·VideoPlayer·EmptyState·Toast·Modal·LoadingSpinner·Sidebar 너비·GNB 높이","status":"gap"}],"gaps":[{"id":"G-C1","priority":"P1","category":"색상 토큰","item":"--color-video-bg","description":"카메라 셀 영상 영역 배경 전용 토큰 없음. 임시: gray-dark-0 직접 참조"},{"id":"G-C2","priority":"P1","category":"색상 토큰","item":"AI 이벤트 태그 색상","description":"침입·화재·배회 등 AI 이벤트 카테고리별 전용 토큰 없음. 임시: status-error/warning/info 순환 매핑"},{"id":"G-L1","priority":"P1","category":"레이아웃 토큰","item":"--sidebar-width / --topbar-height","description":"Sizing 토큰 카테고리 부재. 사이드바 너비·GNB 높이 모두 없음. 서비스 전용 CSS 변수로 관리"},{"id":"G-L2","priority":"P1","category":"레이아웃 토큰","item":"--camera-grid-gap","description":"카메라 그리드 간격 토큰 없음. 그리드 레이아웃 패턴(2×2, 4×4) 전체 부재"},{"id":"G-P1","priority":"P1","category":"컴포넌트","item":"VideoPlayer · CameraCell · CameraGrid · LiveBadge","description":"영상 플레이어·카메라 카드·그리드·Live 배지 — 영상 도메인 전용. service-specific 설계 필요"},{"id":"G-P2","priority":"P1","category":"컴포넌트","item":"EmptyState · LoadingSpinner","description":"빈 상태·로딩 상태 컴포넌트 없음. 임시: 서비스 전용 구현"},{"id":"G-P3","priority":"P1","category":"컴포넌트","item":"Toast · Modal / Dialog","description":"Toast 없음. Modal은 구조 토큰(radius-modal-md, color-surface-raised)만 있고 컴포넌트 미등록"},{"id":"G-P4","priority":"P2","category":"컴포넌트","item":"Tab","description":"Tab 컴포넌트 없음 — 카메라 설정 탭 등에서 필요. Button 또는 Radio로 임시 대응"},{"id":"G-P5","priority":"P2","category":"컴포넌트","item":"VideoSearchResultCard · VideoTimeline","description":"AI 문장 검색 결과 카드·타임라인 하이라이팅 — service-specific 설계 필요"}],"candidates":[{"id":"CV-1","item":"--color-bg-home (#F5F6FB)","screen":"대시보드","checkPoint":"Figma에서 라이트/다크 토큰 값 확인 후 확정"},{"id":"CV-2","item":"--color-bg-selected (blue-50)","screen":"모니터링 사이드바 내비게이션","checkPoint":"다크모드에서 충분한 대비 확인 필요"},{"id":"CV-3","item":"Chip 다크모드","screen":"알림 이벤트 분류 필터","checkPoint":"dark mode 시각 검증 미완료 (pending) — 검증 후 사용 확정"},{"id":"CV-4","item":"Date Picker","screen":"알림·영상 검색 화면","checkPoint":"착수 전 HD 결정 필요 — 녹화 영상 검색 기간 선택에서 핵심"},{"id":"CV-5","item":"Nav (Sidebar)","screen":"공통 내비게이션","checkPoint":"in-progress 상태 — 클라우드 영상 메뉴 구조 반영 가능 여부 확인 필요"},{"id":"CV-6","item":"Radio vs Button (레이아웃 전환)","screen":"모니터링 카메라 그리드","checkPoint":"2×2 / 4×4 전환 UX 패턴 결정 필요 — Radio(아이콘) 또는 Button 그룹"}]},{"id":"openQuestions","title":"확인 필요 항목","items":[{"id":"A-01","priority":"high","topic":"웹뷰어 접근 주체","question":"클라우드 S/W(웹뷰어)는 에스원 내부 직원 전용인가, 고객도 직접 로그인할 수 있는가?"},{"id":"A-02","priority":"high","topic":"App vs 웹 기능 경계","question":"모두App(고객 모바일)과 클라우드 S/W(웹뷰어)의 기능 경계는 어떻게 되는가?"},{"id":"B-01","priority":"high","topic":"웹뷰어 화면 목록·구조","question":"6개 기능이 웹뷰어에서 어떤 화면 구조(IA)로 구성되는가?"},{"id":"B-02","priority":"high","topic":"영상 검색 화면 구성","question":"문장 검색 결과 표시 방식과 영상 구간 재생 UX는?"},{"id":"C-01","priority":"high","topic":"요청출동 처리 흐름","question":"월 2회 기본 요청출동이 웹뷰어에서 어떤 흐름으로 처리되는가?"},{"id":"D-01","priority":"mid","topic":"내부 운영자 역할 체계","question":"클라우드 S/W를 사용하는 에스원 내부 직원의 역할 구분은?"},{"id":"C-02","priority":"mid","topic":"통합계정 연동 방식","question":"에스원 통합계정 연동 방식은? (SSO 등)"},{"id":"B-03","priority":"mid","topic":"AI 알고리즘 구독 화면","question":"유료 AI 알고리즘 옵션 추가·관리 화면 위치는?"}]},{"id":"iaProposal","title":"IA 제안","analyzedAt":"2026-05-21","basis":"Figma 기획문서 + Verkada 벤치마크 비교 분석","premise":"웹뷰어 접근 주체(A-01) 미확정 상태 — 에스원 내부 관제 직원 주 사용자로 가정","specSummary":{"total":45,"keep":12,"add":9,"adapt":9,"defer":9,"reject":3,"needsReview":3},"minimalIA":{"label":"A. 최소 출시 IA","desc":"Phase 1 출시에 적합한 가장 단순한 구조. 사용자가 바로 영상 조회·검색·이벤트 처리를 할 수 있는 수준.","menus":[{"name":"대시보드","priority":"P0","items":["사이트별 카메라 상태 요약"],"specs":["KPI 수치 카드","사이트별 상태 카드","최근 이벤트 목록"]},{"name":"실시간 영상","priority":"P0","items":["멀티 카메라 그리드 (2x2/3x3)","단일 카메라 상세 보기"],"specs":["그리드 레이아웃 전환","얼굴 블러 토글","카메라 상태 표시"]},{"name":"이벤트","priority":"P0","items":["이상감지 이벤트 목록","출동 요청 처리"],"specs":["이벤트 수신함","이벤트 영상 클립","출동 요청"]},{"name":"영상 검색","priority":"P0","items":["AI 문장 검색","날짜·카메라 필터","검색 결과 클립 보기"],"specs":["자연어 검색 입력","검색 필터","검색 결과 클립 뷰어"]},{"name":"카메라 관리","priority":"P0","items":["카메라 목록·상태","카메라 기본 설정"],"specs":["장비 상태 목록","카메라 등록 온보딩","일반·AI 설정"]},{"name":"설정","priority":"P0","items":["내 계정 (통합계정 연동)","AI 구독 옵션 관리"],"specs":["SSO 로그인","역할·권한","구독 옵션 on/off"]}]},"recommendedIA":{"label":"B. 권장 IA","desc":"초기 사용성과 향후 확장성을 함께 고려한 추천 구조. P1 사양 70% 포함.","menus":[{"name":"대시보드","priority":"P0","items":["운영 현황 요약","사이트별 상태 카드","최근 이벤트 요약"],"note":"SOC 콘솔 개념 → 에스원 관제 맥락으로 재설계"},{"name":"실시간 영상","priority":"P0","items":["멀티 카메라 그리드 (2x2/3x3/4x3)","단일 카메라 상세 보기"],"note":"얼굴 블러 토글 포함 / 레이아웃 저장은 Phase 2"},{"name":"녹화 영상","priority":"P0","items":["24h 타임라인 재생","날짜·카메라 선택","스냅샷·다운로드"],"note":"실시간 영상과 분리 — 탐색 편의성 향상"},{"name":"AI 영상 검색","priority":"P0","items":["자연어 문장 검색","검색 필터","최근·추천 검색","검색 결과 클립"],"note":"S1 핵심 차별점 — 독립 대메뉴 필수"},{"name":"이벤트 관리","priority":"P0","items":["이벤트 수신함","이벤트 상세·출동 처리","사건 이력","기본 알림 규칙"],"note":"관제 업무 흐름 명확화를 위해 독립 대메뉴"},{"name":"카메라 관리","priority":"P0","items":["카메라 목록·상태","카메라 등록","카메라 설정 (일반·AI·프라이버시)","원격 펌웨어"],"note":"장비이상감지 + 온보딩 + AI 설정 통합"},{"name":"관리자","priority":"P0","items":["계정·SSO","사용자·권한","AI 구독 옵션","이상감지 빈도 통계","감사 로그"],"note":"에스원 내부 역할 체계 확정 후 권한 설계 가능"}]},"advancedIA":{"label":"C. 고도화 IA","desc":"Phase 2 이후 확장을 고려한 전체 구조. Verkada 수준 사양 포함.","additions":[{"menu":"인물·차량","condition":"Hold — 개인정보보호법 확인 후","items":["인물 감지 목록 (비식별 처리)","차량 번호판 인식 (LPR 사양 확인 후)"]},{"menu":"분석·통계","condition":"P2 — Phase 2 이후","items":["재실 인원 트렌드","대기열 분석","이상감지 빈도 심화"]},{"menu":"플로어 플랜","condition":"P2 — 단순화 버전","items":["평면도 기반 카메라 위치 보기"]},{"menu":"이벤트 관리 확장","condition":"P2","items":["커스텀 알림 규칙 빌더","수사 케이스 관리"]},{"menu":"관리자 확장","condition":"P2","items":["데이터 내보내기·컴플라이언스","API Keys·Webhook"]}]},"specPriority":{"P0":[{"spec":"라이브 그리드 (2x2/3x3/4x3)","decision":"keep","reason":"기획 명시 / 관제 핵심 화면"},{"spec":"단일 카메라 라이브 보기","decision":"add","reason":"개별 카메라 확인 필수"},{"spec":"24h 재생 타임라인","decision":"keep","reason":"기획 명시 / 녹화영상 조회 핵심"},{"spec":"얼굴 블러 토글","decision":"add","reason":"개보법 대응 필수"},{"spec":"이상감지 이벤트 수신함","decision":"keep","reason":"관제 핵심 업무 흐름"},{"spec":"침입·화재·배회 AI 감지 이벤트","decision":"keep","reason":"기획 기본 AI 알고리즘"},{"spec":"이벤트 → 출동 요청 처리","decision":"keep","reason":"기획 핵심 시나리오"},{"spec":"자연어 문장 검색","decision":"keep","reason":"기획 핵심 차별점"},{"spec":"검색 필터 (카메라·날짜)","decision":"add","reason":"검색 정확도 필수"},{"spec":"검색 결과 클립 뷰어","decision":"keep","reason":"검색 후 영상 확인 핵심"},{"spec":"사이트·카메라별 현황 대시보드","decision":"adapt","reason":"SOC 콘솔 → 에스원 관제 맥락 재설계"},{"spec":"카메라 목록·장비 상태","decision":"keep","reason":"장비이상감지 기획 명시"},{"spec":"카메라 온보딩 (장치 등록)","decision":"add","reason":"다이렉트몰 셀프 온보딩 핵심"},{"spec":"카메라 기본 설정 (이름·AI on/off)","decision":"adapt","reason":"General·Events 탭 우선"},{"spec":"SSO / 통합계정 로그인","decision":"keep","reason":"기획 명시 (확인항목 C-02)"},{"spec":"역할·권한 관리","decision":"adapt","reason":"에스원 내부 역할 구분 (관제원·운영자·관리자)"},{"spec":"AI 알고리즘 구독 옵션 관리","decision":"adapt","reason":"화재·배회·라인크로스·피플카운트 on/off"}],"P1":[{"spec":"영상 스냅샷·다운로드","decision":"adapt","reason":"공유 방식 에스원 정책 기준 조정"},{"spec":"알림 음소거·스누즈","decision":"add","reason":"무인매장 야간 운영 과잉 알림 방지"},{"spec":"기본 알림 규칙 설정","decision":"adapt","reason":"기본 조건 제공, 커스텀은 Phase 2"},{"spec":"사건 이력 조회","decision":"add","reason":"출동 결과 기록·이력 관리"},{"spec":"최근·추천 검색","decision":"add","reason":"비전문 SOHO 사용자 편의성"},{"spec":"원격 펌웨어 업데이트","decision":"add","reason":"AI 알고리즘 업데이트 연계"},{"spec":"이상감지 빈도 기본 통계","decision":"add","reason":"운영 리포트 최소 단위"},{"spec":"감사 로그","decision":"add","reason":"운영 보안·개보법 대응"}],"P2":[{"spec":"멀티캠 동기화 재생","decision":"defer","reason":"SOHO 8대 이하 단일 재생으로 충분"},{"spec":"평면도 기반 카메라 보기","decision":"adapt","reason":"단순화 버전으로 Phase 2"},{"spec":"재실 인원·대기열 트렌드","decision":"defer","reason":"SOHO 니즈 있으나 Phase 2"},{"spec":"수사 케이스 관리","decision":"defer","reason":"출동 결과 연계 고도화"},{"spec":"커스텀 알림 규칙 빌더","decision":"defer","reason":"기본 알림 구성 후 Phase 2"},{"spec":"데이터 내보내기·컴플라이언스","decision":"add","reason":"개보법 대응 — 정책 확인 후"}],"Hold":[{"spec":"인물 얼굴 감지·저장 (POI)","decision":"needs-review","reason":"개인정보보호법 생체정보 수집 범위 확인 필요"},{"spec":"차량 번호판 인식 (LPR)","decision":"needs-review","reason":"S1 AI 카메라 LPR 탑재 여부 확인 필요"},{"spec":"인물 동선 추적","decision":"needs-review","reason":"개보법 비식별 처리 방식 기준 확인 필요"}],"Reject":[{"spec":"양방향 음성 (Talkdown)","decision":"reject","reason":"S1 AI 카메라 H/W 미확인"},{"spec":"공개 그리드 URL","decision":"reject","reason":"에스원 보안 정책 — 인증 없는 외부 공개 부적합"},{"spec":"Slack·Teams·InformaCast 연동","decision":"reject","reason":"SOHO 타깃 불필요"}]},"openQuestions":[{"id":"Q1","priority":"critical","question":"웹뷰어 접근 주체(A-01) — 에스원 내부 전용인가, 고객(SOHO)도 접근하는가?","impact":"IA 전체 구조가 이 답에 따라 달라짐"},{"id":"Q2","priority":"critical","question":"이벤트 → 출동 처리 흐름 상세(C-01) — 웹뷰어에서 어떤 화면이 필요한가?","impact":"이벤트 관리 대메뉴 하위 화면 구성"},{"id":"Q3","priority":"high","question":"에스원 내부 역할 체계(D-01) — 관제원·운영자·관리자 구분이 확정돼야 권한 설계 가능","impact":"관리자 대메뉴 권한 매트릭스"},{"id":"Q4","priority":"high","question":"모두App vs 웹뷰어 기능 경계(A-02) — 고객이 모두App으로 할 수 있는 것과 웹뷰어에서 해야 하는 것 구분","impact":"채널별 기능 설계 방향"},{"id":"Q5","priority":"medium","question":"다음에 어떤 화면부터 기획할 것인가? 추천 순서: 이벤트 수신함 → 실시간 영상 → AI 검색 → 카메라 온보딩 → 대시보드","impact":"기획 작업 우선순위"}]},{"id":"benchmark","title":"버카다 벤치마크 분석","source":"github.com/ErikKim/verkada — VSaaS 화면 복사본 분석","analyzedAt":"2026-05-21","summary":"Verkada는 글로벌 VSaaS 1위 사업자. 영상·AI검색·관제·출입통제·직장관리까지 아우르는 통합 플랫폼으로, 이 중 클라우드영상시스템(SOHO VSaaS)에 직접 적용 가능한 기능을 아래와 같이 선별했다.","clusters":[{"id":"video-core","title":"영상 모니터링 코어","items":[{"feature":"Live Grid (1x1~4x3 레이아웃)","verkadaSpec":"페이지당 최대 12대, 드래그 타일 재배치, 레이아웃 저장","decision":"adopt","rationale":"웹뷰어 핵심 화면 — SOHO 최대 8대 환경에 2x2/3x3 레이아웃 우선 제공"},{"feature":"단일 카메라 라이브 + PTZ 컨트롤","verkadaSpec":"줌/팬/틸트 패드, 프리셋 위치, 모션존 에디터","decision":"adopt","rationale":"개별 카메라 상세 모니터링 화면 필수"},{"feature":"24h 재생 타임라인 (Playback)","verkadaSpec":"24시간 스크럽, 1x/2x/4x/8x 속도, HQ/SQ 품질 전환, 날짜 선택","decision":"adopt","rationale":"녹화영상 전송·조회 기획 명시 — 타임라인 스크럽 UX가 핵심"},{"feature":"얼굴 흐림(Face Blur) 토글","verkadaSpec":"라이브 그리드에서 원터치 얼굴 블러 적용","decision":"adopt","rationale":"개인정보보호법 대응 — SOHO 매장 내 고객 얼굴 식별 방지 필요"},{"feature":"영상 아카이브 / 스냅샷 / 다운로드","verkadaSpec":"클립 아카이브, 캡처 이미지, MP4 다운로드, 공유 링크","decision":"adopt","rationale":"기획 명시(녹화영상 전송) — 다운로드·공유는 S1 보안 정책 기준으로 범위 조정"},{"feature":"멀티캠 동기화 재생","verkadaSpec":"2~4개 카메라 동시 재생·시간 동기화 타임라인","decision":"defer","rationale":"Phase 1 SOHO 8대 이하 — 단일 카메라 재생으로 충분, Phase 2 소/중형 시 도입"},{"feature":"카메라 설정 (7탭)","verkadaSpec":"General·Device·Audio·Events·Privacy·Analytics·Backup","decision":"adapt","rationale":"General·Events·Privacy 3탭 우선 도입, Audio·Backup은 S1 카메라 사양 확인 후 결정"},{"feature":"프라이버시 마스크 영역 편집","verkadaSpec":"드래그로 블랙마스크 영역 지정, 인코딩 시 영구 적용","decision":"adapt","rationale":"개보법 대응 필수 기능 — 마스크 소급 미적용 정책 등 법적 검토 후 사양 확정"},{"feature":"펌웨어 업데이트 관리","verkadaSpec":"카메라별 펌웨어 버전 확인, 원격 업데이트 실행","decision":"adopt","rationale":"클라우드 AI 카메라 원격 관리의 핵심 운영 기능"},{"feature":"카메라 상태·통계 (Health/Stats)","verkadaSpec":"연결 상태·CPU·대역폭·스토리지 사용량 차트","decision":"adopt","rationale":"기획 명시(장비이상감지)와 직결 — 장비 이상 조기 감지"},{"feature":"카메라 감사 로그","verkadaSpec":"접근 기록, 설정 변경 이력","decision":"adopt","rationale":"운영 보안 및 개보법 대응 필수 로그"},{"feature":"인물 히트맵","verkadaSpec":"시간대별 동선 밀도 히트맵 오버레이","decision":"defer","rationale":"Phase 2 분석 기능 — SOHO 초기 니즈는 낮음, 리테일 확장 시 유효"},{"feature":"공개 그리드 (외부 공유 링크)","verkadaSpec":"조직 외부에 카메라 그리드 URL 공개","decision":"reject","rationale":"에스원 보안 정책상 인증 없는 외부 공개 링크는 부적합"}]},{"id":"ai-search","title":"AI 검색","items":[{"feature":"자연어 문장 검색","verkadaSpec":"예: '파란 재킷 남성' 입력 → 일치 영상 구간 검색","decision":"adopt","rationale":"기획문서 핵심 차별점 명시 — 타사 未제공, S1 구독 기본 포함"},{"feature":"검색 필터 (사이트·카메라·날짜·인물·차량)","verkadaSpec":"필터 칩으로 검색 범위 좁히기, 멀티 조건 조합","decision":"adopt","rationale":"검색 정확도와 운영 효율 향상 — SOHO도 필요"},{"feature":"최근 검색 & 추천 검색","verkadaSpec":"최근 검색 목록 + 자주 쓰는 검색 템플릿","decision":"adopt","rationale":"보안 비전문가인 SOHO 사용자 편의성 향상"},{"feature":"검색 결과 클립 뷰어","verkadaSpec":"결과 썸네일 그리드, 영상 구간 인라인 재생","decision":"adopt","rationale":"문장 검색 후 영상 구간 확인이 핵심 UX"},{"feature":"검색 결과로 알림 규칙 생성","verkadaSpec":"검색 조건을 알림 트리거로 저장","decision":"adapt","rationale":"유용한 기능이나 Phase 1 기본 알림 구성 후 Phase 2로 검토"}]},{"id":"alerts","title":"이상감지 & 알림","items":[{"feature":"알림 수신함 (읽음·안읽음·음소거)","verkadaSpec":"탭별 알림 분류, 이벤트 카드 목록, 필터 패널","decision":"adopt","rationale":"이상감지 이벤트 수신·확인이 웹뷰어 핵심 업무 흐름"},{"feature":"AI 감지: 침입·배회·화재","verkadaSpec":"모션 감지, 객체 분류, 이벤트 클립 자동 생성","decision":"adopt","rationale":"기획문서 기본 AI 알고리즘 명시 — 구독 기본 포함"},{"feature":"AI 감지: 라인크로스·피플카운트","verkadaSpec":"가상 라인 설정, 방향 감지, 시간대별 카운팅","decision":"adopt","rationale":"기획문서 유료 옵션 AI 알고리즘 명시 — 구독 추가 시 활성화"},{"feature":"알림 규칙 생성 (Alert Rule Builder)","verkadaSpec":"감지 유형·시간·구역 조건 조합, 알림 채널 지정","decision":"adapt","rationale":"Phase 1은 기본 규칙 제공, 커스텀 규칙 편집기는 Phase 2"},{"feature":"알림 채널 선택 (Push·Email·Slack)","verkadaSpec":"알림별 수신 채널 지정, Slack·Teams·InformaCast 연동","decision":"adapt","rationale":"Phase 1은 모두App 푸시 + 이메일, 3rd party 연동은 Phase 2"},{"feature":"알림 음소거/스누즈","verkadaSpec":"시간 지정 음소거, 반복 알림 억제","decision":"adopt","rationale":"무인매장·야간 운영 SOHO에 과잉 알림 방지 필수"},{"feature":"POI 매칭 알림","verkadaSpec":"등록된 인물 얼굴이 카메라에 포착되면 즉시 알림","decision":"defer","rationale":"개인정보보호법 얼굴 인식 저장 제약 — 법적 검토 후 Phase 2 이후 도입"}]},{"id":"people-vehicles","title":"인물 & 차량 분석","items":[{"feature":"인물 감지 그리드 (면 크롭)","verkadaSpec":"카메라별 감지 인물 얼굴 크롭 타일 그리드, 사이트·시간 필터","decision":"adapt","rationale":"개인정보보호법 얼굴 저장 방식 검토 필요 — 실루엣 또는 비식별 대안 우선 검토"},{"feature":"POI (주요 인물) 프로필 & 동선 추적","verkadaSpec":"인물 등록, 사이트 간 이동 궤적, 출현 타임라인","decision":"defer","rationale":"법적 복잡도 高 — 개보법·비식별 처리 기준 확보 후 Phase 2 이후 도입"},{"feature":"차량 번호판 인식 (LPR)","verkadaSpec":"번호판 리스트, LPOI(관심 차량) 등록·알림","decision":"adapt","rationale":"S1 AI 카메라 LPR 탑재 여부 확인 후 Phase 2 도입 검토"}]},{"id":"analytics","title":"스마트 트렌드 & 분석","items":[{"feature":"재실 인원 트렌드 (Occupancy)","verkadaSpec":"시간대별 재실 인원수 차트, 사이트별 비교","decision":"defer","rationale":"Phase 2 — 무인매장·미용실 SOHO에 니즈 있으나 Phase 1 범위 외"},{"feature":"대기열 분석 (Queue Trends)","verkadaSpec":"대기 줄 길이 실시간·추세 분석","decision":"defer","rationale":"Phase 2 — 음식점/카페 SOHO에 유효하나 AI 알고리즘 옵션 추가 후 검토"},{"feature":"이상감지 알림 빈도 차트","verkadaSpec":"요일·시간대별 알림 발생 빈도 히스토그램","decision":"adopt","rationale":"운영 리포트 기본 — 이상 패턴 파악 및 알림 규칙 최적화에 활용"},{"feature":"동선 히트맵 (Helix)","verkadaSpec":"매장 내 고객 이동 경로 시각화","decision":"defer","rationale":"Phase 2+ — 리테일 분석 기능, 개보법 검토 후 비식별 처리 방식으로 도입"}]},{"id":"floorplan","title":"플로어 플랜","items":[{"feature":"평면도 기반 카메라 핀 배치","verkadaSpec":"평면도에 카메라 위치 핀, 클릭 시 라이브 팝업","decision":"adapt","rationale":"단일 매장 SOHO 적합 — 간소화 버전으로 도입, 다층 관리는 Phase 2"}]},{"id":"operator","title":"관제 / 운영자 화면","items":[{"feature":"관제 운영자 티켓 큐","verkadaSpec":"이상감지 이벤트를 티켓으로 처리, 대응 상태 관리","decision":"adapt","rationale":"에스원 관제서버 연동 흐름에 맞게 재설계 — 요청출동 처리 흐름과 통합"},{"feature":"SOC 콘솔 (사이트 그리드)","verkadaSpec":"계약 사이트별 카메라 상태·이벤트 현황 대시보드","decision":"adopt","rationale":"에스원 내부 관제 화면 핵심 — 다수 고객사 동시 모니터링"},{"feature":"전문 관제 서비스 구독 관리","verkadaSpec":"Professional Monitoring 구독·해지, 대응 레벨 설정","decision":"adapt","rationale":"에스원 영상확인 관제서비스(유료 옵션 10円)와 대응 — 구독 연동 방식 검토 필요"},{"feature":"사건 이력 (Incident History)","verkadaSpec":"이상감지 사건 목록, 대응 결과, 타임라인 로그","decision":"adopt","rationale":"관제 운영 기록 및 출동 이력 관리에 필요"},{"feature":"양방향 음성 (Talkdown)","verkadaSpec":"관제자가 카메라 스피커로 현장에 직접 경고 방송","decision":"reject","rationale":"S1 AI 카메라 양방향 음성 사양 미확인 — 하드웨어 검토 후 재평가"},{"feature":"수사 케이스 관리 (Investigation)","verkadaSpec":"사건별 영상 클립 수집, 타임라인 정리, 담당자 할당","decision":"defer","rationale":"Phase 2 이후 — 에스원 출동 결과 연계 기능으로 고도화"}]},{"id":"device-mgmt","title":"장치 관리","items":[{"feature":"장치 목록 & 상태 대시보드","verkadaSpec":"전체 장치 리스트, 연결 상태·오류 뱃지, 사이트별 필터","decision":"adopt","rationale":"기획 명시(장비이상감지) — 카메라 관리의 기본 화면"},{"feature":"장치 온보딩 마법사","verkadaSpec":"QR코드 스캔 또는 시리얼번호 입력으로 신규 장치 등록","decision":"adopt","rationale":"다이렉트몰 셀프 온보딩 핵심 — SOHO 비전문 사용자 대상"},{"feature":"원격 펌웨어 업데이트","verkadaSpec":"버전 확인, 일정 업데이트, 진행률 표시","decision":"adopt","rationale":"AI 알고리즘 업데이트와 연계 — 클라우드 AI 카메라 운영 필수"},{"feature":"장치 통계 (CPU·대역폭·스토리지)","verkadaSpec":"시간대별 리소스 사용 차트","decision":"defer","rationale":"Phase 2 — 운영 안정화 후 고도화"}]},{"id":"admin","title":"관리자 (Admin)","items":[{"feature":"조직 정보 · 사용자 · 그룹 관리","verkadaSpec":"조직 프로필, 사용자 초대/삭제, 그룹별 권한 관리","decision":"adopt","rationale":"다수 고객사 계정 운영 필수 — ID 추가 옵션(1.5円/5개)과 연동"},{"feature":"역할 및 권한 매트릭스","verkadaSpec":"역할별 화면·기능 접근 권한 설정","decision":"adopt","rationale":"에스원 내부 역할 구분(관제원·운영자·관리자) 대응 필요"},{"feature":"SSO / 통합계정 연동","verkadaSpec":"SAML SSO, SCIM 자동 프로비저닝, SSOButton 컴포넌트","decision":"adopt","rationale":"기획문서 통합계정 연동 명시 — 에스원 SSO 방식 확정 필요(확인항목 C-02)"},{"feature":"감사 로그 & 리포트","verkadaSpec":"사용자 행동 로그, 리포트 자동화, CSV 내보내기","decision":"adopt","rationale":"운영 보안 및 개보법 대응 필수"},{"feature":"구독 라이선싱 관리","verkadaSpec":"제품별 라이선스 수량·만료일, 업그레이드 흐름","decision":"adopt","rationale":"AI 알고리즘 구독 옵션 관리(화재·배회 등)에 직접 대응"},{"feature":"기능 플래그 (Feature Manager)","verkadaSpec":"조직·사이트별 베타 기능 on/off","decision":"adopt","rationale":"구독 옵션별 기능 활성화 제어에 활용 — AI 알고리즘 옵션 관리"},{"feature":"데이터 내보내기 · 컴플라이언스","verkadaSpec":"영상 메타데이터 내보내기, 컴플라이언스 뱃지","decision":"adopt","rationale":"개인정보보호법 대응 — 데이터 보관·삭제 정책 시행"},{"feature":"API Keys & Webhook","verkadaSpec":"API 키 발급, Webhook URL 등록, 이벤트 발생 시 외부 호출","decision":"adapt","rationale":"Phase 2 — 관제서버 연동 등 외부 시스템 연계 시 필요"},{"feature":"외부 협업 도구 연동 (Slack·Teams)","verkadaSpec":"이상감지 알림을 Slack/Teams 채널로 전송","decision":"reject","rationale":"SOHO 타깃 서비스에 불필요 — 모두App 푸시로 충분"}]},{"id":"out-of-scope","title":"범위 외 (Out of Scope)","note":"Verkada의 하드웨어 생태계 확장 기능으로, 클라우드영상시스템 범위와 무관","items":[{"feature":"출입통제 (Access Control)","verkadaSpec":"도어 잠금·해제, 출입 권한, 스케줄, 비상 롤콜","decision":"reject","rationale":"에스원 별개 상품(SVMS 등) — 클라우드영상시스템 범위 외"},{"feature":"인터폰 (Intercom)","verkadaSpec":"IP 인터폰 통화, AI 음성 안내, 통화 기록","decision":"reject","rationale":"S1 인터폰 별도 상품 — 클라우드영상시스템 범위 외"},{"feature":"공기질 센서 (Air Quality)","verkadaSpec":"CO₂·PM2.5·온습도 모니터링, 임계값 알림","decision":"reject","rationale":"클라우드영상시스템 범위 외"},{"feature":"네트워크 게이트웨이 (Connectivity)","verkadaSpec":"Verkada 전용 게이트웨이 관리, WAN 페일오버","decision":"reject","rationale":"에스원 네트워크 인프라 별도 관리 — 서비스 범위 외"},{"feature":"직장 관리 (Workplace — 방문자·우편물)","verkadaSpec":"방문자 체크인, 우편물 추적, NDA 서명","decision":"reject","rationale":"클라우드영상시스템 범위 외 — SOHO 타깃과 무관"}]}]}]}};
+
+// S1 서비스 통합 에이전트 관리 — admin.js
+
+
+
+// ── 상태 label 변환 ──
+const STATUS_LABEL = {
+  active:                     '진행 중',
+  standby:                    '대기',
+  planned:                    '예정',
+  blocked:                    '막힘',
+  deprecated:                 '사용 중단',
+  pending:                    '검토 대기',
+  ok:                         '정상',
+  unknown:                    '미확인',
+  fail:                       '실패',
+  'not-started':              '시작 전',
+  draft:                      '초안',
+  high:                       '높음',
+  medium:                     '보통',
+  low:                        '낮음',
+  'service-candidate':        '서비스 후보',
+  'common-candidate':         '공통 후보',
+  'common-approved':          '공통 승인',
+  'review-needed':            '검토 필요',
+  'designer-review-needed':   '디자이너 검토 필요',
+};
+
+// ── 그룹 title 변환 ──
+const GROUP_TITLE_MAP = {
+  'Leadership':               '서비스 통합 리더',
+  'Orchestration':            '실무 리더',
+  'Shared Capability Agents': '공통 분석 역할',
+  'Shared Capabilities':      '공통 분석 역할',
+  'Service Teams':            '서비스별 분석 팀',
+};
+
+// ── 에이전트 이름 변환 ──
+const AGENT_NAME_MAP = {
+  'S1 Service Intelligence Lead': '서비스 통합 리더',
+  'Main Orchestrator':            '실무 리더',
+  'Service Guide Curator':        '서비스 가이드 정리 담당',
+};
+
+// ── 유틸 ──
+function badge(status) {
+  const cls_map = {
+    active: 'active', standby: 'standby', planned: 'planned',
+    blocked: 'blocked', deprecated: 'deprecated', pending: 'pending',
+    ok: 'ok', unknown: 'unknown', fail: 'fail', 'not-started': 'planned',
+    draft: 'draft', high: 'high', medium: 'medium', low: 'low',
+    'service-candidate': 'standby', 'common-candidate': 'planned',
+    'common-approved': 'active', 'review-needed': 'pending',
+    'designer-review-needed': 'pending',
+  };
+  const cls   = cls_map[status] || 'unknown';
+  const label = STATUS_LABEL[status] || status;
+  return `<span class="badge badge-${cls}">${label}</span>`;
+}
+
+function insightBadge(status) {
+  const map = {
+    confirmed:       ['confirmed',      '확인됨'],
+    assumed:         ['assumed',        '추정'],
+    'review-needed': ['review-needed',  '검토 필요'],
+  };
+  const [cls, label] = map[status] || ['unknown', status];
+  return `<span class="insight-badge insight-badge-${cls}">${label}</span>`;
+}
+
+function iaStatusChip(status) {
+  const map = {
+    confirmed:       ['ia-chip-confirmed', '확인됨'],
+    assumed:         ['ia-chip-assumed',   '추정'],
+    'review-needed': ['ia-chip-review',    '확인 필요'],
+  };
+  const [cls, label] = map[status] || ['ia-chip-review', '확인 필요'];
+  return `<span class="ia-status-chip ${cls}">${label}</span>`;
+}
+
+function el(tag, cls, html) {
+  return `<${tag} class="${cls}">${html}</${tag}>`;
+}
+
+// ── 내비게이션 ──
+function initNav() {
+  const allNavItems = document.querySelectorAll('.nav-item, .nav-sub-item');
+  allNavItems.forEach(item => {
+    item.addEventListener('click', () => {
+      const target = item.dataset.section;
+      allNavItems.forEach(n => n.classList.remove('active'));
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      item.classList.add('active');
+      document.getElementById(`section-${target}`)?.classList.add('active');
+      document.querySelector('.breadcrumb strong').textContent = item.querySelector('.nav-label').textContent;
+    });
+  });
+
+  document.querySelectorAll('.nav-domain-toggle').forEach(toggle => {
+    toggle.addEventListener('click', () => {
+      const domain = toggle.dataset.domain;
+      const items = document.querySelector(`.nav-domain-items[data-domain="${domain}"]`);
+      toggle.classList.toggle('collapsed');
+      items?.classList.toggle('collapsed');
+    });
+  });
+}
+
+// ── 탭 ──
+function initTabs() {
+  document.querySelectorAll('.tabs').forEach(tabsEl => {
+    tabsEl.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const group = tab.dataset.group;
+        const target = tab.dataset.target;
+        tabsEl.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        document.querySelectorAll(`.tab-panel[data-group="${group}"]`).forEach(p => p.classList.remove('active'));
+        document.querySelector(`.tab-panel[data-group="${group}"][data-panel="${target}"]`)?.classList.add('active');
+      });
+    });
+  });
+}
+
+
+// ── 전체 현황 ──
+function renderOverview() {
+  const d = D();
+  const services   = d.services || [];
+  const agentSummary = d.agentSummary || {};
+  const reviews    = d.reviewQueue || [];
+  const candidates = d.patternCandidates || [];
+  const gates      = d.qualityGates || [];
+
+  const activeServices  = services.filter(s => s.status === 'active').length;
+  const pendingReviews  = reviews.filter(r => r.status === 'pending').length;
+  const gateFails       = gates.filter(g => g.status === 'fail').length;
+  const totalAgents     = agentSummary.totalAgents || 0;
+  const activeAgents    = agentSummary.active || 0;
+  const el              = document.getElementById('overview-stats');
+  if (!el) return;
+
+  if (!totalAgents && !services.length) {
+    el.innerHTML = `
+      <div class="card" style="text-align:center;padding:48px;color:var(--gray-400)">
+        데이터가 없습니다.<br>
+        <span style="font-size:12px;margin-top:8px;display:block">관리자에게 데이터 갱신을 요청하거나, 터미널에서 동기화 명령을 실행하세요.</span>
+      </div>`;
+    return;
+  }
+
+  const activeList = services.filter(s => s.status === 'active');
+
+  el.innerHTML = `
+    <div class="cards cards-4">
+      <div class="card">
+        <div class="card-label">분석 중인 서비스</div>
+        <div class="card-value">${activeServices}</div>
+        <div class="card-sub">${services.length}개 서비스 등록됨</div>
+      </div>
+      <div class="card">
+        <div class="card-label">에이전트 역할</div>
+        <div class="card-value">${activeAgents} <span style="font-size:16px;color:var(--gray-400)">/ ${totalAgents}</span></div>
+        <div class="card-sub">진행 중 / 전체</div>
+      </div>
+      <div class="card">
+        <div class="card-label">검토할 항목</div>
+        <div class="card-value" style="color:var(--orange-500)">${pendingReviews}</div>
+        <div class="card-sub">디자이너 확인 필요</div>
+      </div>
+      <div class="card">
+        <div class="card-label">서비스 후보</div>
+        <div class="card-value">${candidates.length}</div>
+        <div class="card-sub">공통화 검토 전 단계</div>
+      </div>
+    </div>
+    ${activeList.length ? `
+    <div class="ov-active-wrap mt-24">
+      <div class="ov-active-label">현재 분석 중</div>
+      ${activeList.map(s => `
+        <div class="ov-active-row">
+          <div class="ov-active-name">${s.displayName}</div>
+          ${s.currentFocus ? `<div class="ov-active-focus">${s.currentFocus}</div>` : ''}
+          ${s.nextAction   ? `<div class="ov-active-action">→ ${s.nextAction}</div>` : ''}
+        </div>`).join('')}
+    </div>` : ''}`;
+}
+
+// ── 조직도 ──
+function renderOrgChart() {
+  const groups = D().agentGroups || [];
+  if (!groups.length) return '';
+
+  const leadership    = groups.find(g => g.id === 'leadership');
+  const orchestration = groups.find(g => g.id === 'orchestration');
+  const shared        = groups.find(g => g.id === 'shared');
+  const expConsistency = groups.find(g => g.id === 'experience-consistency');
+  const serviceTeams  = groups.find(g => g.id === 'service-teams');
+
+  const leadAgent = (leadership?.agents || [])[0] || {};
+  const orchAgent = (orchestration?.agents || [])[0] || {};
+
+  const sharedCards = (shared?.agents || []).map(a => {
+    const displayName = AGENT_NAME_MAP[a.name] || a.name;
+    const shortRole   = (a.role || '').split('. ')[0];
+    return `
+    <div class="mini-agent-card status-${a.status}">
+      <div class="mini-agent-header">
+        <div class="mini-agent-name">${displayName}</div>
+        ${badge(a.status)}
+      </div>
+      <div class="mini-agent-role">${shortRole}</div>
+    </div>`;
+  }).join('');
+
+  const teams = serviceTeams?.teams || [];
+  const serviceCards = teams.map(t => {
+    const isActive   = t.teamStatus === 'active';
+    const agentNames = (t.agents || []).map(a => a.name);
+    return `
+      <div class="service-team-card ${isActive ? 'svc-active' : 'svc-planned'}">
+        <div class="stc-header">
+          <div class="stc-name">${t.displayName || t.teamName}</div>
+          ${badge(t.teamStatus)}
+        </div>
+        <div class="stc-section">
+          <div class="stc-section-label">Leader</div>
+          <div class="stc-manager-chip ${isActive ? 'stc-manager-active' : ''}">UX 통합관리 에이전트</div>
+        </div>
+        <div class="stc-section">
+          <div class="stc-section-label">상세 에이전트</div>
+          <div class="stc-agents">
+            ${agentNames.map(n => `<div class="stc-agent-row">${n}</div>`).join('')}
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+
+  return `
+    <section class="agent-org-chart">
+
+      <div class="org-root">
+        <h3>S1 서비스 통합 에이전트</h3>
+        <p class="org-root-sub">s1sa · 여러 서비스 분석을 한곳에서 관리하는 내부 운영 체계</p>
+      </div>
+
+      <article class="org-card org-lead">
+        <div class="org-card-header">
+          <div>
+            <h3>서비스 통합 리더</h3>
+            <div style="font-size:11px;color:var(--gray-400);margin-top:2px">S1 Service Intelligence Lead</div>
+          </div>
+          ${badge(leadAgent.status || 'standby')}
+        </div>
+        <p class="org-node-role">여러 서비스의 분석 결과를 모아 큰 방향을 판단합니다.</p>
+      </article>
+
+      <div class="org-connector"></div>
+
+      <article class="org-card org-orchestrator">
+        <div class="org-card-header">
+          <div>
+            <h3>실무 리더</h3>
+            <div style="font-size:11px;color:var(--gray-400);margin-top:2px">Main Orchestrator</div>
+          </div>
+          ${badge(orchAgent.status || 'active')}
+        </div>
+        <p class="org-node-role">현재 작업을 굴리고 다음 할 일을 정리합니다.</p>
+      </article>
+
+      <div class="org-connector"></div>
+
+      <section class="org-section shared-capabilities">
+        <div class="org-section-header">
+          <h3>공통 분석 역할</h3>
+          <p class="org-section-sub">모든 서비스에 공통으로 쓰이는 역할 <span style="font-size:10px;color:var(--gray-400)">Shared Capability Team</span></p>
+        </div>
+        <div class="capability-grid">${sharedCards}</div>
+      </section>
+
+      <div class="org-connector"></div>
+
+      <section class="org-section experience-consistency-review">
+        <div class="org-section-header">
+          <h3>경험 정합성 리뷰</h3>
+          <p class="org-section-sub">서비스별 UX 통합관리자의 분석 결과를 수집·관리·연결하여 전체 SaaS 정합성 기준을 정리하는 역할 <span style="font-size:10px;color:var(--gray-400)">Experience Consistency Review</span></p>
+        </div>
+        <div class="exp-consistency-wrap">
+          ${(() => {
+            const a = (expConsistency?.agents || [])[0];
+            if (!a) return '';
+            return `
+            <div class="exp-consistency-card">
+              <div class="mini-agent-header">
+                <div class="mini-agent-name">Experience Consistency Lead</div>
+                ${badge(a.status)}
+              </div>
+              <div class="mini-agent-role">통합 SaaS 정합성 리뷰</div>
+            </div>`;
+          })()}
+        </div>
+      </section>
+
+      <div class="org-connector"></div>
+
+      <section class="org-section service-domain-teams">
+        <div class="org-section-header">
+          <h3>서비스별 분석 팀</h3>
+          <p class="org-section-sub">각 서비스의 화면과 업무 맥락을 분석하는 팀 <span style="font-size:10px;color:var(--gray-400)">Service Domain Teams</span></p>
+        </div>
+        <div class="service-team-grid">${serviceCards}</div>
+      </section>
+
+      <div class="org-legend">
+        <div class="org-legend-title">상태 안내</div>
+        <div class="org-legend-grid">
+          <div class="org-legend-item"><strong>진행 중</strong>현재 분석에 참여하는 역할</div>
+          <div class="org-legend-item"><strong>대기</strong>조건이 맞을 때만 활성화되는 역할</div>
+          <div class="org-legend-item"><strong>예정</strong>아직 준비 전인 역할</div>
+          <div class="org-legend-item"><strong>서비스 통합 리더</strong>두 번째 서비스 분석이 시작되면 활성화</div>
+          <div class="org-legend-item"><strong>실무 리더</strong>항상 진행 중 · 전체 작업 흐름과 다음 할 일 관리</div>
+        </div>
+      </div>
+
+    </section>`;
+}
+
+// ── 에이전트 카드 ──
+function agentCard(a) {
+  const displayName = AGENT_NAME_MAP[a.name] || a.name;
+  const nameSlug    = a.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+  return `
+    <div class="agent-card status-${a.status}">
+      <div class="agent-card-header">
+        <div>
+          <div class="agent-card-name">${displayName}</div>
+          ${a.id && a.id !== nameSlug ? `<div class="agent-card-id">${a.id}</div>` : ''}
+        </div>
+        ${badge(a.status)}
+      </div>
+      <div class="agent-card-role">${a.role}</div>
+      ${a.activation ? `
+        <div class="agent-card-activation">
+          <span class="agent-card-activation-label">활성화 조건</span>
+          ${a.activation}
+        </div>` : ''}
+      <div class="agent-card-meta">
+        ${a.relatedService && a.relatedService !== 'all' ? `<span>서비스: ${a.relatedService}</span>` : ''}
+        ${a.workspacePath ? `<span class="font-mono">${a.workspacePath}</span>` : ''}
+      </div>
+      ${a.notes ? `<div class="agent-card-notes">${a.notes}</div>` : ''}
+    </div>`;
+}
+
+// ── 에이전트 팀 구성 ──
+function renderAgentTeams() {
+  const groups  = D().agentGroups || [];
+
+  if (!groups.length) {
+    document.getElementById('agent-teams-content').innerHTML =
+      `<div class="card" style="text-align:center;padding:48px;color:var(--gray-400)">
+        에이전트 데이터가 없습니다.<br>
+        <span style="font-size:12px;margin-top:8px;display:block">관리자에게 데이터 갱신을 요청하세요.</span>
+      </div>`;
+    return;
+  }
+
+  const roleNotice = `
+    <div class="role-notice">
+      <strong>역할 구분:</strong>
+      <strong>실무 리더</strong>은 전체 작업 흐름과 다음 할 일을 관리합니다(항상 진행 중).
+      <strong>서비스 통합 리더</strong>는 여러 서비스 분석 결과를 비교해 공통화 방향을 판단합니다. 두 번째 서비스 분석 이후 활성화 예정입니다(현재 대기).
+      <strong>서비스 가이드 정리 담당(Service Guide Curator)</strong>은 서비스 개요·IA·주요 화면/기능·주요 사양을 중심으로 서비스 가이드를 정리합니다. 사용자가 수정한 정리 내용을 우선 기준으로 삼으며, 부족한 정보만 원본 분석에서 보완합니다. UX 평가·공통화 판단·DS 매핑 판단은 담당하지 않습니다.
+      <strong>UX 통합관리자</strong>는 각 서비스군 카드 안에서 동작하는 역할입니다. 상세 에이전트들의 분석 결과를 바탕으로 서비스군 내 화면 구조·사용 흐름·시각 표현의 불일치와 공통화 후보를 정리합니다. 원본 화면을 다시 분석하지 않으며 상세 에이전트를 대체하지 않습니다.
+      <strong>Experience Consistency Lead</strong>는 미래 통합 SaaS 전환 단계에서 활성화되는 예정 역할입니다. 서비스군별 UX 통합관리 결과를 바탕으로 전체 SaaS 관점의 화면 구조, 사용 흐름, 시각 표현 기준을 정리합니다. UX 통합관리자(서비스군 내부)와 역할 범위가 다릅니다.
+    </div>`;
+
+  const groupsArr = groups.map((group, i) => {
+    let content;
+    if (group.id === 'service-teams') {
+      const teams = group.teams || [];
+      const teamsHtml = teams.map(team => `
+        <div class="service-team-block">
+          <div class="service-team-header status-${team.teamStatus}">
+            <div>
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+                <div class="service-team-name">${team.teamName}</div>
+                ${badge(team.teamStatus)}
+              </div>
+              <div class="service-team-meta">
+                ${team.currentFocus ? `<span>현재 작업: ${team.currentFocus}</span>` : ''}
+                ${team.currentPhase && team.currentPhase !== 'not-started' ? `<span>${STATUS_LABEL[team.currentPhase] || team.currentPhase}</span>` : ''}
+                ${team.currentPhase === 'not-started' ? `<span style="color:var(--gray-400)">분석 미시작</span>` : ''}
+              </div>
+              ${team.context ? `<div style="font-size:11px;color:var(--gray-500);margin-top:4px;max-width:600px">${team.context}</div>` : ''}
+            </div>
+            ${team.workspacePath ? `<span class="service-team-workspace">${team.workspacePath}</span>` : ''}
+          </div>
+          <div class="agent-cards">
+            ${(team.agents || []).map(agentCard).join('')}
+          </div>
+        </div>`).join('');
+      content = `
+        <div class="agent-group">
+          <div class="agent-group-header">
+            <span class="agent-group-title">${GROUP_TITLE_MAP[group.title] || group.title}</span>
+            <span class="agent-group-desc">${group.description || ''}</span>
+          </div>
+          ${teamsHtml}
+        </div>`;
+    } else {
+      const agents = group.agents || [];
+      content = `
+        <div class="agent-group">
+          <div class="agent-group-header">
+            <span class="agent-group-title">${GROUP_TITLE_MAP[group.title] || group.title}</span>
+            <span class="agent-group-count">${agents.length}</span>
+            <span class="agent-group-desc">${group.description || ''}</span>
+          </div>
+          <div class="agent-cards">
+            ${agents.map(agentCard).join('')}
+          </div>
+        </div>`;
+    }
+    const title = GROUP_TITLE_MAP[group.title] || group.title;
+    return { id: group.id, title, content, active: i === 0 };
+  });
+
+  const detailTabs = `
+    <div class="tabs agent-detail-tabs">
+      ${groupsArr.map(g => `<div class="tab ${g.active ? 'active' : ''}" data-group="agent-detail" data-target="${g.id}">${g.title}</div>`).join('')}
+    </div>
+    ${groupsArr.map(g => `<div class="tab-panel ${g.active ? 'active' : ''}" data-group="agent-detail" data-panel="${g.id}"><div class="agent-arch">${g.content}</div></div>`).join('')}`;
+
+  document.getElementById('agent-teams-content').innerHTML =
+    renderOrgChart() +
+    roleNotice +
+    detailTabs;
+
+  initAgentDetailTabs();
+}
+
+function initAgentDetailTabs() {
+  const tabsEl = document.querySelector('.agent-detail-tabs');
+  if (!tabsEl) return;
+  tabsEl.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const group = tab.dataset.group;
+      const target = tab.dataset.target;
+      tabsEl.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      document.querySelectorAll(`.tab-panel[data-group="${group}"]`).forEach(p => p.classList.remove('active'));
+      document.querySelector(`.tab-panel[data-group="${group}"][data-panel="${target}"]`)?.classList.add('active');
+      const headerH    = document.querySelector('.main-header')?.offsetHeight ?? 0;
+      const tabsAbsTop = tabsEl.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({ top: Math.max(0, tabsAbsTop - headerH), behavior: 'instant' });
+    });
+  });
+}
+
+// ── 서비스 분석 현황 ──
+// ── 이미지 모달 ──
+function openImageModal(src, title) {
+  let modal = document.getElementById('sn-image-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'sn-image-modal';
+    modal.className = 'sn-modal-overlay';
+    modal.innerHTML = `
+      <div class="sn-modal-box">
+        <div class="sn-modal-header">
+          <span class="sn-modal-title"></span>
+          <button class="sn-modal-close" aria-label="닫기">✕</button>
+        </div>
+        <div class="sn-modal-body">
+          <img class="sn-modal-img" src="" alt="">
+        </div>
+      </div>`;
+    document.body.appendChild(modal);
+    modal.querySelector('.sn-modal-close').addEventListener('click', () => modal.classList.remove('open'));
+    modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('open'); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') modal.classList.remove('open'); });
+  }
+  modal.querySelector('.sn-modal-title').textContent = title;
+  modal.querySelector('.sn-modal-img').src = src;
+  modal.querySelector('.sn-modal-img').alt = title;
+  modal.classList.add('open');
+}
+
+// ── 공유 자료 ──
+function renderSharedNotes() {
+  const el = document.getElementById('shared-notes-content');
+  if (!el) return;
+
+  const notes = [
+    {
+      tag: '기획 자료',
+      title: '통합 관리, 어디까지 하나?',
+      desc: '왜 하나의 에이전트가 모든 것을 관리하면 안 되는가, 그리고 이상적인 운영 방향',
+      date: '2026-05-21',
+      image: 'assets/images/shared-01.png',
+    },
+  ];
+
+  el.innerHTML = `
+    <div class="sn-grid">
+      ${notes.map(n => `
+        <div class="sn-card${n.image ? ' sn-card-clickable' : ''}" ${n.image ? `data-image="${n.image}" data-title="${n.title}"` : ''}>
+          <div class="sn-card-tag">${n.tag}</div>
+          <div class="sn-card-title">${n.title}</div>
+          <div class="sn-card-desc">${n.desc}</div>
+          <div class="sn-card-date">${n.date}${n.image ? '<span class="sn-card-view-hint">클릭하여 보기 →</span>' : ''}</div>
+        </div>`).join('')}
+      <div class="sn-card sn-card-empty">
+        <div class="sn-empty-icon">+</div>
+        <div class="sn-empty-label">자료를 추가하려면<br>admin.js의 notes 배열에 항목을 추가하세요.</div>
+      </div>
+    </div>`;
+
+  el.querySelectorAll('.sn-card-clickable').forEach(card => {
+    card.addEventListener('click', () => openImageModal(card.dataset.image, card.dataset.title));
+  });
+}
+
+function renderServiceIntelligence() {
+  const domains = D().serviceDomains || [];
+  const el = document.getElementById('service-intelligence-content');
+  if (!el) return;
+  if (!domains.length) {
+    el.innerHTML = `<div class="card" style="text-align:center;padding:48px;color:var(--gray-400)">데이터가 없습니다. 관리자에게 데이터 갱신을 요청하세요.</div>`;
+    return;
+  }
+  const sortedDomains = [...domains].sort((a, b) =>
+    (a.status === 'active' ? 0 : 1) - (b.status === 'active' ? 0 : 1)
+  );
+  el.innerHTML = sortedDomains.map(domain => {
+    const rawSvcs = domain.services || [];
+    const svcs = [...rawSvcs].sort((a, b) =>
+      (a.status === 'active' ? 0 : 1) - (b.status === 'active' ? 0 : 1)
+    );
+    const activeCount = svcs.filter(s => s.status === 'active').length;
+    const isActive = domain.status === 'active';
+    return `
+      <div class="si-block ${isActive ? 'si-block-active' : 'si-block-planned'}">
+        <div class="si-domain-header">
+          <span class="si-domain-name">${domain.domainName}</span>
+          ${badge(domain.status)}
+          <span class="si-domain-meta">${svcs.length}개 서비스${activeCount > 0 ? ` · ${activeCount}개 분석 중` : ''}</span>
+        </div>
+        <div class="si-rows">
+          ${svcs.map(s => {
+            const isRowActive = s.status === 'active';
+            return `
+              <div class="si-row ${isRowActive ? 'si-row-active' : 'si-row-planned'}">
+                <div class="si-col-name">
+                  <span class="si-svc-name">${s.serviceName}</span>
+                  ${s.system ? `<span class="si-svc-system">${s.system}</span>` : ''}
+                </div>
+                <div class="si-col-focus">${s.currentFocus || '—'}</div>
+                <div class="si-col-action">${s.nextAction || '—'}</div>
+                <div class="si-col-status">${badge(s.status)}</div>
+              </div>`;
+          }).join('')}
+        </div>
+      </div>`;
+  }).join('');
+
+}
+
+// ── IA 제안 렌더링 ──
+function renderIAProposalSection(ia) {
+  const decisionBadge = d => {
+    const map = { keep:'ia-dec-keep', add:'ia-dec-add', adapt:'ia-dec-adapt', defer:'ia-dec-defer', reject:'ia-dec-reject', 'needs-review':'ia-dec-hold' };
+    const label = { keep:'유지', add:'추가', adapt:'변형', defer:'보류', reject:'제외', 'needs-review':'검토' };
+    return `<span class="ia-dec-badge ${map[d]||'ia-dec-defer'}">${label[d]||d}</span>`;
+  };
+  const prioColor = { P0:'ia-p0', P1:'ia-p1', P2:'ia-p2', Hold:'ia-hold', Reject:'ia-reject' };
+
+  // ── 요약 바 ──
+  const ss = ia.specSummary || {};
+  const summaryHtml = `
+    <div class="ia-summary">
+      <div class="ia-summary-left">
+        <div class="ia-summary-title">작업 목적</div>
+        <div class="ia-summary-desc">기획안(Figma 10장)과 Verkada 벤치마크를 비교해 초기 PC 웹뷰어 IA를 제안합니다.</div>
+        <div class="ia-summary-premise">전제: ${ia.premise || ''}</div>
+      </div>
+      <div class="ia-summary-right">
+        <div class="ia-summary-stat-row">
+          <span class="ia-stat ia-dec-keep">유지 ${ss.keep||0}</span>
+          <span class="ia-stat ia-dec-add">추가 ${ss.add||0}</span>
+          <span class="ia-stat ia-dec-adapt">변형 ${ss.adapt||0}</span>
+          <span class="ia-stat ia-dec-defer">보류 ${ss.defer||0}</span>
+          <span class="ia-stat ia-dec-reject">제외 ${ss.reject||0}</span>
+          <span class="ia-stat ia-dec-hold">검토 ${ss.needsReview||0}</span>
+        </div>
+      </div>
+    </div>`;
+
+  // ── IA 트리 렌더러 ──
+  const renderIATree = (iaData, colorClass) => {
+    if (!iaData) return '';
+    const menus = iaData.menus || [];
+    return `
+      <div class="ia-tree-block">
+        <div class="ia-tree-header ${colorClass}">${iaData.label}</div>
+        <div class="ia-tree-desc">${iaData.desc || ''}</div>
+        <div class="ia-tree-menus">
+          ${menus.map((m, mi) => `
+            <div class="ia-tree-menu">
+              <div class="ia-tree-menu-name">
+                <span class="ia-tree-num">${String(mi+1).padStart(2,'0')}</span>
+                <span>${m.name}</span>
+                <span class="ia-menu-prio ${prioColor[m.priority]||''}">${m.priority}</span>
+              </div>
+              ${m.note ? `<div class="ia-tree-menu-note">${m.note}</div>` : ''}
+              <div class="ia-tree-sub-list">
+                ${(m.items||[]).map(item => `<div class="ia-tree-sub">↳ ${item}</div>`).join('')}
+              </div>
+            </div>`).join('')}
+        </div>
+      </div>`;
+  };
+
+  // ── 고도화 IA (추가 메뉴 목록) ──
+  const advancedHtml = (() => {
+    const adv = ia.advancedIA;
+    if (!adv) return '';
+    return `
+      <div class="ia-tree-block">
+        <div class="ia-tree-header ia-hdr-advanced">${adv.label}</div>
+        <div class="ia-tree-desc">${adv.desc || ''}</div>
+        <div class="ia-adv-list">
+          ${(adv.additions||[]).map(a => `
+            <div class="ia-adv-item">
+              <div class="ia-adv-menu">${a.menu} <span class="ia-adv-cond">${a.condition}</span></div>
+              ${(a.items||[]).map(i => `<div class="ia-tree-sub">↳ ${i}</div>`).join('')}
+            </div>`).join('')}
+        </div>
+      </div>`;
+  })();
+
+  // ── 사양 우선순위 테이블 ──
+  const specPrio = ia.specPriority || {};
+  const renderSpecTable = (prio, items, headerCls) => {
+    if (!items || !items.length) return '';
+    const rows = items.map(s => `
+      <tr>
+        <td class="ia-spec-td">${s.spec}</td>
+        <td>${decisionBadge(s.decision)}</td>
+        <td class="ia-spec-reason">${s.reason}</td>
+      </tr>`).join('');
+    return `
+      <div class="ia-spec-group">
+        <div class="ia-spec-group-hdr ${headerCls}">${prio} <span class="ia-spec-count">${items.length}개</span></div>
+        <table class="ia-spec-table"><tbody>${rows}</tbody></table>
+      </div>`;
+  };
+
+  const specHtml = `
+    <div class="insight-section">
+      <div class="insight-section-title">사양 우선순위</div>
+      ${renderSpecTable('P0 — 초기 필수', specPrio.P0, 'ia-p0-hdr')}
+      ${renderSpecTable('P1 — 초기 권장', specPrio.P1, 'ia-p1-hdr')}
+      ${renderSpecTable('P2 — 고도화', specPrio.P2, 'ia-p2-hdr')}
+      ${renderSpecTable('Hold — 정책·기술 확인', specPrio.Hold, 'ia-hold-hdr')}
+      ${renderSpecTable('Reject — 제외', specPrio.Reject, 'ia-reject-hdr')}
+    </div>`;
+
+  // ── 추가 확인 질문 ──
+  const qMap = { critical:'ia-q-critical', high:'ia-q-high', medium:'ia-q-medium' };
+  const oqHtml = `
+    <div class="insight-section">
+      <div class="insight-section-title">추가 확인 질문</div>
+      <div class="ia-oq-list">
+        ${(ia.openQuestions||[]).map(q => `
+          <div class="ia-oq-item ${qMap[q.priority]||''}">
+            <div class="ia-oq-hdr">
+              <span class="ia-oq-id">${q.id}</span>
+              <span class="ia-oq-badge ia-q-badge-${q.priority}">${q.priority==='critical'?'필수확인':q.priority==='high'?'중요':'보통'}</span>
+            </div>
+            <div class="ia-oq-question">${q.question}</div>
+            <div class="ia-oq-impact">→ ${q.impact}</div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+
+  return `
+    ${summaryHtml}
+    <div class="insight-section">
+      <div class="insight-section-title">IA 구조 (3단계)</div>
+      <div class="ia-three-col">
+        ${renderIATree(ia.minimalIA, 'ia-hdr-minimal')}
+        ${renderIATree(ia.recommendedIA, 'ia-hdr-recommended')}
+        ${advancedHtml}
+      </div>
+    </div>
+    ${specHtml}
+    ${oqHtml}`;
+}
+
+// ── 버카다 벤치마크 렌더링 ──
+function renderBenchmarkSection(benchmark) {
+  const decisionMeta = {
+    adopt:  { label: 'adopt',  ko: '채택',    cls: 'bm-adopt'  },
+    adapt:  { label: 'adapt',  ko: '조정',    cls: 'bm-adapt'  },
+    defer:  { label: 'defer',  ko: '보류',    cls: 'bm-defer'  },
+    reject: { label: 'reject', ko: '제외',    cls: 'bm-reject' },
+  };
+
+  // summary counts
+  const allItems = (benchmark.clusters || []).flatMap(c => c.items || []);
+  const counts = { adopt: 0, adapt: 0, defer: 0, reject: 0 };
+  allItems.forEach(it => { if (counts[it.decision] !== undefined) counts[it.decision]++; });
+
+  const summaryBar = `
+    <div class="bm-summary">
+      <div class="bm-summary-desc">${benchmark.summary || ''}</div>
+      <div class="bm-summary-pills">
+        <span class="bm-pill bm-adopt">${counts.adopt} 채택</span>
+        <span class="bm-pill bm-adapt">${counts.adapt} 조정</span>
+        <span class="bm-pill bm-defer">${counts.defer} 보류</span>
+        <span class="bm-pill bm-reject">${counts.reject} 제외</span>
+      </div>
+    </div>`;
+
+  const clustersHtml = (benchmark.clusters || []).map(cluster => {
+    const rows = (cluster.items || []).map(item => {
+      const dm = decisionMeta[item.decision] || decisionMeta.defer;
+      return `
+        <tr>
+          <td class="bm-td-feature">${item.feature}</td>
+          <td class="bm-td-spec">${item.verkadaSpec}</td>
+          <td class="bm-td-decision"><span class="bm-badge ${dm.cls}">${dm.ko}</span></td>
+          <td class="bm-td-rationale">${item.rationale}</td>
+        </tr>`;
+    }).join('');
+
+    return `
+      <div class="insight-section">
+        <div class="insight-section-title">${cluster.title}
+          ${cluster.note ? `<span class="bm-cluster-note">${cluster.note}</span>` : ''}
+        </div>
+        <div class="bm-table-scroll">
+          <table class="bm-table">
+            <thead>
+              <tr>
+                <th class="bm-th-feature">Verkada 기능</th>
+                <th class="bm-th-spec">스펙 요약</th>
+                <th class="bm-th-decision">판단</th>
+                <th class="bm-th-rationale">S1 적용 근거</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+      </div>`;
+  }).join('');
+
+  return summaryBar + clustersHtml;
+}
+
+// ── 서비스 가이드 정리 렌더링 ──
+function renderInsightSections(insight) {
+  if (!insight) return '';
+  const sections = insight.sections || [];
+  const sec = id => sections.find(s => s.id === id);
+
+  const wrap = (title, headerBadge, content) => `
+    <div class="insight-section">
+      <div class="insight-section-title">${title}${headerBadge ? ' ' + headerBadge : ''}</div>
+      ${content}
+    </div>`;
+
+  const kvTable = (items) => `
+    <table class="insight-table"><tbody>
+      ${items.map(item => `
+        <tr>
+          <td class="insight-label">${item.label}</td>
+          <td class="insight-value">${item.value}</td>
+          <td>${insightBadge(item.status)}</td>
+        </tr>`).join('')}
+    </tbody></table>`;
+
+  const overview = sec('overview');
+  const overviewHtml = overview ? wrap(overview.title, '', kvTable(overview.items)) : '';
+
+  const purpose = sec('purpose');
+  const purposeHtml = purpose ? wrap(purpose.title, '', kvTable(purpose.items)) : '';
+
+  const characteristics = sec('characteristics');
+  const characteristicsHtml = characteristics ? wrap(characteristics.title, '', kvTable(characteristics.items)) : '';
+
+  const users = sec('users');
+  const usersHtml = users ? wrap(users.title, '', `
+    <div class="insight-role-grid">
+    ${users.roles.map(role => `
+      <div class="insight-role-card">
+        <div class="insight-role-header">
+          <span class="insight-role-name">${role.role}</span>
+          ${insightBadge(role.status)}
+        </div>
+        <div class="insight-role-purpose">${role.purpose}</div>
+        ${(role.tasks||[]).length ? `<ul class="insight-role-tasks">${role.tasks.map(t => `<li>${t}</li>`).join('')}</ul>` : ''}
+        ${role.reviewNote ? `<div class="insight-review-note">검토: ${role.reviewNote}</div>` : ''}
+      </div>`).join('')}
+    </div>`) : '';
+
+  const ia = sec('ia');
+  const iaHtml = ia ? wrap(ia.title, '', (() => {
+    const menus = ia.gnbMenus || [];
+
+    // ── 1. 진입 및 공통 영역 ──
+    const entryBlock = `
+      <div class="ia-block-title">1. 진입 및 공통 영역</div>
+      <div class="ia-entry-row">
+        <div class="ia-entry-item"><span class="ia-entry-label">인증 / 로그인</span><span class="ia-entry-value">Knox SSO 인증 → 로그인</span></div>
+        <div class="ia-entry-item"><span class="ia-entry-label">홈</span><span class="ia-entry-value">HOME 대시보드 (탭 디폴트 표출)</span></div>
+        <div class="ia-entry-item"><span class="ia-entry-label">유틸리티</span><span class="ia-entry-value">언어설정 (국문 / 영문) · 내정보 (내 정보 수정 / 로그아웃)</span></div>
+      </div>`;
+
+    // ── 2. 메뉴 구조 테이블 ──
+    const tableRows = menus.flatMap(menu =>
+      (menu.subItems || []).map((item, si) => {
+        const count = (menu.subItems || []).length;
+        const firstCell = si === 0
+          ? `<td class="ia-td-1d" rowspan="${count}">${menu.menu}${menu.note ? `<div class="ia-1d-note">${menu.note}</div>` : ''}</td>`
+          : '';
+        const subText = item.children?.length
+          ? item.children.map(c => `<span class="ia-sub-tag">${c}</span>`).join('')
+          : `<span class="ia-sub-empty">-</span>`;
+        const noteText = item.note ? `<div class="ia-item-inline-note">${item.note}</div>` : '';
+        return `<tr>${firstCell}<td class="ia-td-2d">${item.name}${noteText}</td><td class="ia-td-sub">${subText}</td><td class="ia-td-role">${item.role || '-'}</td><td class="ia-td-status">${iaStatusChip(item.status)}</td></tr>`;
+      })
+    ).join('');
+
+    const tableBlock = `
+      <div class="ia-block-title">2. 메뉴 구조</div>
+      <div class="ia-table-scroll">
+        <table class="ia-menu-table">
+          <thead><tr><th>1Depth</th><th>2Depth / 화면</th><th>하위 항목</th><th>역할</th><th>상태</th></tr></thead>
+          <tbody>${tableRows}</tbody>
+        </table>
+      </div>`;
+
+    // ── 3. IA 트리 ──
+    const treeBlock = `
+      <div class="ia-block-title">3. IA 트리 구조</div>
+      <div class="ia-tree-compact">
+        <div class="ia-tc-col">
+          <div class="ia-tc-root">진입 / 공통</div>
+          <div class="ia-tc-d1">Knox SSO 인증</div>
+          <div class="ia-tc-d1">로그인</div>
+          <div class="ia-tc-d1">HOME 대시보드<div class="ia-tc-d2">탭 디폴트 표출</div></div>
+          <div class="ia-tc-d1">유틸리티 메뉴
+            <div class="ia-tc-d2">언어설정<div class="ia-tc-d3">국문</div><div class="ia-tc-d3">영문</div></div>
+            <div class="ia-tc-d2">내정보<div class="ia-tc-d3">내 정보 수정</div><div class="ia-tc-d3">로그아웃</div></div>
+          </div>
+        </div>
+        ${menus.map(menu => `
+          <div class="ia-tc-col">
+            <div class="ia-tc-root">${menu.menu}</div>
+            ${(menu.subItems || []).map(item => `
+              <div class="ia-tc-d1">${item.name}
+                ${(item.children || []).map(c => `<div class="ia-tc-d2">${c}</div>`).join('')}
+              </div>`).join('')}
+          </div>`).join('')}
+      </div>`;
+
+    // ── 4. 확인 필요 박스 ──
+    const reviewItems = ia.iaReviewNotes || [];
+    const reviewBlock = reviewItems.length ? `
+      <div class="ia-review-box">
+        <div class="ia-review-box-title">구조상 확인 필요 항목</div>
+        <ul class="ia-review-list">${reviewItems.map(r => `<li>${r}</li>`).join('')}</ul>
+      </div>` : '';
+
+    return `<div class="ia-doc">${entryBlock}${tableBlock}${treeBlock}${reviewBlock}</div>`;
+  })()) : '';
+
+  const scenarios = sec('scenarios');
+  const scenariosHtml = scenarios ? wrap(scenarios.title, '', `
+    ${scenarios.items.map((item, i) => `
+      <div class="insight-scenario">
+        <div class="insight-scenario-header">
+          <span class="insight-scenario-num">시나리오 ${i + 1}</span>
+          ${insightBadge(item.status)}
+        </div>
+        <div class="insight-scenario-title">${item.title}</div>
+        <ol class="insight-scenario-steps">${item.steps.map(s => `<li>${s}</li>`).join('')}</ol>
+        ${item.reviewNote ? `<div class="insight-review-note">검토: ${item.reviewNote}</div>` : ''}
+      </div>`).join('')}`) : '';
+
+  const ux = sec('uxDirection');
+  const uxHtml = ux ? wrap(ux.title, insightBadge(ux.status), `
+    ${ux.note ? `<div class="insight-source-note">${ux.note}</div>` : ''}
+    ${ux.items.map(item => `
+      <div class="insight-ux-item">
+        <div class="insight-ux-label">${item.label} ${insightBadge(item.status)}</div>
+        <div class="insight-ux-value">${item.value}</div>
+      </div>`).join('')}`) : '';
+
+  const features = sec('features');
+  const featuresHtml = features ? wrap(features.title, '', `
+    <div class="insight-features-grid">
+      ${features.items.map(item => `
+        <div class="insight-feature-item">
+          <div class="insight-feature-name">${item.name} ${insightBadge(item.status)}</div>
+          <div class="insight-feature-desc">${item.description}</div>
+        </div>`).join('')}
+    </div>`) : '';
+
+  const openQuestions = sec('openQuestions');
+  const openQuestionsHtml = openQuestions ? wrap(openQuestions.title, '', `
+    <div class="insight-oq-list">
+      ${openQuestions.items.map(item => `
+        <div class="insight-oq-item insight-oq-${item.priority}">
+          <div class="insight-oq-header">
+            <span class="insight-oq-id">${item.id}</span>
+            <span class="insight-oq-topic">${item.topic}</span>
+            <span class="insight-oq-badge insight-oq-badge-${item.priority}">${item.priority === 'high' ? '우선' : item.priority === 'mid' ? '중간' : '낮음'}</span>
+          </div>
+          <div class="insight-oq-question">${item.question}</div>
+        </div>`).join('')}
+    </div>`) : '';
+
+  // ── 서비스 가이드 패널 컨텐츠 ──
+  const serviceGuideContent = `${overviewHtml}${purposeHtml}${usersHtml}${scenariosHtml}${featuresHtml}${characteristicsHtml}${iaHtml}${uxHtml}${openQuestionsHtml}`;
+
+  // ── DS 적용 계획 섹션 ──
+  const dsApp = sec('dsApplication');
+
+  // ── IA 제안 섹션 ──
+  const iaProposal = sec('iaProposal');
+  const iaProposalContent = iaProposal ? renderIAProposalSection(iaProposal) : '';
+
+  // ── 버카다 벤치마크 섹션 ──
+  const benchmark = sec('benchmark');
+  const benchmarkPanelContent = benchmark ? renderBenchmarkSection(benchmark) : '';
+
+  if (!dsApp && !iaProposal && !benchmark) {
+    // 탭 불필요 — 단일 컨테이너
+    return `
+      <div class="insight-container">
+        <div class="insight-header">
+          <div class="insight-header-title">서비스 가이드</div>
+          <div class="insight-header-meta">
+            <span>${insight.serviceName}</span>
+            <span>정리: ${insight.curatedAt}</span>
+            ${insight.sourceRefs?.length ? `<span>${insight.sourceRefs[0]}</span>` : ''}
+          </div>
+        </div>
+        ${serviceGuideContent}
+      </div>`;
+  }
+
+  const dsAppPanelContent = `
+    ${wrap('적용 범위 요약', '', `
+      ${dsApp.summary ? `<div class="dsa-summary">${dsApp.summary}</div>` : ''}
+      <table class="insight-table"><tbody>
+        ${(dsApp.stats || []).map(item => `
+          <tr>
+            <td class="insight-label">${item.label}</td>
+            <td class="insight-value">${item.value}</td>
+            <td><span class="dsa-badge dsa-badge-${item.status}">${item.status === 'confirmed' ? 'applicable' : item.status === 'candidate' ? 'candidate' : 'gap'}</span></td>
+          </tr>`).join('')}
+      </tbody></table>`)}
+    ${wrap('Gap 목록', '', `
+      <div class="dsa-gap-list">
+        ${(dsApp.gaps || []).map(item => `
+          <div class="dsa-gap-item dsa-gap-${item.priority.toLowerCase()}">
+            <div class="dsa-gap-header">
+              <span class="dsa-gap-id">${item.id}</span>
+              <span class="dsa-gap-cat">${item.category}</span>
+              <span class="dsa-gap-priority dsa-p-${item.priority.toLowerCase()}">${item.priority}</span>
+            </div>
+            <div class="dsa-gap-item-name">${item.item}</div>
+            <div class="dsa-gap-desc">${item.description}</div>
+          </div>`).join('')}
+      </div>`)}
+    ${wrap('Candidate 검증 필요 항목', '', `
+      <div class="dsa-cv-list">
+        ${(dsApp.candidates || []).map(item => `
+          <div class="dsa-cv-item">
+            <div class="dsa-cv-header">
+              <span class="dsa-gap-id">${item.id}</span>
+              <span class="dsa-cv-item-name">${item.item}</span>
+              <span class="dsa-cv-screen">${item.screen}</span>
+            </div>
+            <div class="dsa-cv-check">→ ${item.checkPoint}</div>
+          </div>`).join('')}
+      </div>`)}`;
+
+  const tabGroup = `insight-${insight.serviceId}`;
+
+  return `
+    <div class="insight-tabs-wrapper">
+      <div class="tabs insight-service-tabs" data-group="${tabGroup}">
+        <div class="tab active" data-group="${tabGroup}" data-target="service-guide">서비스 가이드</div>
+        ${dsApp ? `<div class="tab" data-group="${tabGroup}" data-target="ds-application">DS 적용 계획</div>` : ''}
+        ${iaProposal ? `<div class="tab" data-group="${tabGroup}" data-target="ia-proposal">IA 제안</div>` : ''}
+        ${benchmark ? `<div class="tab" data-group="${tabGroup}" data-target="benchmark">버카다 벤치마크</div>` : ''}
+      </div>
+      <div class="tab-panel active" data-group="${tabGroup}" data-panel="service-guide">
+        <div class="insight-container">
+          <div class="insight-header">
+            <div class="insight-header-title">서비스 가이드</div>
+            <div class="insight-header-meta">
+              <span>${insight.serviceName}</span>
+              <span>정리: ${insight.curatedAt}</span>
+              ${insight.sourceRefs?.length ? `<span>${insight.sourceRefs[0]}</span>` : ''}
+            </div>
+          </div>
+          ${serviceGuideContent}
+        </div>
+      </div>
+      ${dsApp ? `
+      <div class="tab-panel" data-group="${tabGroup}" data-panel="ds-application">
+        <div class="insight-container">
+          <div class="insight-header">
+            <div class="insight-header-title">DS 적용 계획</div>
+            <div class="insight-header-meta">
+              <span>${insight.serviceName}</span>
+              <span>정리: ${dsApp.updatedAt || insight.curatedAt}</span>
+              <span>S1_AI_DESIGN_GUIDE V2.4</span>
+            </div>
+          </div>
+          ${dsAppPanelContent}
+        </div>
+      </div>` : ''}
+      ${iaProposal ? `
+      <div class="tab-panel" data-group="${tabGroup}" data-panel="ia-proposal">
+        <div class="insight-container">
+          <div class="insight-header">
+            <div class="insight-header-title">IA 제안</div>
+            <div class="insight-header-meta">
+              <span>${iaProposal.basis}</span>
+              <span>분석: ${iaProposal.analyzedAt}</span>
+            </div>
+          </div>
+          ${iaProposalContent}
+        </div>
+      </div>` : ''}
+      ${benchmark ? `
+      <div class="tab-panel" data-group="${tabGroup}" data-panel="benchmark">
+        <div class="insight-container">
+          <div class="insight-header">
+            <div class="insight-header-title">버카다 벤치마크</div>
+            <div class="insight-header-meta">
+              <span>${benchmark.source}</span>
+              <span>분석: ${benchmark.analyzedAt}</span>
+            </div>
+          </div>
+          ${benchmarkPanelContent}
+        </div>
+      </div>` : ''}
+    </div>`;
+}
+
+// ── 서비스별 상세 섹션 ──
+function renderServiceDetail(svc, domain, contentId) {
+  const el = document.getElementById(contentId);
+  if (!el) return;
+
+  if (svc.dashboardLink) {
+    const section = el.closest('.section');
+    const header = section?.querySelector('.section-header');
+    if (header && !header.querySelector('.section-header-action')) {
+      const textDiv = document.createElement('div');
+      [...header.childNodes].forEach(n => textDiv.appendChild(n));
+      header.style.cssText = 'display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:24px';
+      header.appendChild(textDiv);
+      const actionDiv = document.createElement('div');
+      actionDiv.className = 'section-header-action';
+      actionDiv.innerHTML = `<a href="${svc.dashboardLink}" target="_blank" class="btn btn-ghost">워크스페이스 열기 ↗</a>`;
+      header.appendChild(actionDiv);
+    }
+  }
+
+  const insightsAll = D().serviceInsights || [];
+  const insight = insightsAll.find(ins => ins.serviceId === svc.serviceId) || null;
+
+  el.innerHTML = `
+    ${svc.status === 'planned' && !svc.currentFocus ? `
+      <div class="card" style="text-align:center;padding:40px;color:var(--gray-400)">
+        분석 예정 — 자료 제공 후 시작합니다.
+      </div>` : ''}
+    ${insight ? renderInsightSections(insight) : ''}`;
+
+  // 동적으로 생성된 insight 탭 이벤트 연결
+  el.querySelectorAll('.insight-service-tabs .tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const group = tab.dataset.group;
+      const target = tab.dataset.target;
+      el.querySelectorAll(`.insight-service-tabs[data-group="${group}"] .tab`).forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      el.querySelectorAll(`.tab-panel[data-group="${group}"]`).forEach(p => p.classList.remove('active'));
+      el.querySelector(`.tab-panel[data-group="${group}"][data-panel="${target}"]`)?.classList.add('active');
+    });
+  });
+}
+
+function renderAllServiceSections() {
+  const domains = D().serviceDomains || [];
+  domains.forEach(domain => {
+    (domain.services || []).forEach(svc => {
+      renderServiceDetail(svc, domain, `svc-${svc.serviceId}-content`);
+    });
+  });
+}
+// ── 에이전트 활동보고서 ──
+function renderAgentActivityReport() {
+  const el = document.getElementById('agent-activity-content');
+  if (!el) return;
+
+  const REPORT = {
+    generatedAt: '2026-05-21',
+    summary: { totalAgents: 26, high: 4, medium: 2, low: 20, totalOutputFiles: 85 },
+    agents: [
+      { id: 'main-orchestrator',             displayName: '실무 오케스트레이터',        layer: 'orchestration', service: '전체',       status: 'active',   roleDesc: '작업 흐름·단계 관리, Gate Check, 다음 액션 결정',            outputCount: 1,  usageLevel: 'high',   usageType: 'role_reflected',  evidenceSummary: 'service-intelligence-status.md',             issues: null,                                                                       recommendation: 'keep'    },
+      { id: 's1-service-intelligence-lead',  displayName: '서비스 통합 리더',           layer: 'leadership',    service: '전체',       status: 'standby',  roleDesc: '복수 서비스 맥락 통합 이해, 공통화 판단',                   outputCount: 0,  usageLevel: 'low',    usageType: 'documented_only', evidenceSummary: '활성화 조건 미충족 (현재 서비스 1개)',               issues: null,                                                                       recommendation: 'keep'    },
+      { id: 'ui-reader',                     displayName: '화면 구조 분석',             layer: 'shared',        service: '전체',       status: 'active',   roleDesc: '화면 구조·레이아웃·컴포넌트·정보 밀도 분석',               outputCount: 22, usageLevel: 'high',   usageType: 'explicit_prompt', evidenceSummary: 'screen-analysis/ 14개, menu-understanding/ 8개', issues: null,                                                                       recommendation: 'keep'    },
+      { id: 'ux-checker',                    displayName: 'UX 검수',                    layer: 'shared',        service: '전체',       status: 'active',   roleDesc: '관제 업무 흐름·사용성·리스크 검수',                         outputCount: 12, usageLevel: 'high',   usageType: 'explicit_prompt', evidenceSummary: 'validation-reports/ 12개',                        issues: 'ux-check/ 폴더 미생성 — 검수 결과가 분석 문서 안에 혼재',                 recommendation: 'clarify' },
+      { id: 'ds-mapper',                     displayName: 'DS 매핑',                    layer: 'shared',        service: '전체',       status: 'standby',  roleDesc: '기존 UI 요소를 디자인시스템 컴포넌트·토큰 기준으로 매핑',  outputCount: 2,  usageLevel: 'low',    usageType: 'documented_only', evidenceSummary: '산출물 내 "진행 필요" 언급 23회, 실행 0회',        issues: 'A5 디자이너 검증 완료 전까지 실행 보류 (deferred)',                        recommendation: 'clarify' },
+      { id: 'research-synthesizer',          displayName: '분석 결과 종합',             layer: 'shared',        service: '전체',       status: 'standby',  roleDesc: '복수 화면·자료 교차 분석 결과 종합',                        outputCount: 0,  usageLevel: 'low',    usageType: 'documented_only', evidenceSummary: '복수 서비스 분석 완료 후 활성화 예정',               issues: null,                                                                       recommendation: 'keep'    },
+      { id: 'pattern-librarian',             displayName: '패턴 관리',                  layer: 'shared',        service: '전체',       status: 'standby',  roleDesc: '서비스 간 공통 패턴 비교·승격 조건 추적',                  outputCount: 0,  usageLevel: 'low',    usageType: 'documented_only', evidenceSummary: 'pattern-candidates.json 구조만 준비',               issues: null,                                                                       recommendation: 'keep'    },
+      { id: 'service-guide-curator',         displayName: '서비스 가이드 정리',         layer: 'shared',        service: '전체',       status: 'active',   roleDesc: '분석 결과를 바탕으로 서비스 가이드 작성',                  outputCount: 3,  usageLevel: 'medium', usageType: 'explicit_prompt', evidenceSummary: 'cloud-video/service-guide/ 3개',                  issues: null,                                                                       recommendation: 'keep'    },
+      { id: 'mobility-reader',               displayName: '이동체관제 화면 분석',       layer: 'service',       service: '이동체서비스', status: 'active',  roleDesc: '지도·차량·이벤트·이상상황·조치 흐름 중심 화면 분석',       outputCount: 22, usageLevel: 'high',   usageType: 'explicit_prompt', evidenceSummary: 'screen-analysis/ 10개, menu-understanding/ 6개',  issues: null,                                                                       recommendation: 'keep'    },
+      { id: 'pattern-finder',                displayName: '이동체 패턴 추출',           layer: 'service',       service: '이동체서비스', status: 'standby', roleDesc: '반복 레이아웃·패널 구성·알림 표현 패턴 추출',              outputCount: 3,  usageLevel: 'medium', usageType: 'role_reflected',  evidenceSummary: 'comparison/ 2개, pattern-candidates 1건 등록',    issues: '산출물에 generatedBy 필드 없어 추적성 약함',                               recommendation: 'clarify' },
+      { id: 'screen-maker',                  displayName: '이동체 화면 제안',           layer: 'service',       service: '이동체서비스', status: 'planned', roleDesc: '신규 화면 구조·컴포넌트 트리·토큰 매핑 초안 생성',         outputCount: 0,  usageLevel: 'low',    usageType: 'documented_only', evidenceSummary: 'DS 매핑 완료 후 활성화 예정',                      issues: 'ds-mapper 활성화 대기로 이중 블로킹',                                      recommendation: 'keep'    },
+      { id: 'video-service-reader',          displayName: '영상서비스 화면 분석',       layer: 'service',       service: '영상서비스',  status: 'planned',  roleDesc: '영상서비스 화면 구조 분석',                                 outputCount: 0,  usageLevel: 'low',    usageType: 'documented_only', evidenceSummary: '화면 자료 제공 및 승인 대기',                      issues: null,                                                                       recommendation: 'keep'    },
+      { id: 'video-legacy-component-extractor', displayName: '레거시 컴포넌트 추출',   layer: 'service',       service: '영상서비스',  status: 'planned',  roleDesc: 'SW(Thick Client) 컴포넌트 추출·Web 전환 후보 목록',        outputCount: 0,  usageLevel: 'low',    usageType: 'documented_only', evidenceSummary: '선행 에이전트 활성화 대기',                         issues: null,                                                                       recommendation: 'keep'    },
+      { id: 'video-layout-workflow-mapper',  displayName: '영상 레이아웃·업무흐름 매핑', layer: 'service',     service: '영상서비스',  status: 'planned',  roleDesc: '레이아웃 패턴 추출, 운영자 업무 흐름 분석',                outputCount: 0,  usageLevel: 'low',    usageType: 'documented_only', evidenceSummary: '선행 에이전트 활성화 대기',                         issues: null,                                                                       recommendation: 'keep'    },
+      { id: 'video-pattern-finder',          displayName: '영상 패턴 추출',             layer: 'service',       service: '영상서비스',  status: 'planned',  roleDesc: '영상서비스 반복 패턴 탐색 및 service-candidate 등록',       outputCount: 0,  usageLevel: 'low',    usageType: 'documented_only', evidenceSummary: '선행 에이전트 활성화 대기',                         issues: null,                                                                       recommendation: 'keep'    },
+      { id: 'video-web-transition-designer', displayName: '웹전환 설계',                layer: 'service',       service: '영상서비스',  status: 'planned',  roleDesc: 'SW→Web 전환 방향 제안, 레거시 컴포넌트 대응 방안',         outputCount: 0,  usageLevel: 'low',    usageType: 'documented_only', evidenceSummary: '웹 전환 방향 확정 후 활성화',                       issues: null,                                                                       recommendation: 'keep'    },
+      { id: 'video-screen-maker',            displayName: '영상 화면 제안',             layer: 'service',       service: '영상서비스',  status: 'planned',  roleDesc: '영상서비스 신규 화면 구성안 작성',                          outputCount: 0,  usageLevel: 'low',    usageType: 'documented_only', evidenceSummary: '선행 단계 전부 완료 후 활성화',                     issues: null,                                                                       recommendation: 'keep'    },
+    ],
+    futureGroups: [
+      { service: '출입관리서비스',      count: 4 },
+      { service: '빌딩관리서비스',      count: 4 },
+      { service: '통합앱서비스 (모두앱)', count: 5 },
+      { service: '경험 정합성 리뷰',    count: 1 },
+    ],
+    projects: [
+      { name: '이동체서비스 (UVIS)',    phase: 'A5 디자이너 검증 중',    outputCount: 78, status: 'active',  progress: 85 },
+      { name: '클라우드영상시스템',     phase: '서비스 가이드 작성 중',   outputCount: 3,  status: 'active',  progress: 20 },
+      { name: '영상서비스 (SVMS)',      phase: '화면 자료 제공 대기',     outputCount: 0,  status: 'planned', progress: 0  },
+      { name: '출입·빌딩·통합앱',       phase: '분석 미시작',             outputCount: 0,  status: 'planned', progress: 0  },
+    ],
+    analysisNotes: [
+      { type: 'gap',     title: 'UX 검수 산출물 공백',  desc: 'ux-checker가 active 상태이나 전용 폴더(ux-check/)가 미생성. 검수 결과가 분석 문서 안에 혼재되어 독립 이력 추적이 어려움.' },
+      { type: 'gap',     title: 'DS 매핑 진행 지연',    desc: 'ds-mapper가 산출물 내 "다음 단계"로 23회 언급됐으나 A5 검증 대기로 한 번도 실행되지 않음. 완료 일정 확정 필요.' },
+      { type: 'overlap', title: '화면 분석 역할 분화',  desc: 'ui-reader(범용)와 mobility-reader(이동체관제 특화)는 의도적 분화. 겹침이 아닌 계층적 전문화 구조.' },
+      { type: 'overlap', title: '패턴 역할 분화',       desc: 'pattern-finder(서비스 내 발견)와 pattern-librarian(서비스 간 관리)은 의도적 분화. 현재는 pattern-finder만 활동 중.' },
+    ],
+    nextActions: [
+      { priority: 'high',   label: 'ux-checker 산출물 폴더 생성',      desc: 'outputs/mobility/ux-check/ 폴더 생성 후 기존 검수 결과 독립 파일로 정리', owner: 'ux-checker'          },
+      { priority: 'high',   label: 'A5 디자이너 검증 완료 일정 확정',  desc: 'ds-mapper 활성화 선행 조건. 완료 후 DS 매핑 재개 및 screen-maker 블로킹 해제', owner: 'ds-mapper'         },
+      { priority: 'medium', label: '영상서비스 화면 자료 수령 협의',    desc: 'video-service-reader 활성화를 위한 화면 자료 및 사용자 승인 필요', owner: 'video-service-reader' },
+      { priority: 'low',    label: 'pattern-finder 산출물 메타데이터 보강', desc: 'comparison/, validation-reports/ 파일에 generatedBy 필드 추가', owner: 'pattern-finder'      },
+    ],
+  };
+
+  // ── 헬퍼 ──
+  const usageLevelBadge = lvl => {
+    const m = { high: ['ar-badge-high', '활발히 활용 중'], medium: ['ar-badge-medium', '일부 활용 중'], low: ['ar-badge-low', '활용 근거 약함'], unclear: ['ar-badge-unclear', '판단 불명확'] };
+    const [cls, label] = m[lvl] || m.unclear;
+    return `<span class="ar-badge ${cls}">${label}</span>`;
+  };
+  const usageTypeBadge = t => {
+    const m = { explicit_prompt: ['ar-type-ep', '프롬프트 명시'], role_reflected: ['ar-type-rr', '산출물 반영'], documented_only: ['ar-type-do', '문서 정의만'], unclear: ['ar-type-uc', '불명확'] };
+    const [cls, label] = m[t] || m.unclear;
+    return `<span class="ar-type-badge ${cls}">${label}</span>`;
+  };
+  const recoBadge = r => {
+    const m = { keep: ['ar-rec-keep', '유지'], merge: ['ar-rec-merge', '통합 검토'], rename: ['ar-rec-rename', '이름 조정'], clarify: ['ar-rec-clarify', '역할 보강'], archive: ['ar-rec-archive', '보관'], promote: ['ar-rec-promote', '승격'] };
+    const [cls, label] = m[r] || ['ar-rec-keep', r];
+    return `<span class="ar-rec-badge ${cls}">${label}</span>`;
+  };
+  const priorityBadge = p => {
+    const m = { high: ['ar-pri-high', '우선'], medium: ['ar-pri-med', '권장'], low: ['ar-pri-low', '선택'] };
+    const [cls, label] = m[p] || ['ar-pri-low', p];
+    return `<span class="ar-pri-badge ${cls}">${label}</span>`;
+  };
+  const layerLabel = l => ({ orchestration: '총괄', leadership: '리더십', shared: '공통', service: '서비스' }[l] || l);
+
+  const { summary, agents, futureGroups, projects, analysisNotes, nextActions } = REPORT;
+  const futureTotal = futureGroups.reduce((s, g) => s + g.count, 0);
+
+  // ── 에이전트 테이블 행 생성 (레이어별) ──
+  const layers = ['orchestration', 'leadership', 'shared', 'service'];
+  const layerNames = { orchestration: '총괄 (Orchestration)', leadership: '리더십 (Leadership)', shared: '공통 분석 역할 (Shared)', service: '서비스별 분석 팀 (Service)' };
+
+  const agentRows = layers.map(layer => {
+    const group = agents.filter(a => a.layer === layer);
+    if (!group.length) return '';
+    return `
+      <tr class="ar-table-group-row">
+        <td colspan="7" class="ar-table-group-label">${layerNames[layer]}</td>
+      </tr>
+      ${group.map(a => `
+      <tr class="ar-table-row ${a.issues ? 'ar-has-issue' : ''}">
+        <td class="ar-td-name">
+          <div class="ar-agent-name">${a.displayName}</div>
+          <div class="ar-agent-role-short">${a.roleDesc}</div>
+          ${a.issues ? `<div class="ar-agent-issue">⚠ ${a.issues}</div>` : ''}
+        </td>
+        <td>${badge(a.status)}</td>
+        <td><span class="ar-service-tag">${a.service}</span></td>
+        <td class="ar-td-center">${a.outputCount > 0 ? `<strong>${a.outputCount}</strong>` : '<span class="ar-zero">0</span>'}</td>
+        <td>${usageLevelBadge(a.usageLevel)}</td>
+        <td>${usageTypeBadge(a.usageType)}</td>
+        <td>${recoBadge(a.recommendation)}</td>
+      </tr>`).join('')}`;
+  }).join('');
+
+  // ── 프로젝트 카드 ──
+  const projectCards = projects.map(p => `
+    <div class="ar-project-card ${p.status === 'active' ? 'ar-proj-active' : 'ar-proj-planned'}">
+      <div class="ar-project-header">
+        <span class="ar-project-name">${p.name}</span>
+        ${badge(p.status)}
+      </div>
+      <div class="ar-project-phase">${p.phase}</div>
+      <div class="ar-progress-bar-wrap">
+        <div class="ar-progress-bar" style="width:${p.progress}%"></div>
+      </div>
+      <div class="ar-project-meta">
+        <span>산출물 ${p.outputCount}개</span>
+        <span class="ar-progress-pct">${p.progress}%</span>
+      </div>
+    </div>`).join('');
+
+  // ── 분석 노트 (역할 공백·겹침) ──
+  const noteCards = analysisNotes.map(n => `
+    <div class="ar-note-card ar-note-${n.type}">
+      <div class="ar-note-type">${n.type === 'gap' ? '역할 공백' : '역할 분화'}</div>
+      <div class="ar-note-title">${n.title}</div>
+      <div class="ar-note-desc">${n.desc}</div>
+    </div>`).join('');
+
+  // ── 다음 액션 ──
+  const actionItems = nextActions.map(a => `
+    <div class="ar-action-item">
+      <div class="ar-action-header">
+        ${priorityBadge(a.priority)}
+        <span class="ar-action-label">${a.label}</span>
+      </div>
+      <div class="ar-action-desc">${a.desc}</div>
+      <div class="ar-action-owner">담당: ${a.owner}</div>
+    </div>`).join('');
+
+  el.innerHTML = `
+    <div class="ar-disclaimer">
+      현재 파일 기준 진단 · 호출 로그가 없으므로 산출물 파일과 프롬프트 정의를 근거로 판단했습니다 · ${REPORT.generatedAt} 기준
+    </div>
+
+    <!-- 요약 카드 -->
+    <div class="ar-summary-grid">
+      <div class="ar-summary-card">
+        <div class="ar-summary-label">정의된 에이전트</div>
+        <div class="ar-summary-value">${summary.totalAgents + futureTotal}</div>
+        <div class="ar-summary-sub">현재 운영 ${summary.totalAgents}개 · 미래 계획 ${futureTotal}개</div>
+      </div>
+      <div class="ar-summary-card ar-summary-high">
+        <div class="ar-summary-label">활발히 활용 중</div>
+        <div class="ar-summary-value">${summary.high}</div>
+        <div class="ar-summary-sub">산출물·프롬프트에서 역할 확인됨</div>
+      </div>
+      <div class="ar-summary-card ar-summary-medium">
+        <div class="ar-summary-label">일부 활용 중</div>
+        <div class="ar-summary-value">${summary.medium}</div>
+        <div class="ar-summary-sub">제한적 산출물 또는 대기 중</div>
+      </div>
+      <div class="ar-summary-card ar-summary-low">
+        <div class="ar-summary-label">활용 근거 약함</div>
+        <div class="ar-summary-value">${summary.low}</div>
+        <div class="ar-summary-sub">문서 정의만 존재 또는 미시작</div>
+      </div>
+      <div class="ar-summary-card">
+        <div class="ar-summary-label">총 산출물 파일</div>
+        <div class="ar-summary-value">${summary.totalOutputFiles}</div>
+        <div class="ar-summary-sub">분석 문서·메타데이터·검수 리포트</div>
+      </div>
+    </div>
+
+    <!-- 프로젝트별 진행 현황 -->
+    <div class="ar-section-title">프로젝트별 진행 현황</div>
+    <div class="ar-project-grid">${projectCards}</div>
+
+    <!-- 에이전트별 활동 현황 -->
+    <div class="ar-section-title" style="margin-top:32px">에이전트별 활동 현황</div>
+    <div class="ar-table-wrap">
+      <table class="ar-table">
+        <thead>
+          <tr>
+            <th>에이전트</th>
+            <th>상태</th>
+            <th>서비스</th>
+            <th class="ar-td-center">산출물</th>
+            <th>활용도</th>
+            <th>활용 유형</th>
+            <th>추천</th>
+          </tr>
+        </thead>
+        <tbody>${agentRows}</tbody>
+      </table>
+    </div>
+
+    <!-- 미래 계획 에이전트 -->
+    <div class="ar-future-wrap">
+      <div class="ar-future-label">미래 계획 에이전트 (총 ${futureTotal}개) — 분석 미시작</div>
+      <div class="ar-future-chips">
+        ${futureGroups.map(g => `<span class="ar-future-chip">${g.service} <strong>${g.count}명</strong></span>`).join('')}
+      </div>
+    </div>
+
+    <!-- 역할 공백·분화 분석 -->
+    <div class="ar-section-title" style="margin-top:32px">역할 공백 · 분화 분석</div>
+    <div class="ar-notes-grid">${noteCards}</div>
+
+    <!-- 다음 개선 액션 -->
+    <div class="ar-section-title" style="margin-top:32px">다음 개선 액션</div>
+    <div class="ar-actions-list">${actionItems}</div>
+  `;
+}
+
+
+
+// ── 초기화 ──
+document.addEventListener('DOMContentLoaded', () => {
+  const root = document.getElementById('insight-root');
+  const insight = CLOUD_VIDEO_DATA.insight;
+  if (!insight) {
+    root.innerHTML = '<div style="text-align:center;padding:60px;color:#9ca3af">데이터를 불러올 수 없습니다.</div>';
+    return;
+  }
+  root.innerHTML = renderInsightSections(insight);
+
+  // 탭 이벤트
+  root.querySelectorAll('.insight-service-tabs .tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const group  = tab.dataset.group;
+      const target = tab.dataset.target;
+      root.querySelectorAll(`.insight-service-tabs[data-group="${group}"] .tab`).forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      root.querySelectorAll(`.tab-panel[data-group="${group}"]`).forEach(p => p.classList.remove('active'));
+      root.querySelector(`.tab-panel[data-group="${group}"][data-panel="${target}"]`)?.classList.add('active');
+    });
+  });
+});
+</script>
+</body>
+</html>
