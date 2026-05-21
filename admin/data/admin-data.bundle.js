@@ -328,7 +328,7 @@ window.ADMIN_DATA = {
           "commonPromotion": "not-yet",
           "dsMapping": "deferred",
           "nextAction": "차량 위치 모듈 메타데이터 디자이너 검증",
-          "dashboardLink": "../s1-mobility-uvis-workspace/dashboard/index.html",
+          "dashboardLink": "https://s1designux.github.io/s1-mobility-uvis-workspace/dashboard/",
           "publishStatus": "draft",
           "visibility": "admin-only"
         }
@@ -530,7 +530,7 @@ window.ADMIN_DATA = {
       "commonPromotion": "not-yet",
       "dsMapping": "deferred",
       "nextAction": "차량 위치 모듈 메타데이터 디자이너 검증",
-      "dashboardLink": "../s1-mobility-uvis-workspace/dashboard/index.html",
+      "dashboardLink": "https://s1designux.github.io/s1-mobility-uvis-workspace/dashboard/",
       "publishStatus": "draft",
       "visibility": "admin-only",
       "domainId": "mobility",
