@@ -566,6 +566,67 @@ function renderServiceIntelligence() {
 
 }
 
+// ── 버카다 벤치마크 렌더링 ──
+function renderBenchmarkSection(benchmark) {
+  const decisionMeta = {
+    adopt:  { label: 'adopt',  ko: '채택',    cls: 'bm-adopt'  },
+    adapt:  { label: 'adapt',  ko: '조정',    cls: 'bm-adapt'  },
+    defer:  { label: 'defer',  ko: '보류',    cls: 'bm-defer'  },
+    reject: { label: 'reject', ko: '제외',    cls: 'bm-reject' },
+  };
+
+  // summary counts
+  const allItems = (benchmark.clusters || []).flatMap(c => c.items || []);
+  const counts = { adopt: 0, adapt: 0, defer: 0, reject: 0 };
+  allItems.forEach(it => { if (counts[it.decision] !== undefined) counts[it.decision]++; });
+
+  const summaryBar = `
+    <div class="bm-summary">
+      <div class="bm-summary-desc">${benchmark.summary || ''}</div>
+      <div class="bm-summary-pills">
+        <span class="bm-pill bm-adopt">${counts.adopt} 채택</span>
+        <span class="bm-pill bm-adapt">${counts.adapt} 조정</span>
+        <span class="bm-pill bm-defer">${counts.defer} 보류</span>
+        <span class="bm-pill bm-reject">${counts.reject} 제외</span>
+      </div>
+    </div>`;
+
+  const clustersHtml = (benchmark.clusters || []).map(cluster => {
+    const rows = (cluster.items || []).map(item => {
+      const dm = decisionMeta[item.decision] || decisionMeta.defer;
+      return `
+        <tr>
+          <td class="bm-td-feature">${item.feature}</td>
+          <td class="bm-td-spec">${item.verkadaSpec}</td>
+          <td class="bm-td-decision"><span class="bm-badge ${dm.cls}">${dm.ko}</span></td>
+          <td class="bm-td-rationale">${item.rationale}</td>
+        </tr>`;
+    }).join('');
+
+    return `
+      <div class="insight-section">
+        <div class="insight-section-title">${cluster.title}
+          ${cluster.note ? `<span class="bm-cluster-note">${cluster.note}</span>` : ''}
+        </div>
+        <div class="bm-table-scroll">
+          <table class="bm-table">
+            <thead>
+              <tr>
+                <th class="bm-th-feature">Verkada 기능</th>
+                <th class="bm-th-spec">스펙 요약</th>
+                <th class="bm-th-decision">판단</th>
+                <th class="bm-th-rationale">S1 적용 근거</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+      </div>`;
+  }).join('');
+
+  return summaryBar + clustersHtml;
+}
+
 // ── 서비스 가이드 정리 렌더링 ──
 function renderInsightSections(insight) {
   if (!insight) return '';
@@ -736,7 +797,11 @@ function renderInsightSections(insight) {
   // ── DS 적용 계획 섹션 ──
   const dsApp = sec('dsApplication');
 
-  if (!dsApp) {
+  // ── 버카다 벤치마크 섹션 ──
+  const benchmark = sec('benchmark');
+  const benchmarkPanelContent = benchmark ? renderBenchmarkSection(benchmark) : '';
+
+  if (!dsApp && !benchmark) {
     // 탭 불필요 — 단일 컨테이너
     return `
       <div class="insight-container">
@@ -795,7 +860,8 @@ function renderInsightSections(insight) {
     <div class="insight-tabs-wrapper">
       <div class="tabs insight-service-tabs" data-group="${tabGroup}">
         <div class="tab active" data-group="${tabGroup}" data-target="service-guide">서비스 가이드</div>
-        <div class="tab" data-group="${tabGroup}" data-target="ds-application">DS 적용 계획</div>
+        ${dsApp ? `<div class="tab" data-group="${tabGroup}" data-target="ds-application">DS 적용 계획</div>` : ''}
+        ${benchmark ? `<div class="tab" data-group="${tabGroup}" data-target="benchmark">버카다 벤치마크</div>` : ''}
       </div>
       <div class="tab-panel active" data-group="${tabGroup}" data-panel="service-guide">
         <div class="insight-container">
@@ -810,6 +876,7 @@ function renderInsightSections(insight) {
           ${serviceGuideContent}
         </div>
       </div>
+      ${dsApp ? `
       <div class="tab-panel" data-group="${tabGroup}" data-panel="ds-application">
         <div class="insight-container">
           <div class="insight-header">
@@ -822,7 +889,20 @@ function renderInsightSections(insight) {
           </div>
           ${dsAppPanelContent}
         </div>
-      </div>
+      </div>` : ''}
+      ${benchmark ? `
+      <div class="tab-panel" data-group="${tabGroup}" data-panel="benchmark">
+        <div class="insight-container">
+          <div class="insight-header">
+            <div class="insight-header-title">버카다 벤치마크</div>
+            <div class="insight-header-meta">
+              <span>${benchmark.source}</span>
+              <span>분석: ${benchmark.analyzedAt}</span>
+            </div>
+          </div>
+          ${benchmarkPanelContent}
+        </div>
+      </div>` : ''}
     </div>`;
 }
 
@@ -877,6 +957,223 @@ function renderAllServiceSections() {
     });
   });
 }
+// ── 에이전트 활동보고서 ──
+function renderAgentActivityReport() {
+  const el = document.getElementById('agent-activity-content');
+  if (!el) return;
+
+  const REPORT = {
+    generatedAt: '2026-05-21',
+    summary: { totalAgents: 26, high: 4, medium: 2, low: 20, totalOutputFiles: 85 },
+    agents: [
+      { id: 'main-orchestrator',             displayName: '실무 오케스트레이터',        layer: 'orchestration', service: '전체',       status: 'active',   roleDesc: '작업 흐름·단계 관리, Gate Check, 다음 액션 결정',            outputCount: 1,  usageLevel: 'high',   usageType: 'role_reflected',  evidenceSummary: 'service-intelligence-status.md',             issues: null,                                                                       recommendation: 'keep'    },
+      { id: 's1-service-intelligence-lead',  displayName: '서비스 통합 리더',           layer: 'leadership',    service: '전체',       status: 'standby',  roleDesc: '복수 서비스 맥락 통합 이해, 공통화 판단',                   outputCount: 0,  usageLevel: 'low',    usageType: 'documented_only', evidenceSummary: '활성화 조건 미충족 (현재 서비스 1개)',               issues: null,                                                                       recommendation: 'keep'    },
+      { id: 'ui-reader',                     displayName: '화면 구조 분석',             layer: 'shared',        service: '전체',       status: 'active',   roleDesc: '화면 구조·레이아웃·컴포넌트·정보 밀도 분석',               outputCount: 22, usageLevel: 'high',   usageType: 'explicit_prompt', evidenceSummary: 'screen-analysis/ 14개, menu-understanding/ 8개', issues: null,                                                                       recommendation: 'keep'    },
+      { id: 'ux-checker',                    displayName: 'UX 검수',                    layer: 'shared',        service: '전체',       status: 'active',   roleDesc: '관제 업무 흐름·사용성·리스크 검수',                         outputCount: 12, usageLevel: 'high',   usageType: 'explicit_prompt', evidenceSummary: 'validation-reports/ 12개',                        issues: 'ux-check/ 폴더 미생성 — 검수 결과가 분석 문서 안에 혼재',                 recommendation: 'clarify' },
+      { id: 'ds-mapper',                     displayName: 'DS 매핑',                    layer: 'shared',        service: '전체',       status: 'standby',  roleDesc: '기존 UI 요소를 디자인시스템 컴포넌트·토큰 기준으로 매핑',  outputCount: 2,  usageLevel: 'low',    usageType: 'documented_only', evidenceSummary: '산출물 내 "진행 필요" 언급 23회, 실행 0회',        issues: 'A5 디자이너 검증 완료 전까지 실행 보류 (deferred)',                        recommendation: 'clarify' },
+      { id: 'research-synthesizer',          displayName: '분석 결과 종합',             layer: 'shared',        service: '전체',       status: 'standby',  roleDesc: '복수 화면·자료 교차 분석 결과 종합',                        outputCount: 0,  usageLevel: 'low',    usageType: 'documented_only', evidenceSummary: '복수 서비스 분석 완료 후 활성화 예정',               issues: null,                                                                       recommendation: 'keep'    },
+      { id: 'pattern-librarian',             displayName: '패턴 관리',                  layer: 'shared',        service: '전체',       status: 'standby',  roleDesc: '서비스 간 공통 패턴 비교·승격 조건 추적',                  outputCount: 0,  usageLevel: 'low',    usageType: 'documented_only', evidenceSummary: 'pattern-candidates.json 구조만 준비',               issues: null,                                                                       recommendation: 'keep'    },
+      { id: 'service-guide-curator',         displayName: '서비스 가이드 정리',         layer: 'shared',        service: '전체',       status: 'active',   roleDesc: '분석 결과를 바탕으로 서비스 가이드 작성',                  outputCount: 3,  usageLevel: 'medium', usageType: 'explicit_prompt', evidenceSummary: 'cloud-video/service-guide/ 3개',                  issues: null,                                                                       recommendation: 'keep'    },
+      { id: 'mobility-reader',               displayName: '이동체관제 화면 분석',       layer: 'service',       service: '이동체서비스', status: 'active',  roleDesc: '지도·차량·이벤트·이상상황·조치 흐름 중심 화면 분석',       outputCount: 22, usageLevel: 'high',   usageType: 'explicit_prompt', evidenceSummary: 'screen-analysis/ 10개, menu-understanding/ 6개',  issues: null,                                                                       recommendation: 'keep'    },
+      { id: 'pattern-finder',                displayName: '이동체 패턴 추출',           layer: 'service',       service: '이동체서비스', status: 'standby', roleDesc: '반복 레이아웃·패널 구성·알림 표현 패턴 추출',              outputCount: 3,  usageLevel: 'medium', usageType: 'role_reflected',  evidenceSummary: 'comparison/ 2개, pattern-candidates 1건 등록',    issues: '산출물에 generatedBy 필드 없어 추적성 약함',                               recommendation: 'clarify' },
+      { id: 'screen-maker',                  displayName: '이동체 화면 제안',           layer: 'service',       service: '이동체서비스', status: 'planned', roleDesc: '신규 화면 구조·컴포넌트 트리·토큰 매핑 초안 생성',         outputCount: 0,  usageLevel: 'low',    usageType: 'documented_only', evidenceSummary: 'DS 매핑 완료 후 활성화 예정',                      issues: 'ds-mapper 활성화 대기로 이중 블로킹',                                      recommendation: 'keep'    },
+      { id: 'video-service-reader',          displayName: '영상서비스 화면 분석',       layer: 'service',       service: '영상서비스',  status: 'planned',  roleDesc: '영상서비스 화면 구조 분석',                                 outputCount: 0,  usageLevel: 'low',    usageType: 'documented_only', evidenceSummary: '화면 자료 제공 및 승인 대기',                      issues: null,                                                                       recommendation: 'keep'    },
+      { id: 'video-legacy-component-extractor', displayName: '레거시 컴포넌트 추출',   layer: 'service',       service: '영상서비스',  status: 'planned',  roleDesc: 'SW(Thick Client) 컴포넌트 추출·Web 전환 후보 목록',        outputCount: 0,  usageLevel: 'low',    usageType: 'documented_only', evidenceSummary: '선행 에이전트 활성화 대기',                         issues: null,                                                                       recommendation: 'keep'    },
+      { id: 'video-layout-workflow-mapper',  displayName: '영상 레이아웃·업무흐름 매핑', layer: 'service',     service: '영상서비스',  status: 'planned',  roleDesc: '레이아웃 패턴 추출, 운영자 업무 흐름 분석',                outputCount: 0,  usageLevel: 'low',    usageType: 'documented_only', evidenceSummary: '선행 에이전트 활성화 대기',                         issues: null,                                                                       recommendation: 'keep'    },
+      { id: 'video-pattern-finder',          displayName: '영상 패턴 추출',             layer: 'service',       service: '영상서비스',  status: 'planned',  roleDesc: '영상서비스 반복 패턴 탐색 및 service-candidate 등록',       outputCount: 0,  usageLevel: 'low',    usageType: 'documented_only', evidenceSummary: '선행 에이전트 활성화 대기',                         issues: null,                                                                       recommendation: 'keep'    },
+      { id: 'video-web-transition-designer', displayName: '웹전환 설계',                layer: 'service',       service: '영상서비스',  status: 'planned',  roleDesc: 'SW→Web 전환 방향 제안, 레거시 컴포넌트 대응 방안',         outputCount: 0,  usageLevel: 'low',    usageType: 'documented_only', evidenceSummary: '웹 전환 방향 확정 후 활성화',                       issues: null,                                                                       recommendation: 'keep'    },
+      { id: 'video-screen-maker',            displayName: '영상 화면 제안',             layer: 'service',       service: '영상서비스',  status: 'planned',  roleDesc: '영상서비스 신규 화면 구성안 작성',                          outputCount: 0,  usageLevel: 'low',    usageType: 'documented_only', evidenceSummary: '선행 단계 전부 완료 후 활성화',                     issues: null,                                                                       recommendation: 'keep'    },
+    ],
+    futureGroups: [
+      { service: '출입관리서비스',      count: 4 },
+      { service: '빌딩관리서비스',      count: 4 },
+      { service: '통합앱서비스 (모두앱)', count: 5 },
+      { service: '경험 정합성 리뷰',    count: 1 },
+    ],
+    projects: [
+      { name: '이동체서비스 (UVIS)',    phase: 'A5 디자이너 검증 중',    outputCount: 78, status: 'active',  progress: 85 },
+      { name: '클라우드영상시스템',     phase: '서비스 가이드 작성 중',   outputCount: 3,  status: 'active',  progress: 20 },
+      { name: '영상서비스 (SVMS)',      phase: '화면 자료 제공 대기',     outputCount: 0,  status: 'planned', progress: 0  },
+      { name: '출입·빌딩·통합앱',       phase: '분석 미시작',             outputCount: 0,  status: 'planned', progress: 0  },
+    ],
+    analysisNotes: [
+      { type: 'gap',     title: 'UX 검수 산출물 공백',  desc: 'ux-checker가 active 상태이나 전용 폴더(ux-check/)가 미생성. 검수 결과가 분석 문서 안에 혼재되어 독립 이력 추적이 어려움.' },
+      { type: 'gap',     title: 'DS 매핑 진행 지연',    desc: 'ds-mapper가 산출물 내 "다음 단계"로 23회 언급됐으나 A5 검증 대기로 한 번도 실행되지 않음. 완료 일정 확정 필요.' },
+      { type: 'overlap', title: '화면 분석 역할 분화',  desc: 'ui-reader(범용)와 mobility-reader(이동체관제 특화)는 의도적 분화. 겹침이 아닌 계층적 전문화 구조.' },
+      { type: 'overlap', title: '패턴 역할 분화',       desc: 'pattern-finder(서비스 내 발견)와 pattern-librarian(서비스 간 관리)은 의도적 분화. 현재는 pattern-finder만 활동 중.' },
+    ],
+    nextActions: [
+      { priority: 'high',   label: 'ux-checker 산출물 폴더 생성',      desc: 'outputs/mobility/ux-check/ 폴더 생성 후 기존 검수 결과 독립 파일로 정리', owner: 'ux-checker'          },
+      { priority: 'high',   label: 'A5 디자이너 검증 완료 일정 확정',  desc: 'ds-mapper 활성화 선행 조건. 완료 후 DS 매핑 재개 및 screen-maker 블로킹 해제', owner: 'ds-mapper'         },
+      { priority: 'medium', label: '영상서비스 화면 자료 수령 협의',    desc: 'video-service-reader 활성화를 위한 화면 자료 및 사용자 승인 필요', owner: 'video-service-reader' },
+      { priority: 'low',    label: 'pattern-finder 산출물 메타데이터 보강', desc: 'comparison/, validation-reports/ 파일에 generatedBy 필드 추가', owner: 'pattern-finder'      },
+    ],
+  };
+
+  // ── 헬퍼 ──
+  const usageLevelBadge = lvl => {
+    const m = { high: ['ar-badge-high', '활발히 활용 중'], medium: ['ar-badge-medium', '일부 활용 중'], low: ['ar-badge-low', '활용 근거 약함'], unclear: ['ar-badge-unclear', '판단 불명확'] };
+    const [cls, label] = m[lvl] || m.unclear;
+    return `<span class="ar-badge ${cls}">${label}</span>`;
+  };
+  const usageTypeBadge = t => {
+    const m = { explicit_prompt: ['ar-type-ep', '프롬프트 명시'], role_reflected: ['ar-type-rr', '산출물 반영'], documented_only: ['ar-type-do', '문서 정의만'], unclear: ['ar-type-uc', '불명확'] };
+    const [cls, label] = m[t] || m.unclear;
+    return `<span class="ar-type-badge ${cls}">${label}</span>`;
+  };
+  const recoBadge = r => {
+    const m = { keep: ['ar-rec-keep', '유지'], merge: ['ar-rec-merge', '통합 검토'], rename: ['ar-rec-rename', '이름 조정'], clarify: ['ar-rec-clarify', '역할 보강'], archive: ['ar-rec-archive', '보관'], promote: ['ar-rec-promote', '승격'] };
+    const [cls, label] = m[r] || ['ar-rec-keep', r];
+    return `<span class="ar-rec-badge ${cls}">${label}</span>`;
+  };
+  const priorityBadge = p => {
+    const m = { high: ['ar-pri-high', '우선'], medium: ['ar-pri-med', '권장'], low: ['ar-pri-low', '선택'] };
+    const [cls, label] = m[p] || ['ar-pri-low', p];
+    return `<span class="ar-pri-badge ${cls}">${label}</span>`;
+  };
+  const layerLabel = l => ({ orchestration: '총괄', leadership: '리더십', shared: '공통', service: '서비스' }[l] || l);
+
+  const { summary, agents, futureGroups, projects, analysisNotes, nextActions } = REPORT;
+  const futureTotal = futureGroups.reduce((s, g) => s + g.count, 0);
+
+  // ── 에이전트 테이블 행 생성 (레이어별) ──
+  const layers = ['orchestration', 'leadership', 'shared', 'service'];
+  const layerNames = { orchestration: '총괄 (Orchestration)', leadership: '리더십 (Leadership)', shared: '공통 분석 역할 (Shared)', service: '서비스별 분석 팀 (Service)' };
+
+  const agentRows = layers.map(layer => {
+    const group = agents.filter(a => a.layer === layer);
+    if (!group.length) return '';
+    return `
+      <tr class="ar-table-group-row">
+        <td colspan="7" class="ar-table-group-label">${layerNames[layer]}</td>
+      </tr>
+      ${group.map(a => `
+      <tr class="ar-table-row ${a.issues ? 'ar-has-issue' : ''}">
+        <td class="ar-td-name">
+          <div class="ar-agent-name">${a.displayName}</div>
+          <div class="ar-agent-role-short">${a.roleDesc}</div>
+          ${a.issues ? `<div class="ar-agent-issue">⚠ ${a.issues}</div>` : ''}
+        </td>
+        <td>${badge(a.status)}</td>
+        <td><span class="ar-service-tag">${a.service}</span></td>
+        <td class="ar-td-center">${a.outputCount > 0 ? `<strong>${a.outputCount}</strong>` : '<span class="ar-zero">0</span>'}</td>
+        <td>${usageLevelBadge(a.usageLevel)}</td>
+        <td>${usageTypeBadge(a.usageType)}</td>
+        <td>${recoBadge(a.recommendation)}</td>
+      </tr>`).join('')}`;
+  }).join('');
+
+  // ── 프로젝트 카드 ──
+  const projectCards = projects.map(p => `
+    <div class="ar-project-card ${p.status === 'active' ? 'ar-proj-active' : 'ar-proj-planned'}">
+      <div class="ar-project-header">
+        <span class="ar-project-name">${p.name}</span>
+        ${badge(p.status)}
+      </div>
+      <div class="ar-project-phase">${p.phase}</div>
+      <div class="ar-progress-bar-wrap">
+        <div class="ar-progress-bar" style="width:${p.progress}%"></div>
+      </div>
+      <div class="ar-project-meta">
+        <span>산출물 ${p.outputCount}개</span>
+        <span class="ar-progress-pct">${p.progress}%</span>
+      </div>
+    </div>`).join('');
+
+  // ── 분석 노트 (역할 공백·겹침) ──
+  const noteCards = analysisNotes.map(n => `
+    <div class="ar-note-card ar-note-${n.type}">
+      <div class="ar-note-type">${n.type === 'gap' ? '역할 공백' : '역할 분화'}</div>
+      <div class="ar-note-title">${n.title}</div>
+      <div class="ar-note-desc">${n.desc}</div>
+    </div>`).join('');
+
+  // ── 다음 액션 ──
+  const actionItems = nextActions.map(a => `
+    <div class="ar-action-item">
+      <div class="ar-action-header">
+        ${priorityBadge(a.priority)}
+        <span class="ar-action-label">${a.label}</span>
+      </div>
+      <div class="ar-action-desc">${a.desc}</div>
+      <div class="ar-action-owner">담당: ${a.owner}</div>
+    </div>`).join('');
+
+  el.innerHTML = `
+    <div class="ar-disclaimer">
+      현재 파일 기준 진단 · 호출 로그가 없으므로 산출물 파일과 프롬프트 정의를 근거로 판단했습니다 · ${REPORT.generatedAt} 기준
+    </div>
+
+    <!-- 요약 카드 -->
+    <div class="ar-summary-grid">
+      <div class="ar-summary-card">
+        <div class="ar-summary-label">정의된 에이전트</div>
+        <div class="ar-summary-value">${summary.totalAgents + futureTotal}</div>
+        <div class="ar-summary-sub">현재 운영 ${summary.totalAgents}개 · 미래 계획 ${futureTotal}개</div>
+      </div>
+      <div class="ar-summary-card ar-summary-high">
+        <div class="ar-summary-label">활발히 활용 중</div>
+        <div class="ar-summary-value">${summary.high}</div>
+        <div class="ar-summary-sub">산출물·프롬프트에서 역할 확인됨</div>
+      </div>
+      <div class="ar-summary-card ar-summary-medium">
+        <div class="ar-summary-label">일부 활용 중</div>
+        <div class="ar-summary-value">${summary.medium}</div>
+        <div class="ar-summary-sub">제한적 산출물 또는 대기 중</div>
+      </div>
+      <div class="ar-summary-card ar-summary-low">
+        <div class="ar-summary-label">활용 근거 약함</div>
+        <div class="ar-summary-value">${summary.low}</div>
+        <div class="ar-summary-sub">문서 정의만 존재 또는 미시작</div>
+      </div>
+      <div class="ar-summary-card">
+        <div class="ar-summary-label">총 산출물 파일</div>
+        <div class="ar-summary-value">${summary.totalOutputFiles}</div>
+        <div class="ar-summary-sub">분석 문서·메타데이터·검수 리포트</div>
+      </div>
+    </div>
+
+    <!-- 프로젝트별 진행 현황 -->
+    <div class="ar-section-title">프로젝트별 진행 현황</div>
+    <div class="ar-project-grid">${projectCards}</div>
+
+    <!-- 에이전트별 활동 현황 -->
+    <div class="ar-section-title" style="margin-top:32px">에이전트별 활동 현황</div>
+    <div class="ar-table-wrap">
+      <table class="ar-table">
+        <thead>
+          <tr>
+            <th>에이전트</th>
+            <th>상태</th>
+            <th>서비스</th>
+            <th class="ar-td-center">산출물</th>
+            <th>활용도</th>
+            <th>활용 유형</th>
+            <th>추천</th>
+          </tr>
+        </thead>
+        <tbody>${agentRows}</tbody>
+      </table>
+    </div>
+
+    <!-- 미래 계획 에이전트 -->
+    <div class="ar-future-wrap">
+      <div class="ar-future-label">미래 계획 에이전트 (총 ${futureTotal}개) — 분석 미시작</div>
+      <div class="ar-future-chips">
+        ${futureGroups.map(g => `<span class="ar-future-chip">${g.service} <strong>${g.count}명</strong></span>`).join('')}
+      </div>
+    </div>
+
+    <!-- 역할 공백·분화 분석 -->
+    <div class="ar-section-title" style="margin-top:32px">역할 공백 · 분화 분석</div>
+    <div class="ar-notes-grid">${noteCards}</div>
+
+    <!-- 다음 개선 액션 -->
+    <div class="ar-section-title" style="margin-top:32px">다음 개선 액션</div>
+    <div class="ar-actions-list">${actionItems}</div>
+  `;
+}
+
 // ── Init ──
 document.addEventListener('DOMContentLoaded', () => {
   initNav();
@@ -884,6 +1181,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   renderOverview();
   renderAgentTeams();
+  renderAgentActivityReport();
   renderSharedNotes();
   renderServiceIntelligence();
   renderAllServiceSections();

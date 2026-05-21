@@ -1207,6 +1207,230 @@ tr:hover td { background: var(--gray-50); }
   line-height: 1;
 }
 
+/* ════════════════════════════════════════
+   에이전트 활동보고서 (ar-*)
+   ════════════════════════════════════════ */
+
+/* 진단 기준 안내 배너 */
+.ar-disclaimer {
+  font-size: 11px;
+  color: var(--gray-500);
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: 6px;
+  padding: 8px 14px;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+/* 요약 카드 그리드 */
+.ar-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  margin-bottom: 28px;
+}
+.ar-summary-card {
+  background: #fff;
+  border: 1px solid var(--gray-200);
+  border-radius: 10px;
+  padding: 16px 18px;
+}
+.ar-summary-card.ar-summary-high  { border-top: 3px solid var(--green-500); }
+.ar-summary-card.ar-summary-medium { border-top: 3px solid var(--yellow-500); }
+.ar-summary-card.ar-summary-low   { border-top: 3px solid var(--gray-300); }
+.ar-summary-label { font-size: 11px; color: var(--gray-500); font-weight: 500; margin-bottom: 6px; }
+.ar-summary-value { font-size: 28px; font-weight: 700; color: var(--gray-900); line-height: 1; }
+.ar-summary-sub   { font-size: 11px; color: var(--gray-400); margin-top: 6px; }
+
+/* 섹션 타이틀 */
+.ar-section-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gray-800);
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+/* 프로젝트 카드 */
+.ar-project-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+.ar-project-card {
+  background: #fff;
+  border: 1.5px solid var(--gray-200);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.ar-proj-active  { border-color: var(--green-500); }
+.ar-proj-planned { opacity: .75; }
+
+.ar-project-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.ar-project-name  { font-size: 12px; font-weight: 700; color: var(--gray-900); flex: 1; min-width: 0; }
+.ar-project-phase { font-size: 11px; color: var(--gray-500); margin-bottom: 10px; }
+
+.ar-progress-bar-wrap {
+  height: 4px;
+  background: var(--gray-100);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+.ar-progress-bar {
+  height: 100%;
+  background: var(--green-500);
+  border-radius: 2px;
+  transition: width .3s;
+}
+.ar-proj-planned .ar-progress-bar { background: var(--gray-300); }
+
+.ar-project-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--gray-400);
+}
+.ar-progress-pct { font-weight: 600; }
+
+/* 에이전트 테이블 */
+.ar-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--gray-200);
+  border-radius: 10px;
+  background: #fff;
+}
+.ar-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.ar-table thead tr {
+  background: var(--gray-50);
+  border-bottom: 1px solid var(--gray-200);
+}
+.ar-table th {
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--gray-500);
+  white-space: nowrap;
+}
+.ar-table-group-row td {
+  background: var(--gray-50);
+  padding: 6px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gray-600);
+  letter-spacing: .04em;
+  border-top: 1px solid var(--gray-200);
+}
+.ar-table-row td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--gray-100);
+  vertical-align: top;
+}
+.ar-table-row:last-child td { border-bottom: none; }
+.ar-table-row.ar-has-issue { background: #fffbeb; }
+
+.ar-agent-name      { font-weight: 700; color: var(--gray-800); margin-bottom: 2px; }
+.ar-agent-role-short { font-size: 11px; color: var(--gray-500); line-height: 1.4; }
+.ar-agent-issue     { font-size: 10px; color: var(--orange-600); margin-top: 4px; font-weight: 500; }
+.ar-service-tag     { font-size: 10px; color: var(--gray-500); background: var(--gray-100); border-radius: 4px; padding: 2px 7px; white-space: nowrap; }
+.ar-zero            { color: var(--gray-300); }
+.ar-td-name         { min-width: 200px; max-width: 280px; }
+.ar-td-center       { text-align: center; }
+
+/* 활용도 badge */
+.ar-badge           { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 600; white-space: nowrap; }
+.ar-badge-high      { background: var(--green-50);  color: var(--green-600); }
+.ar-badge-medium    { background: var(--yellow-50); color: var(--yellow-600); }
+.ar-badge-low       { background: var(--gray-100);  color: var(--gray-500); }
+.ar-badge-unclear   { background: var(--orange-50); color: var(--orange-600); }
+
+/* 활용 유형 badge */
+.ar-type-badge      { display: inline-flex; align-items: center; padding: 2px 7px; border-radius: 4px; font-size: 10px; font-weight: 500; white-space: nowrap; }
+.ar-type-ep         { background: #eff6ff; color: var(--blue-600); }
+.ar-type-rr         { background: #f0fdf4; color: var(--green-600); }
+.ar-type-do         { background: var(--gray-100); color: var(--gray-500); }
+.ar-type-uc         { background: var(--orange-50); color: var(--orange-600); }
+
+/* 추천 badge */
+.ar-rec-badge       { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 600; white-space: nowrap; }
+.ar-rec-keep        { background: #f0fdf4; color: var(--green-600); }
+.ar-rec-clarify     { background: var(--yellow-50); color: var(--yellow-600); }
+.ar-rec-merge       { background: var(--blue-50); color: var(--blue-600); }
+.ar-rec-rename      { background: var(--purple-50); color: var(--purple-500); }
+.ar-rec-archive     { background: var(--gray-100); color: var(--gray-500); }
+.ar-rec-promote     { background: #eff6ff; color: var(--blue-600); }
+
+/* 미래 계획 에이전트 */
+.ar-future-wrap {
+  margin-top: 16px;
+  background: var(--gray-50);
+  border: 1px dashed var(--gray-300);
+  border-radius: 8px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.ar-future-label { font-size: 11px; color: var(--gray-500); flex-shrink: 0; }
+.ar-future-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.ar-future-chip  { font-size: 11px; color: var(--gray-500); background: #fff; border: 1px solid var(--gray-200); border-radius: 4px; padding: 2px 9px; }
+.ar-future-chip strong { color: var(--gray-700); }
+
+/* 분석 노트 (역할 공백·분화) */
+.ar-notes-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+.ar-note-card {
+  background: #fff;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  padding: 14px 16px;
+  border-left: 4px solid var(--gray-300);
+}
+.ar-note-gap     { border-left-color: var(--orange-500); }
+.ar-note-overlap { border-left-color: var(--blue-500); }
+.ar-note-type    { font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--gray-400); margin-bottom: 4px; }
+.ar-note-gap .ar-note-type  { color: var(--orange-600); }
+.ar-note-overlap .ar-note-type { color: var(--blue-600); }
+.ar-note-title   { font-size: 13px; font-weight: 700; color: var(--gray-800); margin-bottom: 6px; }
+.ar-note-desc    { font-size: 12px; color: var(--gray-600); line-height: 1.6; }
+
+/* 다음 개선 액션 */
+.ar-actions-list { display: flex; flex-direction: column; gap: 10px; }
+.ar-action-item  {
+  background: #fff;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+.ar-action-header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+.ar-action-label  { font-size: 13px; font-weight: 700; color: var(--gray-800); }
+.ar-action-desc   { font-size: 12px; color: var(--gray-600); line-height: 1.6; margin-bottom: 4px; }
+.ar-action-owner  { font-size: 10px; color: var(--gray-400); }
+
+/* 우선순위 badge */
+.ar-pri-badge  { display: inline-flex; align-items: center; padding: 2px 7px; border-radius: 4px; font-size: 10px; font-weight: 700; white-space: nowrap; }
+.ar-pri-high   { background: var(--red-50);    color: var(--red-600); }
+.ar-pri-med    { background: var(--yellow-50); color: var(--yellow-600); }
+.ar-pri-low    { background: var(--gray-100);  color: var(--gray-500); }
+
+
 .sn-empty-label {
   font-size: 11px;
   color: var(--gray-400);
@@ -1969,3 +2193,94 @@ tr:hover td { background: var(--gray-50); }
 .insight-tabs-wrapper { margin-top: 20px; }
 .insight-tabs-wrapper .tabs { margin-bottom: 0; border-radius: 0; }
 .insight-tabs-wrapper .tab-panel.active .insight-container { margin-top: 0; }
+
+/* ── 버카다 벤치마크 ── */
+.bm-summary {
+  background: var(--blue-50);
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.bm-summary-desc {
+  font-size: 12px;
+  color: var(--gray-700);
+  line-height: 1.6;
+}
+.bm-summary-pills {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.bm-pill {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 12px;
+}
+.bm-table-scroll {
+  overflow-x: auto;
+  margin-top: 10px;
+}
+.bm-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.bm-table thead th {
+  background: var(--gray-50);
+  border-bottom: 2px solid var(--gray-200);
+  padding: 8px 10px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gray-500);
+  white-space: nowrap;
+}
+.bm-table tbody tr {
+  border-bottom: 1px solid var(--gray-100);
+  transition: background 0.1s;
+}
+.bm-table tbody tr:hover { background: var(--gray-50); }
+.bm-table tbody td { padding: 9px 10px; vertical-align: top; }
+.bm-th-feature, .bm-td-feature {
+  width: 22%;
+  font-weight: 600;
+  color: var(--gray-800);
+}
+.bm-th-spec, .bm-td-spec {
+  width: 28%;
+  color: var(--gray-600);
+  line-height: 1.5;
+}
+.bm-th-decision, .bm-td-decision {
+  width: 8%;
+  text-align: center;
+}
+.bm-th-rationale, .bm-td-rationale {
+  width: 42%;
+  color: var(--gray-600);
+  line-height: 1.5;
+}
+.bm-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.bm-adopt  { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+.bm-adapt  { background: #fef9c3; color: #854d0e; border: 1px solid #fef08a; }
+.bm-defer  { background: #f3f4f6; color: #6b7280; border: 1px solid #e5e7eb; }
+.bm-reject { background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; }
+.bm-cluster-note {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--gray-500);
+  margin-left: 8px;
+}
