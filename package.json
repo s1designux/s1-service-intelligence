@@ -1,0 +1,15 @@
+{
+  "name": "s1-service-intelligence",
+  "version": "0.1.0",
+  "description": "S1 Service Intelligence — 통합 Admin 허브",
+  "type": "module",
+  "scripts": {
+    "admin:sync": "node scripts/admin/sync-admin-data.mjs",
+    "admin:check": "node scripts/admin/check-admin-data.mjs",
+    "admin:build": "npm run admin:sync && npm run admin:check",
+    "start": "cd admin && npx http-server . -p 3000 -c-1 -o"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

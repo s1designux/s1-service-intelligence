@@ -1,0 +1,25 @@
+{
+  "_description": "공통 승격 후보 패턴 목록. service-candidate는 단일 서비스에서 발견된 패턴이며, 두 개 이상 서비스에서 반복 근거가 쌓인 후에만 common으로 승격한다.",
+  "_source": "s1-service-intelligence (single source of truth)",
+  "_lastUpdated": "2026-05-20",
+  "_movedFrom": "s1-mobility-uvis-workspace/registry/cross-service/",
+  "_promotionRule": "두 개 이상 서비스에서 반복 근거 확인 후 pattern-librarian이 판단. 성급한 공통화 금지.",
+  "candidates": [
+    {
+      "id": "map-list-detail-workspace",
+      "name": "Map-List-Detail Workspace",
+      "description": "지도(Map) + 목록(List) + 상세 패널(Detail)로 구성된 실시간 관제 워크스페이스 레이아웃",
+      "status": "service-candidate",
+      "foundIn": ["mobility-uvis"],
+      "screen": "모니터링 > 차량 위치",
+      "ref": "../s1-mobility-uvis-workspace/outputs/mobility/module-metadata/uvis-vehicle-location-layout-modules.json",
+      "commonPromotion": "not-yet",
+      "promotionCondition": "두 개 이상 서비스(예: video 영상 모니터링)에서 동일 또는 유사 패턴 반복 확인 후 판단",
+      "designerReview": "needed",
+      "dsMapping": "deferred",
+      "publishStatus": "draft",
+      "visibility": "admin-only",
+      "notes": "현재 UVIS mobility 단독 발견. video 서비스 분석 후 비교 필요."
+    }
+  ]
+}

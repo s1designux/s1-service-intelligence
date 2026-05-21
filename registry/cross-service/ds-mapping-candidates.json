@@ -1,0 +1,9 @@
+{
+  "_description": "DS 매핑 검토 대기 중인 패턴 및 컴포넌트 목록. 현재 전체 deferred 상태.",
+  "_source": "s1-service-intelligence (single source of truth)",
+  "_lastUpdated": "2026-05-20",
+  "_movedFrom": "s1-mobility-uvis-workspace/registry/cross-service/",
+  "_status": "deferred",
+  "_deferredReason": "디자이너 검증(A5) 완료 전. DS 매핑은 검증 후 진행.",
+  "candidates": []
+}

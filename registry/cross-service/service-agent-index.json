@@ -1,0 +1,73 @@
+{
+  "_description": "S1 전체 서비스 에이전트 인덱스. 각 서비스 팀의 상태와 등록 정보를 관리한다. 실제 데이터는 각 서비스 registry를 참조(ref)한다.",
+  "_source": "s1-service-intelligence (single source of truth)",
+  "_lastUpdated": "2026-05-20",
+  "_movedFrom": "s1-mobility-uvis-workspace/registry/cross-service/",
+  "services": [
+    {
+      "serviceId": "mobility-uvis",
+      "name": "UVIS 이동체관제",
+      "client": "SAMSUNG",
+      "system": "SAMSUNG 통근버스 관제 시스템 UVIS",
+      "status": "active",
+      "registeredAt": "2026-05-20",
+      "agentTeam": "mobility",
+      "workspacePath": "../s1-mobility-uvis-workspace/",
+      "ref": "../s1-mobility-uvis-workspace/registry/services/mobility/",
+      "agents": {
+        "mobility-reader": "active",
+        "pattern-finder": "active",
+        "screen-maker": "standby"
+      },
+      "currentPhase": "A5-pending-designer-review",
+      "currentMenu": "모니터링 > 차량 위치",
+      "completedPhases": ["A1", "A2", "A3", "A4"],
+      "pendingPhases": ["A5-designer-review"]
+    },
+    {
+      "serviceId": "video",
+      "name": "영상서비스",
+      "client": "TBD",
+      "system": "TBD — SW(Thick Client) 기반 레거시",
+      "status": "planned",
+      "registeredAt": "2026-05-20",
+      "agentTeam": "video",
+      "workspacePath": "TBD",
+      "ref": "../s1-mobility-uvis-workspace/registry/services/video/",
+      "agents": {
+        "video-service-reader": "planned",
+        "video-legacy-component-extractor": "planned",
+        "video-layout-workflow-mapper": "planned",
+        "video-web-transition-designer": "planned",
+        "video-pattern-finder": "planned",
+        "video-screen-maker": "planned"
+      },
+      "activationConditions": [
+        "영상서비스 화면 자료(스크린샷 또는 사양서) 제공",
+        "사용자 명시적 시작 승인"
+      ],
+      "currentPhase": "not-started"
+    }
+  ],
+  "sharedAgents": {
+    "ui-reader": "active",
+    "ux-checker": "active",
+    "ds-mapper": "standby",
+    "research-synthesizer": "standby",
+    "pattern-librarian": "standby"
+  },
+  "leadership": {
+    "s1-service-intelligence-lead": {
+      "status": "standby",
+      "activationConditions": [
+        "두 개 이상 서비스의 menu metadata 축적 완료",
+        "cross-service pattern 비교 명시적 요청",
+        "common vs service-specific 판단 필요",
+        "통합 서비스 방향 검토 요청"
+      ]
+    }
+  },
+  "orchestration": {
+    "main-orchestrator": "active"
+  }
+}

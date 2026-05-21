@@ -1,0 +1,42 @@
+{
+  "_description": "서비스별 주요 업무 흐름 정의. cross-service 업무 흐름 비교의 기준 정보.",
+  "_source": "s1-service-intelligence (single source of truth)",
+  "_lastUpdated": "2026-05-20",
+  "_movedFrom": "s1-mobility-uvis-workspace/registry/cross-service/",
+  "services": {
+    "mobility-uvis": {
+      "primaryFlows": [
+        {
+          "id": "vehicle-location-monitoring",
+          "name": "차량 위치 모니터링",
+          "trigger": "운영자 화면 진입 / 실시간 갱신",
+          "steps": [
+            "지도에서 전체 차량 위치 파악",
+            "목록에서 특정 차량 선택",
+            "상세 패널에서 차량 상태 확인",
+            "이상 차량 대응 또는 배차 조정"
+          ],
+          "layoutPattern": "map-list-detail-workspace",
+          "ref": "../s1-mobility-uvis-workspace/outputs/mobility/menu-understanding/monitoring-vehicle-location.metadata.json"
+        }
+      ],
+      "secondaryFlows": [
+        {
+          "id": "dispatch-management",
+          "name": "배차 관리",
+          "ref": "../s1-mobility-uvis-workspace/outputs/mobility/menu-understanding/batcha-management.md"
+        },
+        {
+          "id": "route-management",
+          "name": "노선 관리",
+          "ref": "../s1-mobility-uvis-workspace/outputs/mobility/menu-understanding/route-management.md"
+        }
+      ]
+    },
+    "video": {
+      "_note": "분석 시작 전 — 자료 제공 후 정의 예정",
+      "primaryFlows": [],
+      "secondaryFlows": []
+    }
+  }
+}

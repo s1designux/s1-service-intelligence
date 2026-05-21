@@ -1,0 +1,332 @@
+{
+  "_description": "S1 전체 서비스 목록. Admin 화면의 Service Intelligence 섹션 기준 데이터.",
+  "_lastUpdated": "2026-05-20",
+  "serviceDomains": [
+    {
+      "domainId": "mobility",
+      "domainName": "이동체서비스",
+      "status": "active",
+      "serviceIa": {
+        "title": "UVIS WEB IA / 서비스 구조",
+        "target": "관계사 UVIS 관제 WEB",
+        "lastUpdated": "2026-05-20",
+        "version": "1.1",
+        "sections": [
+          {
+            "id": "common",
+            "label": "공통 진입",
+            "items": [
+              { "label": "Knox SSO 인증" },
+              { "label": "로그인" },
+              { "label": "HOME 대시보드",
+                "children": [{ "label": "탭 디폴트 표출" }]
+              }
+            ]
+          },
+          {
+            "id": "utility",
+            "label": "유틸리티 메뉴",
+            "items": [
+              { "label": "언어설정",
+                "children": [{ "label": "국문" }, { "label": "영문" }]
+              },
+              { "label": "내정보",
+                "children": [{ "label": "내 정보 수정" }, { "label": "로그아웃" }]
+              }
+            ]
+          },
+          {
+            "id": "gnb",
+            "label": "GNB 메뉴",
+            "menus": [
+              {
+                "label": "모니터링",
+                "items": [
+                  { "label": "대시보드", "note": "HOME 대시보드와 별도 화면" },
+                  { "label": "차량 위치" }
+                ]
+              },
+              {
+                "label": "운영 관리",
+                "items": [
+                  { "label": "기본 설정",
+                    "children": [
+                      { "label": "공통 코드 관리" },
+                      { "label": "지역코드 관리" },
+                      { "label": "휴일관리" }
+                    ]
+                  },
+                  { "label": "정류장 관리" },
+                  { "label": "노선 관리" },
+                  { "label": "운행 계획" },
+                  { "label": "배차 관리" },
+                  { "label": "정산 운임표" },
+                  { "label": "정산 레포트",
+                    "children": [
+                      { "label": "월별 정산" },
+                      { "label": "일별 정산" }
+                    ]
+                  },
+                  { "label": "통근버스 신청 관리" }
+                ]
+              },
+              {
+                "label": "통계 현황",
+                "items": [
+                  { "label": "운행 실적" },
+                  { "label": "탑승자 조회" },
+                  { "label": "노선별 탑승 현황",
+                    "children": [
+                      { "label": "탑승 현황" },
+                      { "label": "즐겨찾기 현황" }
+                    ]
+                  },
+                  { "label": "통근 데이터 분석" },
+                  { "label": "체류시간 관리" },
+                  { "label": "음주 측정 정보" },
+                  { "label": "대용량 다운로드" }
+                ]
+              },
+              {
+                "label": "알림 관리",
+                "items": [
+                  { "label": "푸시 알림" },
+                  { "label": "팝업 공지" },
+                  { "label": "수신자 관리" }
+                ]
+              },
+              {
+                "label": "기준 정보",
+                "items": [
+                  { "label": "운수사 관리" },
+                  { "label": "차량/운전자 관리",
+                    "children": [
+                      { "label": "차량정보 관리" },
+                      { "label": "운전자 관리" }
+                    ]
+                  },
+                  { "label": "단말기 정보" },
+                  { "label": "지점 관리" }
+                ]
+              },
+              {
+                "label": "설정",
+                "items": [
+                  { "label": "사용자 계정 관리",
+                    "children": [
+                      { "label": "관제 관리자" },
+                      { "label": "통근버스 사용자" }
+                    ]
+                  },
+                  { "label": "사용 권한 관리" },
+                  { "label": "협력사 관리", "note": "협력사 기본 정보 관리" },
+                  { "label": "사용자로그" },
+                  { "label": "환경 설정" }
+                ]
+              },
+              {
+                "label": "귀성 관리",
+                "note": "상시 GNB 노출",
+                "items": [
+                  { "label": "귀성 기준정보" },
+                  { "label": "귀성 노선 관리" },
+                  { "label": "귀성 운행 계획" },
+                  { "label": "귀성 배차 관리" },
+                  { "label": "귀성 신청 현황" },
+                  { "label": "협력사 입금현황", "note": "협력사별 입금 현황 리스트" },
+                  { "label": "귀성 탑승자 관리" },
+                  { "label": "귀성 예약 취소 현황" }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "services": [
+        {
+          "serviceId": "mobility-uvis-integrated",
+          "serviceName": "통합 UVIS",
+          "client": "TBD",
+          "system": "관계사용 UVIS 통합 계획 (예정)",
+          "status": "planned",
+          "currentPhase": "not-started",
+          "currentFocus": null,
+          "detectedLayout": null,
+          "analyzedMenuCount": 0,
+          "pendingReviewCount": 0,
+          "sourceTypes": [],
+          "commonPromotion": "n/a",
+          "dsMapping": "n/a",
+          "nextAction": "자료 제공 대기",
+          "publishStatus": "draft",
+          "visibility": "admin-only"
+        },
+        {
+          "serviceId": "mobility-uvis-user",
+          "serviceName": "관계사용 UVIS - User",
+          "client": "TBD",
+          "system": "관계사용 UVIS 사용자 앱 (예정)",
+          "status": "planned",
+          "currentPhase": "not-started",
+          "currentFocus": null,
+          "detectedLayout": null,
+          "analyzedMenuCount": 0,
+          "pendingReviewCount": 0,
+          "sourceTypes": [],
+          "commonPromotion": "n/a",
+          "dsMapping": "n/a",
+          "nextAction": "자료 제공 대기",
+          "publishStatus": "draft",
+          "visibility": "admin-only"
+        },
+        {
+          "serviceId": "mobility-uvis-admin",
+          "serviceName": "관계사용 UVIS - Admin",
+          "client": "SAMSUNG",
+          "system": "SAMSUNG 통근버스 관제 시스템 UVIS",
+          "status": "active",
+          "currentPhase": "designer-review-needed",
+          "currentFocus": "모니터링 > 차량 위치",
+          "detectedLayout": "map-list-detail-workspace",
+          "workspacePath": "../s1-mobility-uvis-workspace",
+          "outputsPath": "../s1-mobility-uvis-workspace/outputs/mobility",
+          "registryPath": "../s1-mobility-uvis-workspace/registry/services/mobility",
+          "analyzedMenuCount": 10,
+          "pendingReviewCount": 7,
+          "sourceTypes": ["스크린샷", "UI사양서(PDF)", "ChatGPT 보조 이미지"],
+          "commonPromotion": "not-yet",
+          "dsMapping": "deferred",
+          "nextAction": "차량 위치 모듈 메타데이터 디자이너 검증",
+          "dashboardLink": "../s1-mobility-uvis-workspace/dashboard/index.html",
+          "publishStatus": "draft",
+          "visibility": "admin-only"
+        }
+      ]
+    },
+    {
+      "domainId": "video",
+      "domainName": "영상서비스",
+      "status": "planned",
+      "services": [
+        {
+          "serviceId": "video-svms",
+          "serviceName": "SVMS",
+          "client": "TBD",
+          "system": "SW(Thick Client) 기반 레거시 영상관제 시스템",
+          "status": "planned",
+          "currentPhase": "not-started",
+          "currentFocus": null,
+          "detectedLayout": null,
+          "analyzedMenuCount": 0,
+          "pendingReviewCount": 0,
+          "sourceTypes": ["SW-thick-client", "Photoshop-stylesheet"],
+          "legacyCharacteristics": {
+            "clientType": "SW-thick-client",
+            "styleBase": "Photoshop-stylesheet",
+            "adminHeavy": true,
+            "webTransitionPossible": true,
+            "webTransitionDecided": false
+          },
+          "commonPromotion": "n/a",
+          "dsMapping": "n/a",
+          "nextAction": "화면 자료 제공 대기 + 사용자 승인 후 분석 시작",
+          "publishStatus": "draft",
+          "visibility": "admin-only"
+        },
+        {
+          "serviceId": "video-cloud",
+          "serviceName": "클라우드영상시스템",
+          "client": "TBD",
+          "system": "클라우드 기반 영상 관제 시스템 (예정)",
+          "status": "planned",
+          "currentPhase": "not-started",
+          "currentFocus": null,
+          "detectedLayout": null,
+          "analyzedMenuCount": 0,
+          "pendingReviewCount": 0,
+          "sourceTypes": [],
+          "commonPromotion": "n/a",
+          "dsMapping": "n/a",
+          "nextAction": "자료 제공 대기",
+          "publishStatus": "draft",
+          "visibility": "admin-only"
+        }
+      ]
+    },
+    {
+      "domainId": "access",
+      "domainName": "출입관리서비스",
+      "status": "planned",
+      "services": [
+        {
+          "serviceId": "access-cloud-manager",
+          "serviceName": "클라우드매니저",
+          "client": "TBD",
+          "system": "클라우드 기반 출입관리 시스템 (예정)",
+          "status": "planned",
+          "currentPhase": "not-started",
+          "currentFocus": null,
+          "detectedLayout": null,
+          "analyzedMenuCount": 0,
+          "pendingReviewCount": 0,
+          "sourceTypes": [],
+          "commonPromotion": "n/a",
+          "dsMapping": "n/a",
+          "nextAction": "자료 제공 대기",
+          "publishStatus": "draft",
+          "visibility": "admin-only"
+        }
+      ]
+    },
+    {
+      "domainId": "building",
+      "domainName": "빌딩관리서비스",
+      "status": "planned",
+      "services": [
+        {
+          "serviceId": "building-manager",
+          "serviceName": "빌딩매니저",
+          "client": "TBD",
+          "system": "빌딩 관리 통합 시스템 (예정)",
+          "status": "planned",
+          "currentPhase": "not-started",
+          "currentFocus": null,
+          "detectedLayout": null,
+          "analyzedMenuCount": 0,
+          "pendingReviewCount": 0,
+          "sourceTypes": [],
+          "commonPromotion": "n/a",
+          "dsMapping": "n/a",
+          "nextAction": "자료 제공 대기",
+          "publishStatus": "draft",
+          "visibility": "admin-only"
+        }
+      ]
+    },
+    {
+      "domainId": "allinone",
+      "domainName": "통합앱서비스 / 모두앱",
+      "status": "planned",
+      "services": [
+        {
+          "serviceId": "allinone-modoo",
+          "serviceName": "모두앱",
+          "client": "TBD",
+          "system": "통합앱 서비스 모두앱 (예정)",
+          "status": "planned",
+          "currentPhase": "not-started",
+          "currentFocus": null,
+          "detectedLayout": null,
+          "analyzedMenuCount": 0,
+          "pendingReviewCount": 0,
+          "sourceTypes": [],
+          "commonPromotion": "n/a",
+          "dsMapping": "n/a",
+          "nextAction": "자료 제공 대기",
+          "publishStatus": "draft",
+          "visibility": "admin-only"
+        }
+      ]
+    }
+  ]
+}

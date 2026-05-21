@@ -1,0 +1,37 @@
+{
+  "_description": "서비스별 사용자 역할 정의. cross-service 사용자 비교의 기준 정보.",
+  "_source": "s1-service-intelligence (single source of truth)",
+  "_lastUpdated": "2026-05-20",
+  "_movedFrom": "s1-mobility-uvis-workspace/registry/cross-service/",
+  "services": {
+    "mobility-uvis": {
+      "primaryRole": {
+        "id": "control-room-operator",
+        "name": "관제 운영자",
+        "korName": "관제 운영자",
+        "responsibilities": [
+          "실시간 차량 위치 모니터링",
+          "차량 상태 확인 (정상/지연/이탈)",
+          "배차 관리 및 조정",
+          "노선/정류장 정보 관리",
+          "운행 계획 수립"
+        ],
+        "workPattern": "연속 모니터링 + 이벤트 대응",
+        "attentionLoad": "high",
+        "multitaskingRequired": true
+      },
+      "secondaryRoles": [
+        {
+          "id": "admin",
+          "name": "시스템 관리자",
+          "responsibilities": ["공통코드 관리", "지역코드 관리", "휴일 관리"]
+        }
+      ]
+    },
+    "video": {
+      "_note": "분석 시작 전 — 자료 제공 후 정의 예정",
+      "primaryRole": null,
+      "secondaryRoles": []
+    }
+  }
+}

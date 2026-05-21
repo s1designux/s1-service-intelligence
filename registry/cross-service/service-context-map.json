@@ -1,0 +1,59 @@
+{
+  "_description": "서비스별 목적, 사용자, 환경 컨텍스트 정의. cross-service 비교의 기준 정보.",
+  "_source": "s1-service-intelligence (single source of truth)",
+  "_lastUpdated": "2026-05-20",
+  "_movedFrom": "s1-mobility-uvis-workspace/registry/cross-service/",
+  "services": {
+    "mobility-uvis": {
+      "servicePurpose": "관제 운영자가 실시간으로 차량 위치와 운행 상태를 모니터링하고 배차를 관리한다",
+      "serviceType": "real-time-monitoring-and-control",
+      "platform": "web-pc",
+      "userEnvironment": "관제실 / 운영 데스크",
+      "primaryUsers": ["관제 운영자"],
+      "operationMode": "실시간 (24시간 운영 가능)",
+      "dataCharacteristics": {
+        "realtime": true,
+        "geoSpatial": true,
+        "tabular": true
+      },
+      "currentAnalysis": {
+        "completedMenus": [
+          "모니터링 > 차량 위치",
+          "배차관리",
+          "노선관리",
+          "정류장관리",
+          "운행계획",
+          "정산 > 의뢰요",
+          "정산 > 배차결과",
+          "공통코드관리",
+          "지역코드관리",
+          "휴일관리"
+        ],
+        "derivedLayoutPattern": "map-list-detail-workspace",
+        "patternStatus": "service-candidate",
+        "ref": "../s1-mobility-uvis-workspace/registry/services/mobility/"
+      }
+    },
+    "video": {
+      "servicePurpose": "TBD — 영상 모니터링 및 관리 (분석 시작 전)",
+      "serviceType": "video-monitoring",
+      "platform": "TBD (현재 SW Thick Client, Web 전환 가능성 있음)",
+      "userEnvironment": "TBD",
+      "primaryUsers": ["TBD"],
+      "legacyCharacteristics": {
+        "clientType": "SW-thick-client",
+        "styleBase": "Photoshop-stylesheet",
+        "adminHeavy": true,
+        "webTransitionPossible": true,
+        "webTransitionDecided": false
+      },
+      "currentAnalysis": {
+        "status": "not-started",
+        "activationConditions": [
+          "영상서비스 화면 자료 제공",
+          "사용자 명시적 승인"
+        ]
+      }
+    }
+  }
+}

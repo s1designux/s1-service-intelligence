@@ -1,0 +1,27 @@
+{
+  "_description": "서비스별 workspace 경로 및 연결 정보. Admin에서 서비스 workspace로 이동하거나 데이터를 참조할 때 사용.",
+  "_lastUpdated": "2026-05-20",
+  "workspaces": [
+    {
+      "serviceId": "mobility-uvis",
+      "workspacePath": "../s1-mobility-uvis-workspace/",
+      "registryRef": "../s1-mobility-uvis-workspace/registry/services/mobility/",
+      "outputsRef": "../s1-mobility-uvis-workspace/outputs/mobility/",
+      "agentsRef": "../s1-mobility-uvis-workspace/.claude/agents/services/mobility/",
+      "dashboardLink": "../s1-mobility-uvis-workspace/dashboard/index.html",
+      "claudeMd": "../s1-mobility-uvis-workspace/CLAUDE.md",
+      "status": "active",
+      "notes": "기존 UVIS 분석 워크스페이스. 원본 데이터 source. 복사하지 않고 상대 경로로 참조."
+    },
+    {
+      "serviceId": "video-service",
+      "workspacePath": "TBD",
+      "registryRef": "TBD",
+      "outputsRef": "TBD",
+      "agentsRef": "../s1-mobility-uvis-workspace/.claude/agents/services/video/",
+      "dashboardLink": null,
+      "status": "planned",
+      "notes": "워크스페이스 미생성. 화면 자료 제공 및 사용자 승인 후 생성 예정."
+    }
+  ]
+}
