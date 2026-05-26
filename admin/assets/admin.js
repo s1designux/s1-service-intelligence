@@ -719,17 +719,7 @@ function renderSSSections(ss, keys) {
             </div>
           </div>
         </div>` : '';
-      const summaryHtml = `
-        <div class="ss-mt16">
-          <div class="ss-sub-label">메뉴별 주요 제공 기능</div>
-          <table class="ss-table">
-            <thead><tr><th style="width:110px">메뉴</th><th>주요 기능</th></tr></thead>
-            <tbody>
-              ${menus.map(m=>`<tr><td class="ss-td-b">${m.name}</td><td>${(m.contents||[]).join(' · ')}</td></tr>`).join('')}
-            </tbody>
-          </table>
-        </div>`;
-      return blk(n, '사용자 모드 IA', diagramHtml + aiInsetHtml + summaryHtml);
+      return blk(n, '사용자 모드 IA', diagramHtml + aiInsetHtml);
     },
 
     installModeIA: n => {
@@ -755,17 +745,7 @@ function renderSSSections(ss, keys) {
               </div>`).join('')}
           </div>
         </div>`;
-      const summaryHtml = `
-        <div class="ss-mt16">
-          <div class="ss-sub-label">메뉴별 주요 제공 기능</div>
-          <table class="ss-table">
-            <thead><tr><th style="width:110px">메뉴</th><th>주요 기능</th></tr></thead>
-            <tbody>
-              ${menus.map(m=>`<tr><td class="ss-td-b">${m.name}</td><td>${(m.contents||[]).join(' · ')}</td></tr>`).join('')}
-            </tbody>
-          </table>
-        </div>`;
-      return blk(n, '설치 모드 IA', diagramHtml + summaryHtml);
+      return blk(n, '설치 모드 IA', diagramHtml);
     },
 
     aiSafeService: n => {
@@ -892,6 +872,41 @@ function renderSSSections(ss, keys) {
     if (key === 'conclusion') return fn();
     return fn(num++);
   }).join('');
+}
+
+// ── 사양 우선순위 단독 렌더링 (개발사양 기본정보 4번 항목) ──
+function renderSpecPrioritySection(ia, num) {
+  if (!ia || !ia.specPriority) return '';
+  const decisionBadge = d => {
+    const map = { keep:'ia-dec-keep', add:'ia-dec-add', adapt:'ia-dec-adapt', defer:'ia-dec-defer', reject:'ia-dec-reject', 'needs-review':'ia-dec-hold' };
+    const label = { keep:'유지', add:'추가', adapt:'변형', defer:'보류', reject:'제외', 'needs-review':'검토' };
+    return `<span class="ia-dec-badge ${map[d]||'ia-dec-defer'}">${label[d]||d}</span>`;
+  };
+  const sp = ia.specPriority;
+  const tbl = (prio, items, hdrCls) => {
+    if (!items?.length) return '';
+    return `
+      <div class="ia-spec-group">
+        <div class="ia-spec-group-hdr ${hdrCls}">${prio} <span class="ia-spec-count">${items.length}개</span></div>
+        <table class="ia-spec-table"><tbody>
+          ${items.map(s=>`
+            <tr>
+              <td class="ia-spec-td">${s.spec}</td>
+              <td>${decisionBadge(s.decision)}</td>
+              <td class="ia-spec-reason">${s.reason}</td>
+            </tr>`).join('')}
+        </tbody></table>
+      </div>`;
+  };
+  return `
+    <div class="ss-block">
+      <div class="ss-block-title">${num}. 사양 우선순위</div>
+      ${tbl('P0 — 초기 필수', sp.P0, 'ia-p0-hdr')}
+      ${tbl('P1 — 초기 권장', sp.P1, 'ia-p1-hdr')}
+      ${tbl('P2 — 고도화', sp.P2, 'ia-p2-hdr')}
+      ${tbl('Hold — 정책·기술 확인', sp.Hold, 'ia-hold-hdr')}
+      ${tbl('Reject — 제외', sp.Reject, 'ia-reject-hdr')}
+    </div>`;
 }
 
 // ── IA 제안 렌더링 ──
@@ -1300,6 +1315,7 @@ function renderInsightSections(insight) {
     const planHtml   = renderSSSections(svcSummary, ['background', 'goals', 'roadmap']);
     const uxHtml     = renderSSSections(svcSummary, ['targets', 'vmsComparison', 'modes', 'userJourney', 'userModeIA', 'installModeIA', 'algorithmPolicy']);
     const specBasic  = renderSSSections(svcSummary, ['features', 'specs', 'benchmark']);
+    const specPrioHtml = renderSpecPrioritySection(iaProposal, 4);
     const futureHtml = renderSSSections(svcSummary, ['openIssues', 'conclusion']);
     const journeyImg = svcSummary.journeyImage
       ? `<div class="ss-journey-img-wrap sn-card-clickable" data-image="${svcSummary.journeyImage}" data-title="클라우드 영상시스템 전체 유저저니">
@@ -1326,7 +1342,6 @@ function renderInsightSections(insight) {
           <div class="tab" data-group="${tabGroup}" data-target="ux-concept">UX컨셉</div>
           <div class="tab" data-group="${tabGroup}" data-target="spec">개발사양</div>
           <div class="tab" data-group="${tabGroup}" data-target="future">향후검토</div>
-          ${iaProposal ? `<div class="tab" data-group="${tabGroup}" data-target="ia-proposal">IA 제안</div>` : ''}
           ${dsApp ? `<div class="tab" data-group="${tabGroup}" data-target="ds-application">DS 적용 계획</div>` : ''}
         </div>
 
@@ -1370,7 +1385,7 @@ function renderInsightSections(insight) {
               <button class="ss-sub-chip active" data-sub="basic">기본정보</button>
               ${benchmark ? `<button class="ss-sub-chip" data-sub="bm">선진사참고</button>` : ''}
             </div>
-            <div class="ss-sub-panel active" data-sub="basic">${specBasic}</div>
+            <div class="ss-sub-panel active" data-sub="basic">${specBasic}${specPrioHtml}</div>
             ${benchmark ? `<div class="ss-sub-panel" data-sub="bm">${benchmarkPanelContent}</div>` : ''}
           </div>
         </div>
@@ -1387,20 +1402,6 @@ function renderInsightSections(insight) {
             ${futureHtml}
           </div>
         </div>
-
-        ${iaProposal ? `
-        <div class="tab-panel" data-group="${tabGroup}" data-panel="ia-proposal">
-          <div class="insight-container">
-            <div class="insight-header">
-              <div class="insight-header-title">IA 제안</div>
-              <div class="insight-header-meta">
-                <span>${iaProposal.basis}</span>
-                <span>분석: ${iaProposal.analyzedAt}</span>
-              </div>
-            </div>
-            ${iaProposalContent}
-          </div>
-        </div>` : ''}
 
         ${dsApp ? `
         <div class="tab-panel" data-group="${tabGroup}" data-panel="ds-application">
