@@ -1123,6 +1123,43 @@ tr:hover td { background: var(--gray-50); }
 }
 .sn-card-clickable:hover .sn-card-view-hint { opacity: 1; }
 
+/* ── UX 컨셉 탭 ── */
+.ux-concept-desc {
+  font-size: 13px;
+  color: var(--gray-500);
+  margin-bottom: 16px;
+}
+.ux-concept-figure {
+  position: relative;
+  border: 1px solid var(--gray-200);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--gray-50);
+}
+.ux-concept-figure:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,.1);
+  border-color: var(--blue-500);
+}
+.ux-concept-img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.ux-concept-hint {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+  background: rgba(0,0,0,.55);
+  padding: 4px 10px;
+  border-radius: 6px;
+  opacity: 0;
+  transition: opacity .15s;
+}
+.ux-concept-figure:hover .ux-concept-hint { opacity: 1; }
+
 .sn-card-empty {
   border-style: dashed;
   background: var(--gray-50);
@@ -2404,3 +2441,165 @@ tr:hover td { background: var(--gray-50); }
 .ia-q-badge-medium   { background: var(--gray-100); color: var(--gray-500); border: 1px solid var(--gray-200); }
 .ia-oq-question { font-size: 12px; color: var(--gray-700); line-height: 1.5; margin-bottom: 4px; }
 .ia-oq-impact { font-size: 11px; color: var(--gray-500); }
+
+/* ══════════════════════════════════════════════
+   서비스 서머리 (ss-*)
+   ══════════════════════════════════════════════ */
+
+/* 공통 레이아웃 */
+.ss-block { margin-bottom: 32px; }
+.ss-block-title {
+  font-size: 14px; font-weight: 700; color: var(--gray-900);
+  padding: 8px 12px; background: var(--gray-100);
+  border-left: 3px solid var(--blue-600); border-radius: 3px;
+  margin-bottom: 14px;
+}
+.ss-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.ss-3col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.ss-mt8  { margin-top: 8px; }
+.ss-mt16 { margin-top: 16px; }
+.ss-table-scroll { overflow-x: auto; }
+.ss-sub-label { font-size: 11px; font-weight: 700; color: var(--gray-500); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; }
+
+/* 패널 */
+.ss-panel { border: 1px solid var(--gray-200); border-radius: 6px; padding: 14px; background: #fff; }
+.ss-panel-blue { background: #eff6ff; border-color: #bfdbfe; }
+.ss-panel-title { font-size: 12px; font-weight: 700; color: var(--gray-700); margin-bottom: 10px; }
+
+/* 불릿 리스트 */
+.ss-bullet { list-style: none; padding: 0; margin: 0; }
+.ss-bullet li { font-size: 13px; color: var(--gray-700); padding: 3px 0 3px 14px; position: relative; line-height: 1.5; }
+.ss-bullet li::before { content: '·'; position: absolute; left: 4px; color: var(--blue-500); font-weight: 700; }
+
+/* 테이블 */
+.ss-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.ss-table th { background: var(--gray-100); padding: 8px 12px; font-weight: 600; text-align: left; border: 1px solid var(--gray-200); }
+.ss-table td { padding: 7px 12px; border: 1px solid var(--gray-200); vertical-align: top; }
+.ss-td-b { font-weight: 600; color: var(--gray-800); white-space: nowrap; }
+.ss-td-old { color: var(--gray-600); background: #fafafa; }
+.ss-td-new { color: #1d4ed8; background: #eff6ff; font-weight: 500; }
+.ss-th-new { background: #dbeafe; color: #1d4ed8; }
+.ss-td-result { font-size: 12px; color: var(--green-600); font-weight: 500; min-width: 100px; }
+
+/* 태그 */
+.ss-tag { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 10px; background: var(--gray-100); color: var(--gray-600); margin: 2px 2px 2px 0; }
+.ss-tag-row { margin-top: 6px; }
+.ss-tag-install { background: #dcfce7; color: #15803d; }
+.ss-tag-user { background: #dbeafe; color: #1d4ed8; }
+.ss-tag-admin { background: #f3e8ff; color: #7c3aed; }
+.ss-tag-none { background: var(--gray-100); color: var(--gray-500); }
+
+/* 타겟 */
+.ss-target-name { font-size: 15px; font-weight: 700; color: var(--blue-700); margin-bottom: 8px; }
+
+/* 목표 */
+.ss-goal-list { display: flex; flex-direction: column; gap: 6px; }
+.ss-goal-item { display: flex; align-items: baseline; gap: 10px; padding: 8px 12px; background: #fff; border: 1px solid var(--gray-200); border-radius: 6px; font-size: 13px; }
+.ss-goal-num { font-size: 11px; font-weight: 700; color: var(--blue-600); min-width: 22px; }
+
+/* 모드 카드 */
+.ss-mode-card { border: 1px solid var(--gray-200); border-radius: 8px; padding: 16px; background: #fff; }
+.ss-mode-install { border-top: 3px solid #16a34a; }
+.ss-mode-user    { border-top: 3px solid #2563eb; }
+.ss-mode-admin   { border-top: 3px solid #7c3aed; }
+.ss-mode-title { margin-bottom: 12px; }
+.ss-mode-badge { display: inline-block; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 12px; }
+.ss-mode-row { display: flex; gap: 8px; font-size: 12px; margin-bottom: 5px; }
+.ss-mode-key { color: var(--gray-500); min-width: 60px; flex-shrink: 0; font-weight: 500; }
+.ss-mode-menus { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 4px; }
+.ss-menu-chip { font-size: 11px; padding: 2px 7px; background: var(--gray-100); border-radius: 10px; color: var(--gray-700); }
+
+/* 유저저니 */
+.ss-journey-table td { font-size: 12px; }
+.ss-step-num { font-weight: 800; color: var(--blue-600); font-size: 15px; text-align: center; }
+.ss-jrn-badge { display: inline-block; font-size: 11px; padding: 2px 7px; border-radius: 10px; white-space: nowrap; }
+
+/* 사용자 모드 IA */
+.ss-ia-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.ss-ia-card { border: 1px solid var(--gray-200); border-radius: 8px; padding: 14px; background: #fff; }
+.ss-ia-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.ss-ia-num { font-size: 11px; font-weight: 700; color: var(--blue-500); background: #eff6ff; border-radius: 10px; padding: 1px 7px; }
+.ss-ia-name { font-size: 14px; font-weight: 700; color: var(--gray-900); }
+.ss-ia-role { font-size: 12px; color: var(--gray-600); margin-bottom: 8px; line-height: 1.5; padding-bottom: 8px; border-bottom: 1px solid var(--gray-100); }
+.ss-ia-contents { margin-bottom: 8px; }
+.ss-ia-sub-label { font-size: 11px; font-weight: 700; color: var(--gray-500); margin-top: 8px; margin-bottom: 4px; }
+.ss-ai-ex-table { width: 100%; font-size: 11px; border-collapse: collapse; }
+.ss-ai-ex-table tr { border-bottom: 1px solid var(--gray-100); }
+.ss-ai-ex-table td { padding: 3px 4px; }
+.ss-ai-type { font-weight: 600; color: var(--gray-700); white-space: nowrap; padding-right: 8px !important; }
+
+/* 설치 모드 IA */
+.ss-install-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.ss-install-card { border: 1px solid var(--gray-200); border-radius: 6px; padding: 12px; background: #f0fdf4; border-left: 3px solid #16a34a; }
+.ss-install-header { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
+.ss-install-num { font-size: 11px; font-weight: 700; color: #15803d; background: #dcfce7; border-radius: 10px; padding: 1px 7px; }
+.ss-install-name { font-size: 13px; font-weight: 700; color: var(--gray-800); }
+
+/* AI 안심 서비스 */
+.ss-ai-concept { font-size: 13px; color: var(--gray-700); padding: 12px 16px; background: #eff6ff; border-radius: 6px; border-left: 3px solid var(--blue-500); line-height: 1.6; font-weight: 500; }
+.ss-flow-list { display: flex; flex-direction: column; gap: 6px; }
+.ss-flow-item { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--gray-700); padding: 6px 10px; background: #fff; border: 1px solid var(--gray-200); border-radius: 6px; }
+.ss-flow-num { font-size: 11px; font-weight: 700; color: #fff; background: var(--blue-600); border-radius: 50%; width: 20px; height: 20px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+/* 정책 카드 */
+.ss-pol-card { border: 1px solid var(--gray-200); border-radius: 8px; padding: 14px; }
+.ss-pol-install { background: #f0fdf4; border-top: 3px solid #16a34a; }
+.ss-pol-user    { background: #eff6ff; border-top: 3px solid #2563eb; }
+.ss-pol-system  { background: #faf5ff; border-top: 3px solid #7c3aed; }
+.ss-pol-title { font-size: 13px; font-weight: 700; color: var(--gray-900); margin-bottom: 6px; }
+.ss-pol-desc { font-size: 12px; color: var(--gray-600); margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--gray-200); line-height: 1.5; }
+
+/* 기능 카드 */
+.ss-feat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.ss-feat-card { border: 1px solid var(--gray-200); border-radius: 6px; padding: 12px; }
+.ss-feat-title { font-size: 12px; font-weight: 700; margin-bottom: 8px; }
+.ss-feat-blue   { border-top: 3px solid #2563eb; } .ss-feat-blue   .ss-feat-title { color: #1d4ed8; }
+.ss-feat-purple { border-top: 3px solid #7c3aed; } .ss-feat-purple .ss-feat-title { color: #6d28d9; }
+.ss-feat-orange { border-top: 3px solid #ea580c; } .ss-feat-orange .ss-feat-title { color: #c2410c; }
+.ss-feat-green  { border-top: 3px solid #16a34a; } .ss-feat-green  .ss-feat-title { color: #15803d; }
+.ss-feat-gray   { border-top: 3px solid var(--gray-400); } .ss-feat-gray   .ss-feat-title { color: var(--gray-600); }
+
+/* 사양 카드 */
+.ss-spec-card { border: 1px solid var(--gray-200); border-radius: 6px; padding: 12px; background: var(--gray-50); }
+.ss-spec-title { font-size: 12px; font-weight: 700; color: var(--gray-700); margin-bottom: 8px; }
+
+/* 특장점 */
+.ss-strength-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.ss-strength-card { border: 1px solid var(--gray-200); border-radius: 8px; padding: 14px; background: #fff; }
+.ss-strength-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.ss-strength-num { font-size: 11px; font-weight: 700; color: var(--blue-600); background: #dbeafe; border-radius: 10px; padding: 1px 7px; }
+.ss-strength-title { font-size: 13px; font-weight: 700; color: var(--gray-900); flex: 1; }
+.ss-strength-point { font-size: 10px; padding: 2px 7px; border-radius: 10px; background: var(--gray-100); color: var(--gray-600); white-space: nowrap; }
+.ss-strength-desc { font-size: 12px; color: var(--gray-600); line-height: 1.6; }
+
+/* 로드맵 */
+.ss-rm-card { border: 1px solid var(--gray-200); border-radius: 8px; padding: 16px; background: #fff; }
+.ss-rm-blue   { border-top: 4px solid #2563eb; }
+.ss-rm-green  { border-top: 4px solid #16a34a; }
+.ss-rm-purple { border-top: 4px solid #7c3aed; }
+.ss-rm-phase { font-size: 15px; font-weight: 800; color: var(--gray-900); margin-bottom: 4px; }
+.ss-rm-period { font-size: 12px; font-weight: 400; color: var(--gray-500); }
+.ss-rm-goal { font-size: 12px; color: var(--gray-700); margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--gray-100); font-weight: 500; line-height: 1.5; }
+.ss-rm-section-title { font-size: 11px; font-weight: 700; color: var(--gray-400); margin: 8px 0 4px; text-transform: uppercase; letter-spacing: .5px; }
+.ss-rm-biz { margin-top: 10px; font-size: 11px; padding: 5px 10px; background: var(--gray-100); border-radius: 4px; color: var(--gray-700); font-weight: 600; }
+
+/* 향후 검토 과제 */
+.ss-issue-list { display: flex; flex-direction: column; gap: 8px; }
+.ss-issue-item { padding: 12px 14px; border-radius: 6px; background: #fff; border: 1px solid var(--gray-200); }
+.ss-pri-high   { border-left: 4px solid #dc2626; }
+.ss-pri-medium { border-left: 4px solid #f97316; }
+.ss-pri-low    { border-left: 4px solid var(--gray-300); }
+.ss-issue-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.ss-issue-id { font-size: 11px; font-weight: 700; color: var(--gray-500); background: var(--gray-100); padding: 1px 6px; border-radius: 4px; }
+.ss-issue-topic { font-size: 13px; font-weight: 700; color: var(--gray-900); flex: 1; }
+.ss-issue-desc { font-size: 12px; color: var(--gray-600); line-height: 1.5; }
+.ss-issue-pri { font-size: 10px; padding: 2px 7px; border-radius: 10px; }
+.ss-pri-badge-high { background: #fee2e2; color: #dc2626; }
+.ss-pri-badge-medium { background: #fff7ed; color: #ea580c; }
+.ss-pri-badge-low { background: var(--gray-100); color: var(--gray-500); }
+
+/* 결론 */
+.ss-conclusion {
+  margin-top: 32px; padding: 20px 24px; background: #1e2433; color: #c9d1e0;
+  border-radius: 8px; font-size: 13px; line-height: 1.8;
+}
