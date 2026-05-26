@@ -630,6 +630,7 @@ function renderSSSections(ss, keys) {
       </table>`),
 
     modes: n => blk(n, '전체 서비스 모드 구조', `
+      <p class="ss-mode-why">서비스는 사용 시점과 역할에 따라 세 가지 독립 모드로 분리됩니다. 설치 기사·일반 사용자·서비스 관리자가 각자 필요한 화면에만 집중할 수 있어 혼선 없이 간결한 경험을 제공합니다.</p>
       <div class="ss-3col">
         ${(ss.modes||[]).map(m=>`
           <div class="ss-mode-card ${modeCls[m.id]||''}">
@@ -667,35 +668,105 @@ function renderSSSections(ss, keys) {
       </table>
       </div>`),
 
-    userModeIA: n => blk(n, '사용자 모드 IA', `
-      <div class="ss-ia-grid">
-        ${(ss.userModeIA||[]).map(m=>`
-          <div class="ss-ia-card">
-            <div class="ss-ia-header">
-              <span class="ss-ia-num">${m.num}</span>
-              <span class="ss-ia-name">${m.name}</span>
+    userModeIA: n => {
+      const ai = ss.aiSafeService || {};
+      const menus = ss.userModeIA || [];
+      const diagramHtml = `
+        <div class="ss-iad-wrap">
+          <div class="ss-iad-root ss-iad-root-user">
+            <span class="ss-iad-root-label">사용자 모드</span>
+            <span class="ss-iad-root-sub">PC 웹뷰어 · 모바일 앱 / 관제원 · 운영자 · 담당자</span>
+          </div>
+          <div class="ss-iad-stem"></div>
+          <div class="ss-iad-grid">
+            ${menus.map(m=>`
+              <div class="ss-iad-card">
+                <div class="ss-iad-vline"></div>
+                <div class="ss-iad-card-head">
+                  <span class="ss-iad-num">${m.num}</span>
+                  <span class="ss-iad-name">${m.name}</span>
+                </div>
+                <div class="ss-iad-role">${m.role}</div>
+                <div class="ss-iad-items">
+                  ${(m.contents||[]).map(c=>`<span class="ss-iad-item">${c}</span>`).join('')}
+                </div>
+                ${m.aiExamples ? `
+                  <div class="ss-iad-ai-label">업종별 AI 추천</div>
+                  ${m.aiExamples.map(ex=>`<div class="ss-iad-ai-row"><span class="ss-ai-type">${ex.type}</span><span>${ex.ai.join(' · ')}</span></div>`).join('')}` : ''}
+                ${m.extra ? `
+                  <div class="ss-iad-ai-label">${m.extra.label}</div>
+                  <div class="ss-tag-row">${m.extra.items.map(i=>`<span class="ss-tag">${i}</span>`).join('')}</div>` : ''}
+              </div>`).join('')}
+          </div>
+        </div>`;
+      const aiInsetHtml = ai.concept ? `
+        <div class="ss-ai-inset">
+          <div class="ss-ai-inset-title">AI 안심 서비스 구조</div>
+          <div class="ss-ai-concept">${ai.concept}</div>
+          <div class="ss-2col ss-mt12">
+            <div>
+              <div class="ss-sub-label">기술 용어 → 사용자 표현</div>
+              <table class="ss-table">
+                <thead><tr><th>기술 용어</th><th>사용자 표현</th></tr></thead>
+                <tbody>${(ai.termMapping||[]).map(t=>`<tr><td class="ss-td-old">${t.tech}</td><td class="ss-td-new">${t.user}</td></tr>`).join('')}</tbody>
+              </table>
             </div>
-            <div class="ss-ia-role">${m.role}</div>
-            <div class="ss-ia-contents">${bl(m.contents)}</div>
-            ${m.aiExamples ? `
-              <div class="ss-ia-sub-label">업종별 AI 추천 예시</div>
-              <table class="ss-ai-ex-table">
-                ${m.aiExamples.map(ex=>`<tr><td class="ss-ai-type">${ex.type}</td><td>${ex.ai.join(' · ')}</td></tr>`).join('')}
-              </table>` : ''}
-            ${m.extra ? `
-              <div class="ss-ia-sub-label">${m.extra.label}</div>
-              <div class="ss-tag-row">${m.extra.items.map(i=>`<span class="ss-tag">${i}</span>`).join('')}</div>` : ''}
-          </div>`).join('')}
-      </div>`),
+            <div>
+              <div class="ss-sub-label">서비스 흐름</div>
+              <div class="ss-flow-list">
+                ${(ai.flow||[]).map((f,i)=>`<div class="ss-flow-item"><span class="ss-flow-num">${i+1}</span><span>${f}</span></div>`).join('')}
+              </div>
+            </div>
+          </div>
+        </div>` : '';
+      const summaryHtml = `
+        <div class="ss-mt16">
+          <div class="ss-sub-label">메뉴별 주요 제공 기능</div>
+          <table class="ss-table">
+            <thead><tr><th style="width:110px">메뉴</th><th>주요 기능</th></tr></thead>
+            <tbody>
+              ${menus.map(m=>`<tr><td class="ss-td-b">${m.name}</td><td>${(m.contents||[]).join(' · ')}</td></tr>`).join('')}
+            </tbody>
+          </table>
+        </div>`;
+      return blk(n, '사용자 모드 IA', diagramHtml + aiInsetHtml + summaryHtml);
+    },
 
-    installModeIA: n => blk(n, '설치 모드 IA', `
-      <div class="ss-install-grid">
-        ${(ss.installModeIA||[]).map(m=>`
-          <div class="ss-install-card">
-            <div class="ss-install-header"><span class="ss-install-num">${m.num}</span><span class="ss-install-name">${m.name}</span></div>
-            ${bl(m.contents)}
-          </div>`).join('')}
-      </div>`),
+    installModeIA: n => {
+      const menus = ss.installModeIA || [];
+      const diagramHtml = `
+        <div class="ss-iad-wrap">
+          <div class="ss-iad-root ss-iad-root-install">
+            <span class="ss-iad-root-label">설치 모드</span>
+            <span class="ss-iad-root-sub">태블릿 앱 · 현장 설치 기사 전용</span>
+          </div>
+          <div class="ss-iad-stem"></div>
+          <div class="ss-iad-grid">
+            ${menus.map(m=>`
+              <div class="ss-iad-card">
+                <div class="ss-iad-vline"></div>
+                <div class="ss-iad-card-head">
+                  <span class="ss-iad-num ss-iad-num-install">${m.num}</span>
+                  <span class="ss-iad-name">${m.name}</span>
+                </div>
+                <div class="ss-iad-items">
+                  ${(m.contents||[]).map(c=>`<span class="ss-iad-item">${c}</span>`).join('')}
+                </div>
+              </div>`).join('')}
+          </div>
+        </div>`;
+      const summaryHtml = `
+        <div class="ss-mt16">
+          <div class="ss-sub-label">메뉴별 주요 제공 기능</div>
+          <table class="ss-table">
+            <thead><tr><th style="width:110px">메뉴</th><th>주요 기능</th></tr></thead>
+            <tbody>
+              ${menus.map(m=>`<tr><td class="ss-td-b">${m.name}</td><td>${(m.contents||[]).join(' · ')}</td></tr>`).join('')}
+            </tbody>
+          </table>
+        </div>`;
+      return blk(n, '설치 모드 IA', diagramHtml + summaryHtml);
+    },
 
     aiSafeService: n => {
       const ai = ss.aiSafeService || {};
@@ -1227,7 +1298,7 @@ function renderInsightSections(insight) {
   // ── svcSummary 있으면 기획방향/UX컨셉/개발사양/향후검토 탭 구조 ──
   if (svcSummary) {
     const planHtml   = renderSSSections(svcSummary, ['background', 'goals', 'roadmap']);
-    const uxHtml     = renderSSSections(svcSummary, ['targets', 'vmsComparison', 'modes', 'userJourney', 'userModeIA', 'installModeIA', 'aiSafeService', 'algorithmPolicy', 'strengths']);
+    const uxHtml     = renderSSSections(svcSummary, ['targets', 'vmsComparison', 'modes', 'userJourney', 'userModeIA', 'installModeIA', 'algorithmPolicy']);
     const specBasic  = renderSSSections(svcSummary, ['features', 'specs', 'benchmark']);
     const futureHtml = renderSSSections(svcSummary, ['openIssues', 'conclusion']);
     const journeyImg = svcSummary.journeyImage
