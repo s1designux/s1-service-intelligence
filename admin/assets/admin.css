@@ -2603,3 +2603,27 @@ tr:hover td { background: var(--gray-50); }
   margin-top: 32px; padding: 20px 24px; background: #1e2433; color: #c9d1e0;
   border-radius: 8px; font-size: 13px; line-height: 1.8;
 }
+
+/* 서브칩 (개발사양 기본정보/선진사참고) */
+.ss-sub-nav { display: flex; gap: 6px; margin: 16px 0 12px; padding: 0; }
+.ss-sub-chip {
+  padding: 5px 14px; border-radius: 16px; border: 1px solid var(--gray-300);
+  background: var(--gray-50); color: var(--gray-600);
+  font-size: 12px; font-weight: 600; cursor: pointer; transition: all .15s;
+}
+.ss-sub-chip:hover { background: var(--gray-100); }
+.ss-sub-chip.active { background: var(--blue-600); color: #fff; border-color: var(--blue-600); }
+.ss-sub-panel { display: none; }
+.ss-sub-panel.active { display: block; }
+
+/* UX컨셉 탭 유저저니 이미지 */
+.ss-journey-img-wrap {
+  position: relative; cursor: pointer; border-radius: 8px; overflow: hidden;
+  margin-bottom: 24px; border: 1px solid var(--gray-200);
+}
+.ss-journey-img { width: 100%; display: block; }
+.ss-journey-img-wrap .ux-concept-hint {
+  position: absolute; bottom: 0; right: 0;
+  background: rgba(0,0,0,.5); color: #fff; font-size: 11px;
+  padding: 4px 10px; border-top-left-radius: 6px;
+}

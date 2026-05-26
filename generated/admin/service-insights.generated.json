@@ -703,6 +703,7 @@
           "id": "serviceSummary",
           "title": "서비스 서머리",
           "updatedAt": "2026-05-26",
+          "journeyImage": "assets/images/ux-journey-video-cloud.webp",
           "background": {
             "situation": [
               "기존 영상보안 사업은 로컬 기기 렌탈 중심으로 차별화 부족, 시장 지배력 약화",

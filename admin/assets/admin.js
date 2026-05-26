@@ -567,264 +567,260 @@ function renderServiceIntelligence() {
 }
 
 // ── 서비스 서머리 렌더링 ──
-function renderServiceSummarySection(ss) {
+function renderSSSections(ss, keys) {
   const bl = (items, cls='') =>
-    `<ul class="ss-bullet ${cls}">${items.map(i=>`<li>${i}</li>`).join('')}</ul>`;
-  const sec = (title, content, id='') =>
-    `<div class="ss-block"${id?` id="${id}"`:''}><div class="ss-block-title">${title}</div>${content}</div>`;
-  const modeCls = { install:'ss-mode-install', user:'ss-mode-user', admin:'ss-mode-admin' };
-  const modeTagCls = { install:'ss-tag-install', user:'ss-tag-user', admin:'ss-tag-admin' };
-  const priCls = { high:'ss-pri-high', medium:'ss-pri-medium', low:'ss-pri-low' };
-  const priLabel = { high:'우선확인', medium:'검토필요', low:'참고' };
-  const rmColor = { blue:'ss-rm-blue', green:'ss-rm-green', purple:'ss-rm-purple' };
+    `<ul class="ss-bullet ${cls}">${(items||[]).map(i=>`<li>${i}</li>`).join('')}</ul>`;
+  const blk = (n, title, content) =>
+    `<div class="ss-block"><div class="ss-block-title">${n}. ${title}</div>${content}</div>`;
+  const modeCls   = { install:'ss-mode-install', user:'ss-mode-user', admin:'ss-mode-admin' };
+  const modeTagCls= { install:'ss-tag-install',  user:'ss-tag-user',  admin:'ss-tag-admin'  };
+  const priCls    = { high:'ss-pri-high', medium:'ss-pri-medium', low:'ss-pri-low' };
+  const priLabel  = { high:'우선확인', medium:'검토필요', low:'참고' };
+  const rmColor   = { blue:'ss-rm-blue', green:'ss-rm-green', purple:'ss-rm-purple' };
   const featColor = { blue:'ss-feat-blue', purple:'ss-feat-purple', orange:'ss-feat-orange', green:'ss-feat-green', gray:'ss-feat-gray' };
 
-  // ① 기획 배경
-  const bgHtml = sec('1. 기획 배경', `
-    <div class="ss-2col">
-      <div class="ss-panel">
-        <div class="ss-panel-title">현황 및 문제</div>
-        ${bl(ss.background?.situation||[])}
-      </div>
-      <div class="ss-panel ss-panel-blue">
-        <div class="ss-panel-title">핵심 전략 방향</div>
-        ${bl(ss.background?.strategy||[])}
-      </div>
-    </div>`);
-
-  // ② 서비스 목표
-  const goalsHtml = sec('2. 서비스 목표', `
-    <div class="ss-goal-list">
-      ${(ss.goals||[]).map((g,i)=>`<div class="ss-goal-item"><span class="ss-goal-num">${String(i+1).padStart(2,'0')}</span><span>${g}</span></div>`).join('')}
-    </div>`);
-
-  // ③ 타겟 사용자
-  const t = ss.targets || {};
-  const targetsHtml = sec('3. 타겟 사용자', `
-    <div class="ss-2col">
-      <div class="ss-panel ss-panel-blue">
-        <div class="ss-panel-title">${t.primary?.label||'핵심 타겟'}</div>
-        <div class="ss-target-name">${t.primary?.name||''}</div>
-        <div class="ss-tag-row">${(t.primary?.examples||[]).map(e=>`<span class="ss-tag">${e}</span>`).join('')}</div>
-        ${bl(t.primary?.traits||[],'ss-mt8')}
-      </div>
-      <div class="ss-panel">
-        <div class="ss-panel-title">보조 타겟</div>
-        <table class="ss-table"><tbody>
-          ${(t.secondary||[]).map(s=>`<tr><td class="ss-td-b">${s.name}</td><td>${s.role}</td></tr>`).join('')}
-        </tbody></table>
-      </div>
-    </div>`);
-
-  // ④ VMS 비교
-  const vmsHtml = sec('4. 기존 VMS vs 신규 클라우드영상시스템', `
-    <table class="ss-table">
-      <thead><tr><th>구분</th><th>기존 VMS</th><th class="ss-th-new">신규 클라우드영상시스템</th></tr></thead>
-      <tbody>
-        ${(ss.vmsComparison||[]).map(r=>`
-          <tr>
-            <td class="ss-td-b">${r.item}</td>
-            <td class="ss-td-old">${r.existing}</td>
-            <td class="ss-td-new">${r.new}</td>
-          </tr>`).join('')}
-      </tbody>
-    </table>`);
-
-  // ⑤ 서비스 모드 구조
-  const modesHtml = sec('5. 전체 서비스 모드 구조', `
-    <div class="ss-3col">
-      ${(ss.modes||[]).map(m=>`
-        <div class="ss-mode-card ${modeCls[m.id]||''}">
-          <div class="ss-mode-title">
-            <span class="${modeTagCls[m.id]||'ss-tag-install'} ss-mode-badge">${m.name}</span>
-          </div>
-          <div class="ss-mode-row"><span class="ss-mode-key">사용 시점</span><span>${m.timing}</span></div>
-          <div class="ss-mode-row"><span class="ss-mode-key">주 사용자</span><span>${m.users?.join(', ')||''}</span></div>
-          <div class="ss-mode-row"><span class="ss-mode-key">접속 방식</span><span>${m.access}</span></div>
-          <div class="ss-mode-row"><span class="ss-mode-key">목적</span><span>${m.purpose}</span></div>
-          <div class="ss-mode-menus">
-            ${(m.menus||[]).map((mn,i)=>`<span class="ss-menu-chip">${String(i+1).padStart(2,'0')} ${mn}</span>`).join('')}
-          </div>
-        </div>`).join('')}
-    </div>`);
-
-  // ⑥ 유저저니
-  const journeyHtml = sec('6. 전체 유저저니', `
-    <div class="ss-table-scroll">
-    <table class="ss-table ss-journey-table">
-      <thead><tr><th style="width:36px">#</th><th>단계</th><th>모드</th><th>주 사용자</th><th>주요 액션</th><th>결과</th></tr></thead>
-      <tbody>
-        ${(ss.userJourney||[]).map(j=>{
-          const iMode = j.mode.includes('설치') ? 'install' : j.mode.includes('사용') ? 'user' : j.mode.includes('관리') ? 'admin' : '';
-          const modeBadge = iMode ? `<span class="ss-jrn-badge ${modeTagCls[iMode]||''}">${j.mode}</span>` : `<span class="ss-jrn-badge ss-tag-none">${j.mode}</span>`;
-          return `<tr>
-            <td class="ss-step-num">${j.step}</td>
-            <td class="ss-td-b">${j.title}</td>
-            <td style="white-space:nowrap">${modeBadge}</td>
-            <td>${j.users?.join('<br>')||''}</td>
-            <td>${bl(j.actions)}</td>
-            <td class="ss-td-result">${j.result}</td>
-          </tr>`;
-        }).join('')}
-      </tbody>
-    </table>
-    </div>`);
-
-  // ⑦ 사용자 모드 IA
-  const userIaHtml = sec('7. 사용자 모드 IA', `
-    <div class="ss-ia-grid">
-      ${(ss.userModeIA||[]).map(m=>`
-        <div class="ss-ia-card">
-          <div class="ss-ia-header">
-            <span class="ss-ia-num">${m.num}</span>
-            <span class="ss-ia-name">${m.name}</span>
-          </div>
-          <div class="ss-ia-role">${m.role}</div>
-          <div class="ss-ia-contents">${bl(m.contents)}</div>
-          ${m.aiExamples ? `
-            <div class="ss-ia-sub-label">업종별 AI 추천 예시</div>
-            <table class="ss-ai-ex-table">
-              ${m.aiExamples.map(ex=>`<tr><td class="ss-ai-type">${ex.type}</td><td>${ex.ai.join(' · ')}</td></tr>`).join('')}
-            </table>` : ''}
-          ${m.extra ? `
-            <div class="ss-ia-sub-label">${m.extra.label}</div>
-            <div class="ss-tag-row">${m.extra.items.map(i=>`<span class="ss-tag">${i}</span>`).join('')}</div>` : ''}
-        </div>`).join('')}
-    </div>`);
-
-  // ⑧ 설치 모드 IA
-  const installIaHtml = sec('8. 설치 모드 IA', `
-    <div class="ss-install-grid">
-      ${(ss.installModeIA||[]).map(m=>`
-        <div class="ss-install-card">
-          <div class="ss-install-header"><span class="ss-install-num">${m.num}</span><span class="ss-install-name">${m.name}</span></div>
-          ${bl(m.contents)}
-        </div>`).join('')}
-    </div>`);
-
-  // ⑨ AI 안심 서비스
-  const ai = ss.aiSafeService || {};
-  const aiHtml = sec('9. AI 안심 서비스 구조', `
-    <div class="ss-ai-concept">${ai.concept||''}</div>
-    <div class="ss-2col ss-mt16">
-      <div>
-        <div class="ss-sub-label">사용자 표현 변환</div>
-        <table class="ss-table">
-          <thead><tr><th>기술 용어</th><th>사용자 표현</th></tr></thead>
-          <tbody>${(ai.termMapping||[]).map(t=>`<tr><td class="ss-td-old">${t.tech}</td><td class="ss-td-new">${t.user}</td></tr>`).join('')}</tbody>
-        </table>
-      </div>
-      <div>
-        <div class="ss-sub-label">AI 안심 서비스 흐름</div>
-        <div class="ss-flow-list">
-          ${(ai.flow||[]).map((f,i)=>`<div class="ss-flow-item"><span class="ss-flow-num">${i+1}</span><span>${f}</span></div>`).join('')}
+  const R = {
+    background: n => blk(n, '기획 배경', `
+      <div class="ss-2col">
+        <div class="ss-panel">
+          <div class="ss-panel-title">현황 및 문제</div>
+          ${bl(ss.background?.situation)}
         </div>
-      </div>
-    </div>`);
+        <div class="ss-panel ss-panel-blue">
+          <div class="ss-panel-title">핵심 전략 방향</div>
+          ${bl(ss.background?.strategy)}
+        </div>
+      </div>`),
 
-  // ⑩ 알고리즘 설정 정책
-  const ap = ss.algorithmPolicy || {};
-  const policyHtml = sec('10. AI 알고리즘 설정 정책', `
-    <div class="ss-3col">
-      ${['installer','user','system'].map(key => {
-        const p = ap[key] || {};
-        const cls = key==='installer' ? 'ss-pol-install' : key==='user' ? 'ss-pol-user' : 'ss-pol-system';
-        return `<div class="ss-pol-card ${cls}">
-          <div class="ss-pol-title">${p.label||key}</div>
-          <div class="ss-pol-desc">${p.desc||''}</div>
-          ${bl(p.tasks||[])}
-        </div>`;
-      }).join('')}
-    </div>`);
+    goals: n => blk(n, '서비스 목표', `
+      <div class="ss-goal-list">
+        ${(ss.goals||[]).map((g,i)=>`<div class="ss-goal-item"><span class="ss-goal-num">${String(i+1).padStart(2,'0')}</span><span>${g}</span></div>`).join('')}
+      </div>`),
 
-  // ⑪ 주요 기능
-  const featHtml = sec('11. 주요 제공 기능', `
-    <div class="ss-feat-grid">
-      ${(ss.features||[]).map(f=>`
-        <div class="ss-feat-card ${featColor[f.color]||''}">
-          <div class="ss-feat-title">${f.category}</div>
-          ${bl(f.items)}
-        </div>`).join('')}
-    </div>`);
-
-  // ⑫ 주요 사양
-  const specHtml = sec('12. 주요 사양', `
-    <div class="ss-3col">
-      ${(ss.specs||[]).map(s=>`
-        <div class="ss-spec-card">
-          <div class="ss-spec-title">${s.category}</div>
-          ${bl(s.items)}
-        </div>`).join('')}
-    </div>`);
-
-  // ⑬ 특장점
-  const strHtml = sec('13. 특장점', `
-    <div class="ss-strength-grid">
-      ${(ss.strengths||[]).map(s=>`
-        <div class="ss-strength-card">
-          <div class="ss-strength-header">
-            <span class="ss-strength-num">${s.num}</span>
-            <span class="ss-strength-title">${s.title}</span>
-            <span class="ss-strength-point">${s.point}</span>
+    targets: n => {
+      const t = ss.targets || {};
+      return blk(n, '타겟 사용자', `
+        <div class="ss-2col">
+          <div class="ss-panel ss-panel-blue">
+            <div class="ss-panel-title">${t.primary?.label||'핵심 타겟'}</div>
+            <div class="ss-target-name">${t.primary?.name||''}</div>
+            <div class="ss-tag-row">${(t.primary?.examples||[]).map(e=>`<span class="ss-tag">${e}</span>`).join('')}</div>
+            ${bl(t.primary?.traits,'ss-mt8')}
           </div>
-          <div class="ss-strength-desc">${s.desc}</div>
-        </div>`).join('')}
-    </div>`);
-
-  // ⑭ 벤치마크
-  const bm = ss.benchmark || {};
-  const bmHtml = sec('14. 버카다·롬버스 참고점', `
-    <div class="ss-3col">
-      <div class="ss-panel">
-        <div class="ss-panel-title">${bm.verkada?.label||'Verkada'}</div>
-        ${bl(bm.verkada?.items||[])}
-      </div>
-      <div class="ss-panel">
-        <div class="ss-panel-title">${bm.rhombus?.label||'Rhombus'}</div>
-        ${bl(bm.rhombus?.items||[])}
-      </div>
-      <div class="ss-panel ss-panel-blue">
-        <div class="ss-panel-title">당사 적용 방향</div>
-        ${bl(bm.adaptation||[])}
-      </div>
-    </div>`);
-
-  // ⑮ 로드맵
-  const rmHtml = sec('15. 단계별 로드맵', `
-    <div class="ss-3col">
-      ${(ss.roadmap||[]).map(r=>`
-        <div class="ss-rm-card ${rmColor[r.color]||'ss-rm-blue'}">
-          <div class="ss-rm-phase">${r.phase} <span class="ss-rm-period">${r.period}</span></div>
-          <div class="ss-rm-goal">${r.goal}</div>
-          <div class="ss-rm-section-title">주요 타겟</div>
-          ${bl(r.targets||[])}
-          <div class="ss-rm-section-title">주요 기능</div>
-          ${bl(r.features||[])}
-          <div class="ss-rm-biz">${r.bizModel}</div>
-        </div>`).join('')}
-    </div>`);
-
-  // ⑯ 향후 검토 과제
-  const issuesHtml = sec('16. 향후 검토 과제', `
-    <div class="ss-issue-list">
-      ${(ss.openIssues||[]).map(i=>`
-        <div class="ss-issue-item ${priCls[i.priority]||''}">
-          <div class="ss-issue-header">
-            <span class="ss-issue-id">${i.id}</span>
-            <span class="ss-issue-topic">${i.topic}</span>
-            <span class="ss-issue-pri ss-pri-badge-${i.priority}">${priLabel[i.priority]||i.priority}</span>
+          <div class="ss-panel">
+            <div class="ss-panel-title">보조 타겟</div>
+            <table class="ss-table"><tbody>
+              ${(t.secondary||[]).map(s=>`<tr><td class="ss-td-b">${s.name}</td><td>${s.role}</td></tr>`).join('')}
+            </tbody></table>
           </div>
-          <div class="ss-issue-desc">${i.desc}</div>
-        </div>`).join('')}
-    </div>`);
+        </div>`);
+    },
 
-  // ⑰ 결론
-  const conclusionHtml = ss.conclusion ? `
-    <div class="ss-conclusion">${ss.conclusion}</div>` : '';
+    vmsComparison: n => blk(n, '기존 VMS vs 신규 클라우드영상시스템', `
+      <table class="ss-table">
+        <thead><tr><th>구분</th><th>기존 VMS</th><th class="ss-th-new">신규 클라우드영상시스템</th></tr></thead>
+        <tbody>
+          ${(ss.vmsComparison||[]).map(r=>`
+            <tr>
+              <td class="ss-td-b">${r.item}</td>
+              <td class="ss-td-old">${r.existing}</td>
+              <td class="ss-td-new">${r.new}</td>
+            </tr>`).join('')}
+        </tbody>
+      </table>`),
 
-  return bgHtml + goalsHtml + targetsHtml + vmsHtml + modesHtml + journeyHtml +
-    userIaHtml + installIaHtml + aiHtml + policyHtml + featHtml + specHtml +
-    strHtml + bmHtml + rmHtml + issuesHtml + conclusionHtml;
+    modes: n => blk(n, '전체 서비스 모드 구조', `
+      <div class="ss-3col">
+        ${(ss.modes||[]).map(m=>`
+          <div class="ss-mode-card ${modeCls[m.id]||''}">
+            <div class="ss-mode-title">
+              <span class="${modeTagCls[m.id]||'ss-tag-install'} ss-mode-badge">${m.name}</span>
+            </div>
+            <div class="ss-mode-row"><span class="ss-mode-key">사용 시점</span><span>${m.timing}</span></div>
+            <div class="ss-mode-row"><span class="ss-mode-key">주 사용자</span><span>${m.users?.join(', ')||''}</span></div>
+            <div class="ss-mode-row"><span class="ss-mode-key">접속 방식</span><span>${m.access}</span></div>
+            <div class="ss-mode-row"><span class="ss-mode-key">목적</span><span>${m.purpose}</span></div>
+            <div class="ss-mode-menus">
+              ${(m.menus||[]).map((mn,i)=>`<span class="ss-menu-chip">${String(i+1).padStart(2,'0')} ${mn}</span>`).join('')}
+            </div>
+          </div>`).join('')}
+      </div>`),
+
+    userJourney: n => blk(n, '전체 유저저니', `
+      <div class="ss-table-scroll">
+      <table class="ss-table ss-journey-table">
+        <thead><tr><th style="width:36px">#</th><th>단계</th><th>모드</th><th>주 사용자</th><th>주요 액션</th><th>결과</th></tr></thead>
+        <tbody>
+          ${(ss.userJourney||[]).map(j=>{
+            const iMode = j.mode.includes('설치') ? 'install' : j.mode.includes('사용') ? 'user' : j.mode.includes('관리') ? 'admin' : '';
+            const modeBadge = iMode ? `<span class="ss-jrn-badge ${modeTagCls[iMode]}">${j.mode}</span>` : `<span class="ss-jrn-badge ss-tag-none">${j.mode}</span>`;
+            return `<tr>
+              <td class="ss-step-num">${j.step}</td>
+              <td class="ss-td-b">${j.title}</td>
+              <td style="white-space:nowrap">${modeBadge}</td>
+              <td>${j.users?.join('<br>')||''}</td>
+              <td>${bl(j.actions)}</td>
+              <td class="ss-td-result">${j.result}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+      </div>`),
+
+    userModeIA: n => blk(n, '사용자 모드 IA', `
+      <div class="ss-ia-grid">
+        ${(ss.userModeIA||[]).map(m=>`
+          <div class="ss-ia-card">
+            <div class="ss-ia-header">
+              <span class="ss-ia-num">${m.num}</span>
+              <span class="ss-ia-name">${m.name}</span>
+            </div>
+            <div class="ss-ia-role">${m.role}</div>
+            <div class="ss-ia-contents">${bl(m.contents)}</div>
+            ${m.aiExamples ? `
+              <div class="ss-ia-sub-label">업종별 AI 추천 예시</div>
+              <table class="ss-ai-ex-table">
+                ${m.aiExamples.map(ex=>`<tr><td class="ss-ai-type">${ex.type}</td><td>${ex.ai.join(' · ')}</td></tr>`).join('')}
+              </table>` : ''}
+            ${m.extra ? `
+              <div class="ss-ia-sub-label">${m.extra.label}</div>
+              <div class="ss-tag-row">${m.extra.items.map(i=>`<span class="ss-tag">${i}</span>`).join('')}</div>` : ''}
+          </div>`).join('')}
+      </div>`),
+
+    installModeIA: n => blk(n, '설치 모드 IA', `
+      <div class="ss-install-grid">
+        ${(ss.installModeIA||[]).map(m=>`
+          <div class="ss-install-card">
+            <div class="ss-install-header"><span class="ss-install-num">${m.num}</span><span class="ss-install-name">${m.name}</span></div>
+            ${bl(m.contents)}
+          </div>`).join('')}
+      </div>`),
+
+    aiSafeService: n => {
+      const ai = ss.aiSafeService || {};
+      return blk(n, 'AI 안심 서비스 구조', `
+        <div class="ss-ai-concept">${ai.concept||''}</div>
+        <div class="ss-2col ss-mt16">
+          <div>
+            <div class="ss-sub-label">사용자 표현 변환</div>
+            <table class="ss-table">
+              <thead><tr><th>기술 용어</th><th>사용자 표현</th></tr></thead>
+              <tbody>${(ai.termMapping||[]).map(t=>`<tr><td class="ss-td-old">${t.tech}</td><td class="ss-td-new">${t.user}</td></tr>`).join('')}</tbody>
+            </table>
+          </div>
+          <div>
+            <div class="ss-sub-label">AI 안심 서비스 흐름</div>
+            <div class="ss-flow-list">
+              ${(ai.flow||[]).map((f,i)=>`<div class="ss-flow-item"><span class="ss-flow-num">${i+1}</span><span>${f}</span></div>`).join('')}
+            </div>
+          </div>
+        </div>`);
+    },
+
+    algorithmPolicy: n => {
+      const ap = ss.algorithmPolicy || {};
+      return blk(n, 'AI 알고리즘 설정 정책', `
+        <div class="ss-3col">
+          ${['installer','user','system'].map(key => {
+            const p = ap[key] || {};
+            const cls = key==='installer' ? 'ss-pol-install' : key==='user' ? 'ss-pol-user' : 'ss-pol-system';
+            return `<div class="ss-pol-card ${cls}">
+              <div class="ss-pol-title">${p.label||key}</div>
+              <div class="ss-pol-desc">${p.desc||''}</div>
+              ${bl(p.tasks)}
+            </div>`;
+          }).join('')}
+        </div>`);
+    },
+
+    features: n => blk(n, '주요 제공 기능', `
+      <div class="ss-feat-grid">
+        ${(ss.features||[]).map(f=>`
+          <div class="ss-feat-card ${featColor[f.color]||''}">
+            <div class="ss-feat-title">${f.category}</div>
+            ${bl(f.items)}
+          </div>`).join('')}
+      </div>`),
+
+    specs: n => blk(n, '주요 사양', `
+      <div class="ss-3col">
+        ${(ss.specs||[]).map(s=>`
+          <div class="ss-spec-card">
+            <div class="ss-spec-title">${s.category}</div>
+            ${bl(s.items)}
+          </div>`).join('')}
+      </div>`),
+
+    strengths: n => blk(n, '특장점', `
+      <div class="ss-strength-grid">
+        ${(ss.strengths||[]).map(s=>`
+          <div class="ss-strength-card">
+            <div class="ss-strength-header">
+              <span class="ss-strength-num">${s.num}</span>
+              <span class="ss-strength-title">${s.title}</span>
+              <span class="ss-strength-point">${s.point}</span>
+            </div>
+            <div class="ss-strength-desc">${s.desc}</div>
+          </div>`).join('')}
+      </div>`),
+
+    benchmark: n => {
+      const bm = ss.benchmark || {};
+      return blk(n, '버카다·롬버스 참고점', `
+        <div class="ss-3col">
+          <div class="ss-panel">
+            <div class="ss-panel-title">${bm.verkada?.label||'Verkada'}</div>
+            ${bl(bm.verkada?.items)}
+          </div>
+          <div class="ss-panel">
+            <div class="ss-panel-title">${bm.rhombus?.label||'Rhombus'}</div>
+            ${bl(bm.rhombus?.items)}
+          </div>
+          <div class="ss-panel ss-panel-blue">
+            <div class="ss-panel-title">당사 적용 방향</div>
+            ${bl(bm.adaptation)}
+          </div>
+        </div>`);
+    },
+
+    roadmap: n => blk(n, '단계별 로드맵', `
+      <div class="ss-3col">
+        ${(ss.roadmap||[]).map(r=>`
+          <div class="ss-rm-card ${rmColor[r.color]||'ss-rm-blue'}">
+            <div class="ss-rm-phase">${r.phase} <span class="ss-rm-period">${r.period}</span></div>
+            <div class="ss-rm-goal">${r.goal}</div>
+            <div class="ss-rm-section-title">주요 타겟</div>
+            ${bl(r.targets)}
+            <div class="ss-rm-section-title">주요 기능</div>
+            ${bl(r.features)}
+            <div class="ss-rm-biz">${r.bizModel}</div>
+          </div>`).join('')}
+      </div>`),
+
+    openIssues: n => blk(n, '향후 검토 과제', `
+      <div class="ss-issue-list">
+        ${(ss.openIssues||[]).map(i=>`
+          <div class="ss-issue-item ${priCls[i.priority]||''}">
+            <div class="ss-issue-header">
+              <span class="ss-issue-id">${i.id}</span>
+              <span class="ss-issue-topic">${i.topic}</span>
+              <span class="ss-issue-pri ss-pri-badge-${i.priority}">${priLabel[i.priority]||i.priority}</span>
+            </div>
+            <div class="ss-issue-desc">${i.desc}</div>
+          </div>`).join('')}
+      </div>`),
+
+    conclusion: () => ss.conclusion ? `<div class="ss-conclusion">${ss.conclusion}</div>` : '',
+  };
+
+  let num = 1;
+  return keys.map(key => {
+    const fn = R[key];
+    if (!fn) return '';
+    if (key === 'conclusion') return fn();
+    return fn(num++);
+  }).join('');
 }
 
 // ── IA 제안 렌더링 ──
@@ -1198,7 +1194,6 @@ function renderInsightSections(insight) {
 
   // ── 서비스 서머리 섹션 ──
   const svcSummary = sec('serviceSummary');
-  const svcSummaryContent = svcSummary ? renderServiceSummarySection(svcSummary) : '';
 
   // ── DS 적용 계획 섹션 ──
   const dsApp = sec('dsApplication');
@@ -1227,7 +1222,134 @@ function renderInsightSections(insight) {
       </div>`;
   }
 
-  const dsAppPanelContent = `
+  const tabGroup = `insight-${insight.serviceId}`;
+
+  // ── svcSummary 있으면 기획방향/UX컨셉/개발사양/향후검토 탭 구조 ──
+  if (svcSummary) {
+    const planHtml   = renderSSSections(svcSummary, ['background', 'goals', 'roadmap']);
+    const uxHtml     = renderSSSections(svcSummary, ['targets', 'vmsComparison', 'modes', 'userJourney', 'userModeIA', 'installModeIA', 'aiSafeService', 'algorithmPolicy', 'strengths']);
+    const specBasic  = renderSSSections(svcSummary, ['features', 'specs', 'benchmark']);
+    const futureHtml = renderSSSections(svcSummary, ['openIssues', 'conclusion']);
+    const journeyImg = svcSummary.journeyImage
+      ? `<div class="ss-journey-img-wrap sn-card-clickable" data-image="${svcSummary.journeyImage}" data-title="클라우드 영상시스템 전체 유저저니">
+           <img src="${svcSummary.journeyImage}" alt="클라우드 영상시스템 전체 유저저니" class="ss-journey-img">
+           <div class="ux-concept-hint">클릭하여 크게 보기 →</div>
+         </div>` : '';
+
+    const dsAppPanelContent = dsApp ? `
+      ${wrap('적용 범위 요약', '', `
+        ${dsApp.summary ? `<div class="dsa-summary">${dsApp.summary}</div>` : ''}
+        <table class="insight-table"><tbody>
+          ${(dsApp.stats || []).map(item => `
+            <tr>
+              <td class="insight-label">${item.label}</td>
+              <td class="insight-value">${item.value}</td>
+              <td><span class="dsa-badge dsa-badge-${item.status}">${item.status === 'confirmed' ? 'applicable' : item.status === 'candidate' ? 'candidate' : 'gap'}</span></td>
+            </tr>`).join('')}
+        </tbody></table>`)}` : '';
+
+    return `
+      <div class="insight-tabs-wrapper">
+        <div class="tabs insight-service-tabs" data-group="${tabGroup}">
+          <div class="tab active" data-group="${tabGroup}" data-target="plan">기획방향</div>
+          <div class="tab" data-group="${tabGroup}" data-target="ux-concept">UX컨셉</div>
+          <div class="tab" data-group="${tabGroup}" data-target="spec">개발사양</div>
+          <div class="tab" data-group="${tabGroup}" data-target="future">향후검토</div>
+          ${iaProposal ? `<div class="tab" data-group="${tabGroup}" data-target="ia-proposal">IA 제안</div>` : ''}
+          ${dsApp ? `<div class="tab" data-group="${tabGroup}" data-target="ds-application">DS 적용 계획</div>` : ''}
+        </div>
+
+        <div class="tab-panel active" data-group="${tabGroup}" data-panel="plan">
+          <div class="insight-container">
+            <div class="insight-header">
+              <div class="insight-header-title">기획방향</div>
+              <div class="insight-header-meta">
+                <span>${insight.serviceName}</span>
+                <span>작성: ${svcSummary.updatedAt}</span>
+              </div>
+            </div>
+            ${planHtml}
+          </div>
+        </div>
+
+        <div class="tab-panel" data-group="${tabGroup}" data-panel="ux-concept">
+          <div class="insight-container">
+            <div class="insight-header">
+              <div class="insight-header-title">UX컨셉</div>
+              <div class="insight-header-meta">
+                <span>${insight.serviceName}</span>
+                <span>작성: ${svcSummary.updatedAt}</span>
+              </div>
+            </div>
+            ${journeyImg}
+            ${uxHtml}
+          </div>
+        </div>
+
+        <div class="tab-panel" data-group="${tabGroup}" data-panel="spec">
+          <div class="insight-container">
+            <div class="insight-header">
+              <div class="insight-header-title">개발사양</div>
+              <div class="insight-header-meta">
+                <span>${insight.serviceName}</span>
+                <span>작성: ${svcSummary.updatedAt}</span>
+              </div>
+            </div>
+            <div class="ss-sub-nav">
+              <button class="ss-sub-chip active" data-sub="basic">기본정보</button>
+              ${benchmark ? `<button class="ss-sub-chip" data-sub="bm">선진사참고</button>` : ''}
+            </div>
+            <div class="ss-sub-panel active" data-sub="basic">${specBasic}</div>
+            ${benchmark ? `<div class="ss-sub-panel" data-sub="bm">${benchmarkPanelContent}</div>` : ''}
+          </div>
+        </div>
+
+        <div class="tab-panel" data-group="${tabGroup}" data-panel="future">
+          <div class="insight-container">
+            <div class="insight-header">
+              <div class="insight-header-title">향후검토</div>
+              <div class="insight-header-meta">
+                <span>${insight.serviceName}</span>
+                <span>작성: ${svcSummary.updatedAt}</span>
+              </div>
+            </div>
+            ${futureHtml}
+          </div>
+        </div>
+
+        ${iaProposal ? `
+        <div class="tab-panel" data-group="${tabGroup}" data-panel="ia-proposal">
+          <div class="insight-container">
+            <div class="insight-header">
+              <div class="insight-header-title">IA 제안</div>
+              <div class="insight-header-meta">
+                <span>${iaProposal.basis}</span>
+                <span>분석: ${iaProposal.analyzedAt}</span>
+              </div>
+            </div>
+            ${iaProposalContent}
+          </div>
+        </div>` : ''}
+
+        ${dsApp ? `
+        <div class="tab-panel" data-group="${tabGroup}" data-panel="ds-application">
+          <div class="insight-container">
+            <div class="insight-header">
+              <div class="insight-header-title">DS 적용 계획</div>
+              <div class="insight-header-meta">
+                <span>${insight.serviceName}</span>
+                <span>정리: ${dsApp.updatedAt || insight.curatedAt}</span>
+                <span>S1_AI_DESIGN_GUIDE V2.4</span>
+              </div>
+            </div>
+            ${dsAppPanelContent}
+          </div>
+        </div>` : ''}
+      </div>`;
+  }
+
+  // ── svcSummary 없는 서비스의 기존 탭 구조 ──
+  const dsAppPanelContent = dsApp ? `
     ${wrap('적용 범위 요약', '', `
       ${dsApp.summary ? `<div class="dsa-summary">${dsApp.summary}</div>` : ''}
       <table class="insight-table"><tbody>
@@ -1262,34 +1384,18 @@ function renderInsightSections(insight) {
             </div>
             <div class="dsa-cv-check">→ ${item.checkPoint}</div>
           </div>`).join('')}
-      </div>`)}`;
-
-  const tabGroup = `insight-${insight.serviceId}`;
+      </div>`)}` : '';
 
   return `
     <div class="insight-tabs-wrapper">
       <div class="tabs insight-service-tabs" data-group="${tabGroup}">
-        ${svcSummary ? `<div class="tab active" data-group="${tabGroup}" data-target="service-summary">서비스서머리</div>` : ''}
-        <div class="tab ${!svcSummary ? 'active' : ''}" data-group="${tabGroup}" data-target="service-guide">서비스 가이드</div>
+        <div class="tab active" data-group="${tabGroup}" data-target="service-guide">서비스 가이드</div>
         ${uxConcept ? `<div class="tab" data-group="${tabGroup}" data-target="ux-concept">UX 컨셉</div>` : ''}
         ${dsApp ? `<div class="tab" data-group="${tabGroup}" data-target="ds-application">DS 적용 계획</div>` : ''}
         ${iaProposal ? `<div class="tab" data-group="${tabGroup}" data-target="ia-proposal">IA 제안</div>` : ''}
         ${benchmark ? `<div class="tab" data-group="${tabGroup}" data-target="benchmark">버카다 벤치마크</div>` : ''}
       </div>
-      ${svcSummary ? `
-      <div class="tab-panel active" data-group="${tabGroup}" data-panel="service-summary">
-        <div class="insight-container">
-          <div class="insight-header">
-            <div class="insight-header-title">서비스서머리</div>
-            <div class="insight-header-meta">
-              <span>${insight.serviceName}</span>
-              <span>작성: ${svcSummary.updatedAt}</span>
-            </div>
-          </div>
-          ${svcSummaryContent}
-        </div>
-      </div>` : ''}
-      <div class="tab-panel ${!svcSummary ? 'active' : ''}" data-group="${tabGroup}" data-panel="service-guide">
+      <div class="tab-panel active" data-group="${tabGroup}" data-panel="service-guide">
         <div class="insight-container">
           <div class="insight-header">
             <div class="insight-header-title">서비스 가이드</div>
@@ -1397,6 +1503,19 @@ function renderServiceDetail(svc, domain, contentId) {
       tab.classList.add('active');
       el.querySelectorAll(`.tab-panel[data-group="${group}"]`).forEach(p => p.classList.remove('active'));
       el.querySelector(`.tab-panel[data-group="${group}"][data-panel="${target}"]`)?.classList.add('active');
+    });
+  });
+
+  // 개발사양 하위 서브칩 탭 전환
+  el.querySelectorAll('.ss-sub-nav .ss-sub-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const nav = chip.closest('.ss-sub-nav');
+      const container = chip.closest('.insight-container');
+      const sub = chip.dataset.sub;
+      nav.querySelectorAll('.ss-sub-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      container.querySelectorAll('.ss-sub-panel').forEach(p => p.classList.remove('active'));
+      container.querySelector(`.ss-sub-panel[data-sub="${sub}"]`)?.classList.add('active');
     });
   });
 
